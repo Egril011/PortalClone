@@ -10,6 +10,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Engine/LocalPlayer.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -67,6 +68,11 @@ void APortalCloneCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APortalCloneCharacter::Look);
+
+		//Sprint
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &APortalCloneCharacter::Sprint);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &APortalCloneCharacter::StopSprinting);
+
 	}
 	else
 	{
@@ -99,4 +105,23 @@ void APortalCloneCharacter::Look(const FInputActionValue& Value)
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+void APortalCloneCharacter::BeginPlay() {
+
+	Super::BeginPlay();
+
+	NormalSpeed = GetCharacterMovement()->MaxWalkSpeed;
+}
+
+//Sprint function
+void APortalCloneCharacter::Sprint() {
+	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+
+	if (GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Green, TEXT("Sprinting"));
+}
+
+void APortalCloneCharacter::StopSprinting() {
+	GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
 }
