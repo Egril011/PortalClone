@@ -1,7 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
-
 #include "CoreMinimal.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "PortalCloneWeaponComponent.generated.h"
@@ -48,6 +47,18 @@ public:
 	/** Make the weapon Fire a Projectile */
 	UFUNCTION(BlueprintCallable, Category="Weapon")
 	void Fire();
+	
+
+	/**/
+	UFUNCTION(BlueprintCallable, Category = "PortalWeapon")
+	void FireEffect();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* FireEffectAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	FName MuzzleSocketName = TEXT("Muzzle");
+
 
 protected:
 	/** Ends gameplay for this component. */

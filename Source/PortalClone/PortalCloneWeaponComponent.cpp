@@ -1,6 +1,5 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-
 #include "PortalCloneWeaponComponent.h"
 #include "PortalCloneCharacter.h"
 #include "PortalCloneProjectile.h"
@@ -12,6 +11,7 @@
 #include "Animation/AnimInstance.h"
 #include "Engine/LocalPlayer.h"
 #include "Engine/World.h"
+#include "GunTimeStateHandler.h"
 
 // Sets default values for this component's properties
 UPortalCloneWeaponComponent::UPortalCloneWeaponComponent()
@@ -22,7 +22,7 @@ UPortalCloneWeaponComponent::UPortalCloneWeaponComponent()
 
 
 void UPortalCloneWeaponComponent::Fire()
-{
+{	
 	if (Character == nullptr || Character->GetController() == nullptr)
 	{
 		return;
@@ -92,7 +92,10 @@ bool UPortalCloneWeaponComponent::AttachWeapon(APortalCloneCharacter* TargetChar
 		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerController->InputComponent))
 		{
 			// Fire
-			EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &UPortalCloneWeaponComponent::Fire);
+			//EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &UPortalCloneWeaponComponent::Fire);
+			
+			// FireEffect
+			EnhancedInputComponent->BindAction(FireEffectAction, ETriggerEvent::Triggered, this, &UPortalCloneWeaponComponent::FireEffect);
 		}
 	}
 
@@ -117,3 +120,26 @@ void UPortalCloneWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReas
 	// maintain the EndPlay call chain
 	Super::EndPlay(EndPlayReason);
 }
+
+
+void UPortalCloneWeaponComponent::FireEffect() {
+	
+	if (!GetOwner())
+		return;
+
+	FVector Start = GetSocketLocation(MuzzleSocketName);
+	FVector ForwardVector = GetSocketRotation(MuzzleSocketName).Vector();
+	FVector End = Start + (ForwardVector * 1000.0f);
+
+	FHitResult HitResult;
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		Start,
+		End,
+		ECC_Visibility
+	);
+
+	DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 10.0f, 0, 1.0f);
+}
+ 
