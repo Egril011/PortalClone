@@ -10,7 +10,7 @@ GunTimeStateHandler::~GunTimeStateHandler()
 {
 }
 
-//Apply the effect based on the gun' state
+//Apply the effect based on the gun's state
 void GunTimeStateHandler::ApplyState(AActor* Target, UMyGameInstance* GI) {
 	
 	if (!Target && !GI)

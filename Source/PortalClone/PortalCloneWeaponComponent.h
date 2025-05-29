@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "InputAction.h"
 #include "PortalCloneWeaponComponent.generated.h"
 
 class APortalCloneCharacter;
@@ -34,10 +35,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	class UInputMappingContext* FireMappingContext;
 
-	/** Fire Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	class UInputAction* FireAction;
-
 	/** Sets default values for this component's properties */
 	UPortalCloneWeaponComponent();
 
@@ -45,18 +42,23 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Weapon")
 	bool AttachWeapon(APortalCloneCharacter* TargetCharacter);
 
-	/** Make the weapon Fire a Projectile */
-	UFUNCTION(BlueprintCallable, Category="Weapon")
-	void Fire();
-	
-
-	/**/
+	//method to shot the effect
 	UFUNCTION(BlueprintCallable, Category = "PortalWeapon")
 	void FireEffect();
 
+	//method to change the gun state
+	UFUNCTION(BlueprintCallable, Category = "PortalWeapon")
+	void ChangeGunEffect();
+
+	//The Input to shot
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* FireEffectAction;
 
+	//The input to change the gun's state
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* ChangeGunState;
+
+	//To get the Muzzle from the gun's skeleton 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	FName MuzzleSocketName = TEXT("Muzzle");
 

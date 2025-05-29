@@ -20,52 +20,6 @@ UPortalCloneWeaponComponent::UPortalCloneWeaponComponent()
 	MuzzleOffset = FVector(100.0f, 0.0f, 10.0f);
 }
 
-
-void UPortalCloneWeaponComponent::Fire()
-{	
-	if (Character == nullptr || Character->GetController() == nullptr)
-	{
-		return;
-	}
-
-	// Try and fire a projectile
-	if (ProjectileClass != nullptr)
-	{
-		UWorld* const World = GetWorld();
-		if (World != nullptr)
-		{
-			APlayerController* PlayerController = Cast<APlayerController>(Character->GetController());
-			const FRotator SpawnRotation = PlayerController->PlayerCameraManager->GetCameraRotation();
-			// MuzzleOffset is in camera space, so transform it to world space before offsetting from the character location to find the final muzzle position
-			const FVector SpawnLocation = GetOwner()->GetActorLocation() + SpawnRotation.RotateVector(MuzzleOffset);
-	
-			//Set Spawn Collision Handling Override
-			FActorSpawnParameters ActorSpawnParams;
-			ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
-	
-			// Spawn the projectile at the muzzle
-			World->SpawnActor<APortalCloneProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, ActorSpawnParams);
-		}
-	}
-	
-	// Try and play the sound if specified
-	if (FireSound != nullptr)
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, FireSound, Character->GetActorLocation());
-	}
-	
-	// Try and play a firing animation if specified
-	if (FireAnimation != nullptr)
-	{
-		// Get the animation object for the arms mesh
-		UAnimInstance* AnimInstance = Character->GetMesh1P()->GetAnimInstance();
-		if (AnimInstance != nullptr)
-		{
-			AnimInstance->Montage_Play(FireAnimation, 1.f);
-		}
-	}
-}
-
 bool UPortalCloneWeaponComponent::AttachWeapon(APortalCloneCharacter* TargetCharacter)
 {
 	Character = TargetCharacter;
@@ -91,11 +45,11 @@ bool UPortalCloneWeaponComponent::AttachWeapon(APortalCloneCharacter* TargetChar
 
 		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerController->InputComponent))
 		{
-			// Fire
-			//EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &UPortalCloneWeaponComponent::Fire);
-			
 			// FireEffect
 			EnhancedInputComponent->BindAction(FireEffectAction, ETriggerEvent::Triggered, this, &UPortalCloneWeaponComponent::FireEffect);
+
+			//Change gun's state
+			EnhancedInputComponent->BindAction(ChangeGunState, ETriggerEvent::Started, this, &UPortalCloneWeaponComponent::ChangeGunEffect);
 		}
 	}
 
@@ -121,8 +75,6 @@ void UPortalCloneWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReas
 	Super::EndPlay(EndPlayReason);
 }
 
-
-
 //Method for the Fire Effect
 void UPortalCloneWeaponComponent::FireEffect() {
 	
@@ -141,18 +93,48 @@ void UPortalCloneWeaponComponent::FireEffect() {
 	);
 
 	if (bHit) {
-		DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 10.0f, 0, 1.0f);
-
+		
 		AActor* HitActor = HitResult.GetActor();
 
 		UMyGameInstance* GI = Cast<UMyGameInstance>(GetWorld()->GetGameInstance());
 
-		/*test*/
-		GI->CurrentGunState = EGunTimeState::Slow;
+		/*Debug*/
+		if (GI->CurrentGunState == EGunTimeState::Slow) {
+			DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 10.0f, 0, 1.0f);
+		}
+		else {
+			DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 10.0f, 0, 1.0f);
+		}
 
 		//Call the method that will apply the state based on the gun's effect
 		GunTimeStateHandler::ApplyState(HitActor, GI);
-		
 	}
 }
  
+// Toggles the gun's time effect between Slow and Speed
+void UPortalCloneWeaponComponent::ChangeGunEffect() {
+
+	UMyGameInstance* GI = Cast<UMyGameInstance>(GetWorld()->GetGameInstance());
+
+	if (!GI) 
+	return;
+
+	// Toggle between Slow and Speed effects
+	if (GI->CurrentGunState == EGunTimeState::Slow) {
+		
+		GI->CurrentGunState = EGunTimeState::Speed;
+
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Speed mode"));
+		}
+	}
+	else {
+		GI->CurrentGunState = EGunTimeState::Slow;
+
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Slow mode"));
+		}
+	}
+}
