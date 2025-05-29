@@ -48,7 +48,18 @@ void GunTimeStateHandler::SlowEffect(AActor* Target) {
 	}
 }
 
+//Apply the speed effect to the Target by calling its interface
 void GunTimeStateHandler::SpeedUpEffect(AActor* Target)
 {
-	
+	if (!Target)
+		return;
+
+	//looking if the Target has the Speedable interface
+	if (Target->Implements<USpeedableInterface>()) {
+
+		ISpeedableInterface* Speedable = Cast<ISpeedableInterface>(Target);
+		if (Speedable) {
+			Speedable->Applyspeed();
+		}
+	}
 }

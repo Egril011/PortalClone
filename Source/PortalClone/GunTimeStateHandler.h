@@ -5,6 +5,7 @@
 #include "MyGameInstance.h"
 #include "EGunTimeState.h"
 #include "SlowableInterface.h"
+#include "SpeedableInterface.h"
 #include "CoreMinimal.h"
 
 class PORTALCLONE_API GunTimeStateHandler
