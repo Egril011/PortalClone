@@ -11,5 +11,4 @@ enum class EGunTimeState : uint8
     None,
     Slow,
     Speed,
-    Freeze
 };

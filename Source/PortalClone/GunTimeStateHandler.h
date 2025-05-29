@@ -4,6 +4,7 @@
 
 #include "MyGameInstance.h"
 #include "EGunTimeState.h"
+#include "SlowableInterface.h"
 #include "CoreMinimal.h"
 
 class PORTALCLONE_API GunTimeStateHandler
@@ -15,7 +16,6 @@ public:
 	static void ApplyState(AActor* Target, UMyGameInstance* GI);
 
 private:
-	static void ApplySlow(AActor* Target);
-	static void ApplySpeedUp(AActor* Target);
-	static void ApplyFreeze(AActor* Target);
+	static void SlowEffect(AActor* Target);
+	static void SpeedUpEffect(AActor* Target);
 };

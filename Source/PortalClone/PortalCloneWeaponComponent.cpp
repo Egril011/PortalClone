@@ -122,11 +122,11 @@ void UPortalCloneWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReas
 }
 
 
+
+//Method for the Fire Effect
 void UPortalCloneWeaponComponent::FireEffect() {
 	
-	if (!GetOwner())
-		return;
-
+	//Start the LineTrace
 	FVector Start = GetSocketLocation(MuzzleSocketName);
 	FVector ForwardVector = GetSocketRotation(MuzzleSocketName).Vector();
 	FVector End = Start + (ForwardVector * 1000.0f);
@@ -140,6 +140,19 @@ void UPortalCloneWeaponComponent::FireEffect() {
 		ECC_Visibility
 	);
 
-	DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 10.0f, 0, 1.0f);
+	if (bHit) {
+		DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 10.0f, 0, 1.0f);
+
+		AActor* HitActor = HitResult.GetActor();
+
+		UMyGameInstance* GI = Cast<UMyGameInstance>(GetWorld()->GetGameInstance());
+
+		/*test*/
+		GI->CurrentGunState = EGunTimeState::Slow;
+
+		//Call the method that will apply the state based on the gun's effect
+		GunTimeStateHandler::ApplyState(HitActor, GI);
+		
+	}
 }
  

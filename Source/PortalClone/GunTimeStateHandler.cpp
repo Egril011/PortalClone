@@ -10,24 +10,20 @@ GunTimeStateHandler::~GunTimeStateHandler()
 {
 }
 
+//Apply the effect based on the gun' state
 void GunTimeStateHandler::ApplyState(AActor* Target, UMyGameInstance* GI) {
-
+	
 	if (!Target && !GI)
 		return;
-
 
 	switch (GI->CurrentGunState)
 	{
 		case EGunTimeState::Slow:
-			ApplySlow(Target);
+			SlowEffect(Target);
 			break;
 
 		case EGunTimeState::Speed:
-			ApplySpeedUp(Target);
-			break;
-
-		case EGunTimeState::Freeze:
-			ApplyFreeze(Target);
+			SpeedUpEffect(Target);
 			break;
 
 		default:
@@ -35,14 +31,24 @@ void GunTimeStateHandler::ApplyState(AActor* Target, UMyGameInstance* GI) {
 	}
 }
 
-void GunTimeStateHandler::ApplySlow(AActor* Target) {
+//Apply the slow effect to the Target by calling its interface 
+void GunTimeStateHandler::SlowEffect(AActor* Target) {
 
+	if (!Target) 
+		return;	
+
+	//looking if the Target has the Slowable interface
+	if (Target->Implements<USlowableInterface>()) {
+		
+		ISlowableInterface* Slowable = Cast<ISlowableInterface>(Target);
+		if (Slowable) {
+
+			Slowable->ApplySlowEffect();
+		}
+	}
 }
 
-void GunTimeStateHandler::ApplySpeedUp(AActor* Target) {
-
-}
-
-void GunTimeStateHandler::ApplyFreeze(AActor* Target) {
-
+void GunTimeStateHandler::SpeedUpEffect(AActor* Target)
+{
+	
 }

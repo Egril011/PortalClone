@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
+
 #include "CoreMinimal.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "PortalCloneWeaponComponent.generated.h"
