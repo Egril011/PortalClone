@@ -13,13 +13,6 @@
 #include "Engine/World.h"
 #include "GunTimeStateHandler.h"
 
-// Sets default values for this component's properties
-UPortalCloneWeaponComponent::UPortalCloneWeaponComponent()
-{
-	// Default offset from the character location for projectiles to spawn
-	MuzzleOffset = FVector(100.0f, 0.0f, 10.0f);
-}
-
 bool UPortalCloneWeaponComponent::AttachWeapon(APortalCloneCharacter* TargetCharacter)
 {
 	Character = TargetCharacter;
@@ -49,11 +42,17 @@ bool UPortalCloneWeaponComponent::AttachWeapon(APortalCloneCharacter* TargetChar
 			EnhancedInputComponent->BindAction(FireEffectAction, ETriggerEvent::Triggered, this, &UPortalCloneWeaponComponent::FireEffect);
 
 			//Change gun's state
-			EnhancedInputComponent->BindAction(ChangeGunState, ETriggerEvent::Started, this, &UPortalCloneWeaponComponent::ChangeGunEffect);
+			EnhancedInputComponent->BindAction(ChangeGunStateAction, ETriggerEvent::Started, this, &UPortalCloneWeaponComponent::ChangeGunEffect);
+			
+			//Grab item and put it in front of the player
+			EnhancedInputComponent->BindAction(GrabItemAction, ETriggerEvent::Started, this, &UPortalCloneWeaponComponent::GrabItem);
+			
+			//Drop the item that was in front of the player
+			EnhancedInputComponent->BindAction(GrabItemAction, ETriggerEvent::Completed, this, &UPortalCloneWeaponComponent::DropItem);
 		}
 	}
 
-	return true;
+	return true; 
 }
 
 void UPortalCloneWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -111,7 +110,7 @@ void UPortalCloneWeaponComponent::FireEffect() {
 	}
 }
  
-// Toggles the gun's time effect between Slow and Speed
+//Toggles the gun's time effect between Slow and Speed
 void UPortalCloneWeaponComponent::ChangeGunEffect() {
 
 	UMyGameInstance* GI = Cast<UMyGameInstance>(GetWorld()->GetGameInstance());
@@ -137,4 +136,48 @@ void UPortalCloneWeaponComponent::ChangeGunEffect() {
 			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Slow mode"));
 		}
 	}
+}
+
+//Method for the object goes in front of the player
+void UPortalCloneWeaponComponent::GrabItem() {
+
+	//Start the LineTrace
+	FVector Start = GetSocketLocation(MuzzleSocketName);
+	FVector ForwardVector = GetSocketRotation(MuzzleSocketName).Vector();
+	FVector End = Start + (ForwardVector * 1000.0f);
+
+	FHitResult HitResult;
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		Start,
+		End,
+		ECC_Visibility
+	);
+
+	if (bHit) {        
+
+		/*Debug*/
+		DrawDebugLine(GetWorld(), Start, End, FColor::Yellow, false, 10.0f, 0, 1.0f);
+
+		UPrimitiveComponent* Primitive = HitResult.GetComponent();
+
+		if (Primitive && Primitive->IsSimulatingPhysics()) {
+
+			Primitive->SetSimulatePhysics(false);
+
+			//calculate the distance from where the item will be form the player
+			float DistanceMuzzle = 200.0f;
+			FVector LocationMuzzle = Start + (ForwardVector * DistanceMuzzle);
+			Primitive->SetWorldLocation(LocationMuzzle);
+
+			//attache the item to the parent (gun's socket)
+			Primitive->AttachToComponent(this, FAttachmentTransformRules::KeepWorldTransform,
+			MuzzleSocketName);
+		}
+	}
+}
+
+void UPortalCloneWeaponComponent::DropItem() {
+
 }

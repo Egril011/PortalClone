@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "InputAction.h"
+#include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "PortalCloneWeaponComponent.generated.h"
 
 class APortalCloneCharacter;
@@ -15,6 +16,7 @@ class PORTALCLONE_API UPortalCloneWeaponComponent : public USkeletalMeshComponen
 	GENERATED_BODY()
 
 public:
+
 	/** Projectile class to spawn */
 	UPROPERTY(EditDefaultsOnly, Category=Projectile)
 	TSubclassOf<class APortalCloneProjectile> ProjectileClass;
@@ -35,8 +37,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	class UInputMappingContext* FireMappingContext;
 
-	/** Sets default values for this component's properties */
-	UPortalCloneWeaponComponent();
 
 	/** Attaches the actor to a FirstPersonCharacter */
 	UFUNCTION(BlueprintCallable, Category="Weapon")
@@ -50,18 +50,29 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "PortalWeapon")
 	void ChangeGunEffect();
 
+	//method to grab item
+	UFUNCTION(BlueprintCallable, Category = "PortalWeapon")
+	void GrabItem();
+
+	//method to Drop item
+	UFUNCTION(BlueprintCallable, Category = "PortalWeapon")
+	void DropItem();
+
 	//The Input to shot
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* FireEffectAction;
 
 	//The input to change the gun's state
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* ChangeGunState;
+	UInputAction* ChangeGunStateAction;
 
+	//The input to grab an item causes the item to move in front of the player.
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* GrabItemAction;
+	
 	//To get the Muzzle from the gun's skeleton 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	FName MuzzleSocketName = TEXT("Muzzle");
-
 
 protected:
 	/** Ends gameplay for this component. */
@@ -71,4 +82,7 @@ protected:
 private:
 	/** The Character holding this weapon*/
 	APortalCloneCharacter* Character;
+
+	UPROPERTY()
+	UPhysicsHandleComponent* PhysicsHandle;
 };
