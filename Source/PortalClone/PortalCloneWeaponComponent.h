@@ -75,9 +75,13 @@ private:
 	UPROPERTY()
 	UPrimitiveComponent* Primitive;
 
-	//Drop the object
+	//method to drop the object
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	void DropObject();
+
+	//method to throw the object
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void ThrowObject();
 
 	//method to grab item
 	UFUNCTION(BlueprintCallable, Category = "PortalWeapon")

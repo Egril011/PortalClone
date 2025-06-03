@@ -41,16 +41,6 @@ void UPortalCloneWeaponComponent::TickComponent(float DeltaTime, ELevelTick Tick
 		FVector ObjectLocation = GetSocketLocation(MuzzleSocketName) + (GetSocketRotation(MuzzleSocketName).Vector() * 250.f);
 		PhysicsHandle->SetTargetLocation(ObjectLocation);
 	}
-	
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(
-			/* Key: */     -1,
-			/* Duration: */3.0f,
-			/* Color: */   FColor::Green,
-			/* Text: */    TEXT("Picked up object!")
-		);
-	}
 }
 
 bool UPortalCloneWeaponComponent::AttachWeapon(APortalCloneCharacter* TargetCharacter)
@@ -114,6 +104,11 @@ void UPortalCloneWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReas
 //Method for the Fire Effect
 void UPortalCloneWeaponComponent::FireEffect() {
 	
+	if (PhysicsHandle->GrabbedComponent) {
+		ThrowObject();
+		return;
+	}
+
 	//Start the LineTrace
 	FVector Start = GetSocketLocation(MuzzleSocketName);
 	FVector ForwardVector = GetSocketRotation(MuzzleSocketName).Vector();
@@ -225,6 +220,7 @@ void UPortalCloneWeaponComponent::GrabObject() {
 	}
 }
 
+//Method to allow the player to drop the object
 void UPortalCloneWeaponComponent::DropObject() {
 
 	if (PhysicsHandle && PhysicsHandle->GrabbedComponent) {
@@ -236,4 +232,12 @@ void UPortalCloneWeaponComponent::DropObject() {
 
 		SetComponentTickEnabled(false);
 	}
+}
+
+//Method to throw the object that the player's grabbing
+void UPortalCloneWeaponComponent::ThrowObject() {
+
+	PhysicsHandle->ReleaseComponent();
+
+	Primitive->AddImpulse(GetSocketRotation(MuzzleSocketName).Vector() * 1000.f * Primitive->GetMass(), NAME_None, false);
 }
