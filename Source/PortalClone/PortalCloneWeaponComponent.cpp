@@ -13,6 +13,46 @@
 #include "Engine/World.h"
 #include "GunTimeStateHandler.h"
 
+
+void UPortalCloneWeaponComponent::BeginPlay() {
+	
+	Super::BeginPlay();
+
+	if (!PhysicsHandle)
+	{
+		PhysicsHandle = NewObject<UPhysicsHandleComponent>(this, UPhysicsHandleComponent::StaticClass(), TEXT("GrabHandle"));
+		if (PhysicsHandle)
+		{
+			PhysicsHandle->RegisterComponent();
+		}
+	}
+
+	PrimaryComponentTick.bCanEverTick = true;
+	SetComponentTickEnabled(false);
+}
+
+void UPortalCloneWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {
+
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+		
+	if (PhysicsHandle && PhysicsHandle->GrabbedComponent) {
+		
+		//change the object's location so that the location is always the same even though the object is far aways 
+		FVector ObjectLocation = GetSocketLocation(MuzzleSocketName) + (GetSocketRotation(MuzzleSocketName).Vector() * 250.f);
+		PhysicsHandle->SetTargetLocation(ObjectLocation);
+	}
+	
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(
+			/* Key: */     -1,
+			/* Duration: */3.0f,
+			/* Color: */   FColor::Green,
+			/* Text: */    TEXT("Picked up object!")
+		);
+	}
+}
+
 bool UPortalCloneWeaponComponent::AttachWeapon(APortalCloneCharacter* TargetCharacter)
 {
 	Character = TargetCharacter;
@@ -45,10 +85,7 @@ bool UPortalCloneWeaponComponent::AttachWeapon(APortalCloneCharacter* TargetChar
 			EnhancedInputComponent->BindAction(ChangeGunStateAction, ETriggerEvent::Started, this, &UPortalCloneWeaponComponent::ChangeGunEffect);
 			
 			//Grab item and put it in front of the player
-			EnhancedInputComponent->BindAction(GrabItemAction, ETriggerEvent::Started, this, &UPortalCloneWeaponComponent::GrabItem);
-			
-			//Drop the item that was in front of the player
-			EnhancedInputComponent->BindAction(GrabItemAction, ETriggerEvent::Completed, this, &UPortalCloneWeaponComponent::DropItem);
+			EnhancedInputComponent->BindAction(GrabItemAction, ETriggerEvent::Started, this, &UPortalCloneWeaponComponent::GrabObject);
 		}
 	}
 
@@ -139,45 +176,64 @@ void UPortalCloneWeaponComponent::ChangeGunEffect() {
 }
 
 //Method for the object goes in front of the player
-void UPortalCloneWeaponComponent::GrabItem() {
+void UPortalCloneWeaponComponent::GrabObject() {
 
-	//Start the LineTrace
-	FVector Start = GetSocketLocation(MuzzleSocketName);
-	FVector ForwardVector = GetSocketRotation(MuzzleSocketName).Vector();
-	FVector End = Start + (ForwardVector * 1000.0f);
+	if (PhysicsHandle->GrabbedComponent) {
+		
+		DropObject();
+	}
+	else {
 
-	FHitResult HitResult;
+		//Start the LineTrace
+		FVector Start = GetSocketLocation(MuzzleSocketName);
+		FVector ForwardVector = GetSocketRotation(MuzzleSocketName).Vector();
+		FVector End = Start + (ForwardVector * 1000.0f);
 
-	bool bHit = GetWorld()->LineTraceSingleByChannel(
-		HitResult,
-		Start,
-		End,
-		ECC_Visibility
-	);
+		FHitResult HitResult;
 
-	if (bHit) {        
+		bool bHit = GetWorld()->LineTraceSingleByChannel(
+			HitResult,
+			Start,
+			End,
+			ECC_Visibility
+		);
 
-		/*Debug*/
-		DrawDebugLine(GetWorld(), Start, End, FColor::Yellow, false, 10.0f, 0, 1.0f);
+		if (bHit) {
 
-		UPrimitiveComponent* Primitive = HitResult.GetComponent();
+			/*Debug*/
+			DrawDebugLine(GetWorld(), Start, End, FColor::Yellow, false, 10.0f, 0, 1.0f);
 
-		if (Primitive && Primitive->IsSimulatingPhysics()) {
+			Primitive = HitResult.GetComponent();
 
-			Primitive->SetSimulatePhysics(false);
+			if (Primitive && Primitive->IsSimulatingPhysics()) {
 
-			//calculate the distance from where the item will be form the player
-			float DistanceMuzzle = 200.0f;
-			FVector LocationMuzzle = Start + (ForwardVector * DistanceMuzzle);
-			Primitive->SetWorldLocation(LocationMuzzle);
+				Primitive->SetSimulatePhysics(true);
 
-			//attache the item to the parent (gun's socket)
-			Primitive->AttachToComponent(this, FAttachmentTransformRules::KeepWorldTransform,
-			MuzzleSocketName);
+				//Grap the object by using the physicsHandle 
+				PhysicsHandle->GrabComponentAtLocationWithRotation(
+					Primitive,
+					NAME_None,
+					Primitive->GetComponentLocation(),
+					Primitive->GetComponentRotation()
+				);
+
+				Primitive->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+
+				SetComponentTickEnabled(true);
+			}
 		}
 	}
 }
 
-void UPortalCloneWeaponComponent::DropItem() {
+void UPortalCloneWeaponComponent::DropObject() {
 
+	if (PhysicsHandle && PhysicsHandle->GrabbedComponent) {
+
+		//Reactive the collision with the player
+		Primitive->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
+		
+		PhysicsHandle->ReleaseComponent();
+
+		SetComponentTickEnabled(false);
+	}
 }

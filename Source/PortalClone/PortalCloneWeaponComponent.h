@@ -17,6 +17,9 @@ class PORTALCLONE_API UPortalCloneWeaponComponent : public USkeletalMeshComponen
 
 public:
 
+	virtual void BeginPlay() override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
 	/** Projectile class to spawn */
 	UPROPERTY(EditDefaultsOnly, Category=Projectile)
 	TSubclassOf<class APortalCloneProjectile> ProjectileClass;
@@ -37,26 +40,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	class UInputMappingContext* FireMappingContext;
 
-
 	/** Attaches the actor to a FirstPersonCharacter */
 	UFUNCTION(BlueprintCallable, Category="Weapon")
 	bool AttachWeapon(APortalCloneCharacter* TargetCharacter);
-
-	//method to shot the effect
-	UFUNCTION(BlueprintCallable, Category = "PortalWeapon")
-	void FireEffect();
-
-	//method to change the gun state
-	UFUNCTION(BlueprintCallable, Category = "PortalWeapon")
-	void ChangeGunEffect();
-
-	//method to grab item
-	UFUNCTION(BlueprintCallable, Category = "PortalWeapon")
-	void GrabItem();
-
-	//method to Drop item
-	UFUNCTION(BlueprintCallable, Category = "PortalWeapon")
-	void DropItem();
 
 	//The Input to shot
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -70,7 +56,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* GrabItemAction;
 	
-	//To get the Muzzle from the gun's skeleton 
+	//To get the Muzzle'name from the gun's skeleton 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	FName MuzzleSocketName = TEXT("Muzzle");
 
@@ -85,4 +71,23 @@ private:
 
 	UPROPERTY()
 	UPhysicsHandleComponent* PhysicsHandle;
+
+	UPROPERTY()
+	UPrimitiveComponent* Primitive;
+
+	//Drop the object
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void DropObject();
+
+	//method to grab item
+	UFUNCTION(BlueprintCallable, Category = "PortalWeapon")
+	void GrabObject();
+
+	//method to shot the effect
+	UFUNCTION(BlueprintCallable, Category = "PortalWeapon")
+	void FireEffect();
+
+	//method to change the gun state
+	UFUNCTION(BlueprintCallable, Category = "PortalWeapon")
+	void ChangeGunEffect();
 };

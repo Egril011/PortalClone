@@ -60,9 +60,6 @@ class APortalCloneCharacter : public ACharacter
 	void Sprint();
 	void StopSprinting();
 
-
-
-	
 public:
 	APortalCloneCharacter();
 
