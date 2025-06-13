@@ -14,6 +14,13 @@
 #include "GunTimeStateHandler.h"
 
 
+UPortalCloneWeaponComponent::UPortalCloneWeaponComponent() {
+
+	//Set the Muzzle scene to the original
+	MuzzleSceneGrabbedObject = CreateDefaultSubobject<USceneComponent>(TEXT("MuzzleGrappedObject"));
+	MuzzleSceneGrabbedObject->SetupAttachment(this, MuzzleSocketName);
+}
+
 void UPortalCloneWeaponComponent::BeginPlay() {
 	
 	Super::BeginPlay();
@@ -38,7 +45,9 @@ void UPortalCloneWeaponComponent::TickComponent(float DeltaTime, ELevelTick Tick
 	if (PhysicsHandle && PhysicsHandle->GrabbedComponent) {
 		
 		//change the object's location so that the location is always the same even though the object is far aways 
-		FVector ObjectLocation = GetSocketLocation(MuzzleSocketName) + (GetSocketRotation(MuzzleSocketName).Vector() * 250.f);
+		FVector ObjectLocation = MuzzleSceneGrabbedObject->GetComponentLocation() + 
+		(MuzzleSceneGrabbedObject->GetComponentRotation().Vector() * 250.0f);
+		
 		PhysicsHandle->SetTargetLocation(ObjectLocation);
 	}
 }
@@ -75,7 +84,7 @@ bool UPortalCloneWeaponComponent::AttachWeapon(APortalCloneCharacter* TargetChar
 			EnhancedInputComponent->BindAction(ChangeGunStateAction, ETriggerEvent::Started, this, &UPortalCloneWeaponComponent::ChangeGunEffect);
 			
 			//Grab item and put it in front of the player
-			EnhancedInputComponent->BindAction(GrabItemAction, ETriggerEvent::Started, this, &UPortalCloneWeaponComponent::GrabObject);
+			EnhancedInputComponent->BindAction(GrabObjectAction, ETriggerEvent::Started, this, &UPortalCloneWeaponComponent::GrabObject);
 		}
 	}
 
@@ -238,6 +247,8 @@ void UPortalCloneWeaponComponent::DropObject() {
 void UPortalCloneWeaponComponent::ThrowObject() {
 
 	PhysicsHandle->ReleaseComponent();
+
+	Primitive->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
 
 	Primitive->AddImpulse(GetSocketRotation(MuzzleSocketName).Vector() * 1000.f * Primitive->GetMass(), NAME_None, false);
 }

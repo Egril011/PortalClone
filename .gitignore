@@ -49,6 +49,9 @@ SourceArt/**/*.tga
 Binaries/*
 Plugins/**/Binaries/*
 
+# Ignore the Asset
+Content/Asset/
+
 # Builds
 Build/*
 
@@ -72,3 +75,7 @@ Plugins/**/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+#Ignore the Generated expect Level
+Content/Level
+!Content/Level/*.usmap

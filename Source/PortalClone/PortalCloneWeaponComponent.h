@@ -17,6 +17,9 @@ class PORTALCLONE_API UPortalCloneWeaponComponent : public USkeletalMeshComponen
 
 public:
 
+	//Constructor
+	UPortalCloneWeaponComponent();
+
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -52,9 +55,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* ChangeGunStateAction;
 
-	//The input to grab an item causes the item to move in front of the player.
+	//The input to grab an object and put it in front of the player.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* GrabItemAction;
+	UInputAction* GrabObjectAction;
 	
 	//To get the Muzzle'name from the gun's skeleton 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
@@ -74,6 +77,9 @@ private:
 
 	UPROPERTY()
 	UPrimitiveComponent* Primitive;
+
+	UPROPERTY()
+	USceneComponent* MuzzleSceneGrabbedObject;
 
 	//method to drop the object
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
