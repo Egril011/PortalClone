@@ -49,16 +49,15 @@ class APortalCloneCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* SprintAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* InteractAction;
+
 	//** Sprint value *//
 	UPROPERTY(EditDefaultsOnly, Category = Movement)
 	float NormalSpeed;
 
 	UPROPERTY(EditDefaultsOnly, Category = Movement)
 	float SprintSpeed = 1000.0f;
-
-	//** Sprint function *//
-	void Sprint();
-	void StopSprinting();
 
 public:
 	APortalCloneCharacter();
@@ -83,5 +82,15 @@ public:
 	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
+
+
+private:
+
+	//** Sprint function *//
+	void Sprint();
+	void StopSprinting();
+
+	//method to intect with object
+	void Interact();
 };
 

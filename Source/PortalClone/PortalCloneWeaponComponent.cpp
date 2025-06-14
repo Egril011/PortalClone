@@ -77,13 +77,10 @@ bool UPortalCloneWeaponComponent::AttachWeapon(APortalCloneCharacter* TargetChar
 
 		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerController->InputComponent))
 		{
-			// FireEffect
 			EnhancedInputComponent->BindAction(FireEffectAction, ETriggerEvent::Triggered, this, &UPortalCloneWeaponComponent::FireEffect);
 
-			//Change gun's state
 			EnhancedInputComponent->BindAction(ChangeGunStateAction, ETriggerEvent::Started, this, &UPortalCloneWeaponComponent::ChangeGunEffect);
 			
-			//Grab item and put it in front of the player
 			EnhancedInputComponent->BindAction(GrabObjectAction, ETriggerEvent::Started, this, &UPortalCloneWeaponComponent::GrabObject);
 		}
 	}
@@ -110,7 +107,6 @@ void UPortalCloneWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReas
 	Super::EndPlay(EndPlayReason);
 }
 
-//Method for the Fire Effect
 void UPortalCloneWeaponComponent::FireEffect() {
 	
 	if (PhysicsHandle->GrabbedComponent) {
@@ -151,7 +147,6 @@ void UPortalCloneWeaponComponent::FireEffect() {
 	}
 }
  
-//Toggles the gun's time effect between Slow and Speed
 void UPortalCloneWeaponComponent::ChangeGunEffect() {
 
 	UMyGameInstance* GI = Cast<UMyGameInstance>(GetWorld()->GetGameInstance());
@@ -179,7 +174,6 @@ void UPortalCloneWeaponComponent::ChangeGunEffect() {
 	}
 }
 
-//Method for the object goes in front of the player
 void UPortalCloneWeaponComponent::GrabObject() {
 
 	if (PhysicsHandle->GrabbedComponent) {
@@ -213,7 +207,6 @@ void UPortalCloneWeaponComponent::GrabObject() {
 
 				Primitive->SetSimulatePhysics(true);
 
-				//Grap the object by using the physicsHandle 
 				PhysicsHandle->GrabComponentAtLocationWithRotation(
 					Primitive,
 					NAME_None,
@@ -229,12 +222,10 @@ void UPortalCloneWeaponComponent::GrabObject() {
 	}
 }
 
-//Method to allow the player to drop the object
 void UPortalCloneWeaponComponent::DropObject() {
 
 	if (PhysicsHandle && PhysicsHandle->GrabbedComponent) {
 
-		//Reactive the collision with the player
 		Primitive->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
 		
 		PhysicsHandle->ReleaseComponent();
@@ -243,7 +234,6 @@ void UPortalCloneWeaponComponent::DropObject() {
 	}
 }
 
-//Method to throw the object that the player's grabbing
 void UPortalCloneWeaponComponent::ThrowObject() {
 
 	PhysicsHandle->ReleaseComponent();

@@ -17,7 +17,6 @@ class PORTALCLONE_API UPortalCloneWeaponComponent : public USkeletalMeshComponen
 
 public:
 
-	//Constructor
 	UPortalCloneWeaponComponent();
 
 	virtual void BeginPlay() override;
@@ -47,15 +46,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Weapon")
 	bool AttachWeapon(APortalCloneCharacter* TargetCharacter);
 
-	//The Input to shot
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* FireEffectAction;
 
-	//The input to change the gun's state
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* ChangeGunStateAction;
 
-	//The input to grab an object and put it in front of the player.
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* GrabObjectAction;
 	

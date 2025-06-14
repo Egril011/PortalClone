@@ -10,6 +10,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Engine/LocalPlayer.h"
+#include "InteractableInterface.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -73,6 +74,8 @@ void APortalCloneCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &APortalCloneCharacter::Sprint);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &APortalCloneCharacter::StopSprinting);
 
+		//Interact
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &APortalCloneCharacter::Interact);
 	}
 	else
 	{
@@ -114,7 +117,6 @@ void APortalCloneCharacter::BeginPlay() {
 	NormalSpeed = GetCharacterMovement()->MaxWalkSpeed;
 }
 
-//Sprint function
 void APortalCloneCharacter::Sprint() {
 	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
 
@@ -124,4 +126,33 @@ void APortalCloneCharacter::Sprint() {
 
 void APortalCloneCharacter::StopSprinting() {
 	GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
+}
+
+void APortalCloneCharacter::Interact() {
+
+	// Start the LineTrace
+	FVector Start = GetActorLocation();
+	FVector ForwardVector = GetActorRotation().Vector();
+	FVector End = Start + (ForwardVector * 200.0f);
+
+	FHitResult HitResult;
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		Start,
+		End,
+		ECC_Visibility
+	);
+
+	if (bHit) {
+
+		AActor* HitActor = HitResult.GetActor();
+
+		//See if the hitted object has the interface
+		if (IInteractableInterface* Interactable = 
+			Cast<IInteractableInterface>(HitActor)) {
+
+			Interactable->Interact();
+		}
+	}
 }
