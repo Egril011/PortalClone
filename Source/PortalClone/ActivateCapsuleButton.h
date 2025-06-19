@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "InteractableInterface.h"
+#include "TeleportationCapsule.h"
 #include "ActivateCapsuleButton.generated.h"
 
 UCLASS()
@@ -24,8 +25,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	UAnimSequence* AnimSequence;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Teleportation")
+	ATeleportationCapsule* TeleportationCapsule;
+
 private:
 	virtual void Interact() override;
 
+	//Play the button animation
 	void PlayAnimation();
 };
