@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/BoxComponent.h"
+#include "PortalCloneCharacter.h"
 #include "GameFramework/Actor.h"
 #include "TeleportationCapsule.generated.h"
 
@@ -24,21 +25,33 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	UAnimSequence* AnimOpenDoor;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
-	UAnimSequence* AnimCloseDoor;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
+	//UAnimSequence* AnimCloseDoor;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skeleton")
-	USkeletalMeshComponent* SkeletonMesh;
+	USkeletalMeshComponent* SkeletonMeshCapsule;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Skeleton")
+	USkeletalMeshComponent* SkeletonMeshDoor;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collider")
 	UBoxComponent* BoxCollision;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Teleportation")
+	USceneComponent* SceneTeleportation;
+
+	UFUNCTION()
+	void OverLapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+		bool bFromSweep, const FHitResult& SweepResult);
 
 private:
 	
 	FTimerHandle TimeHandleCloseDoor;
 	
 	//Play the animation to close the door
-	void CloseDoor();
+	//void CloseDoor();
 
-
+	//Teleport the player 
+	void PlayerTeleportation(APortalCloneCharacter* Player);
 };
