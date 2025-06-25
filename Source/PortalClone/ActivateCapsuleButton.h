@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "InteractableInterface.h"
 #include "TeleportationCapsule.h"
+#include "InteractableInterface.h"
 #include "ActivateCapsuleButton.generated.h"
 
 UCLASS()

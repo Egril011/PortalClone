@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameFramework/Actor.h"
 #include "Components/BoxComponent.h"
 #include "PortalCloneCharacter.h"
-#include "GameFramework/Actor.h"
 #include "TeleportationCapsule.generated.h"
 
 UCLASS()
@@ -17,14 +17,14 @@ public:
 	// Sets default values for this actor's properties
 	ATeleportationCapsule();
 
-public:	
+public:
 	//Play the animation to open the door
 	void OpenDoor();
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	UAnimSequence* AnimOpenDoor;
-	
+
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	//UAnimSequence* AnimCloseDoor;
 
@@ -35,7 +35,20 @@ protected:
 	USkeletalMeshComponent* SkeletonMeshDoor;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collider")
-	UBoxComponent* BoxCollision;
+	UBoxComponent* BoxCollisionPlayerDetection;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collider")
+	UBoxComponent* BoxCollisionLeftWall;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collider")
+	UBoxComponent* BoxCollisionRightWall;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collider")
+	UBoxComponent* BoxCollisionBackWall;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collider")
+	UBoxComponent* BoxCollisionTopWall;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Teleportation")
 	USceneComponent* SceneTeleportation;
@@ -46,9 +59,9 @@ protected:
 		bool bFromSweep, const FHitResult& SweepResult);
 
 private:
-	
+
 	FTimerHandle TimeHandleCloseDoor;
-	
+
 	//Play the animation to close the door
 	//void CloseDoor();
 

@@ -1,5 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+
 #include "TeleportationCapsule.h"
 
 // Sets default values
@@ -16,11 +17,23 @@ ATeleportationCapsule::ATeleportationCapsule()
 
 	SkeletonMeshDoor->SetupAttachment(SkeletonMeshCapsule);
 
-	//Attache the collider to the skeleton
-	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollider"));
-	BoxCollision->SetupAttachment(SkeletonMeshCapsule);
+	/*Attache the collider to the skeleton*/
+	BoxCollisionPlayerDetection = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxColliderPlayerDectection"));
+	BoxCollisionPlayerDetection->SetupAttachment(SkeletonMeshCapsule);
 
-	BoxCollision->OnComponentBeginOverlap.AddDynamic(this,
+	BoxCollisionLeftWall = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxColliderLeftWall"));
+	BoxCollisionLeftWall->SetupAttachment(SkeletonMeshCapsule);
+
+	BoxCollisionRightWall = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxColliderRightWall"));
+	BoxCollisionRightWall->SetupAttachment(SkeletonMeshCapsule);
+
+	BoxCollisionBackWall = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxColliderBackWall"));
+	BoxCollisionBackWall->SetupAttachment(SkeletonMeshCapsule);
+
+	BoxCollisionTopWall = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxColliderTopWall"));
+	BoxCollisionTopWall->SetupAttachment(SkeletonMeshCapsule);
+
+	BoxCollisionPlayerDetection->OnComponentBeginOverlap.AddDynamic(this,
 		&ATeleportationCapsule::OverLapBegin);
 
 	//Attache the scene to the skeleton
@@ -35,6 +48,8 @@ void ATeleportationCapsule::OpenDoor() {
 	if (!SkeletonMeshCapsule->IsPlaying() && AnimOpenDoor) {
 
 		SkeletonMeshDoor->PlayAnimation(AnimOpenDoor, false);
+
+		SkeletonMeshDoor->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 
 	//Reset the timer
@@ -60,7 +75,7 @@ void ATeleportationCapsule::OpenDoor() {
 //	}
 //}
 
-void ATeleportationCapsule::OverLapBegin(UPrimitiveComponent* OverlappedComp, 
+void ATeleportationCapsule::OverLapBegin(UPrimitiveComponent* OverlappedComp,
 	AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult& SweepResult) {
 
