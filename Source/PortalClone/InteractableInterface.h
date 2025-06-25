@@ -18,5 +18,6 @@ class IInteractableInterface {
 	GENERATED_BODY()
 
 public:
-	virtual void Interact() = 0;
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Activation")
+	void Interact();
 };

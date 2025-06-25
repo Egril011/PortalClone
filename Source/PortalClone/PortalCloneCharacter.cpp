@@ -149,10 +149,9 @@ void APortalCloneCharacter::Interact() {
 		AActor* HitActor = HitResult.GetActor();
 
 		//See if the hitted object has the interface
-		if (IInteractableInterface* Interactable = 
-			Cast<IInteractableInterface>(HitActor)) {
-
-			Interactable->Interact();
+		if (HitActor->Implements<UInteractableInterface>()) {
+			IInteractableInterface::Execute_Interact(HitActor);
 		}
+		
 	}
 }

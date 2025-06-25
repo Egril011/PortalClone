@@ -90,7 +90,7 @@ private:
 	void Sprint();
 	void StopSprinting();
 
-	//method to intect with object
+	//method to intect with objects
 	void Interact();
 };
 
