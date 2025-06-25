@@ -151,7 +151,6 @@ void APortalCloneCharacter::Interact() {
 		//See if the hitted object has the interface
 		if (HitActor->Implements<UInteractableInterface>()) {
 			IInteractableInterface::Execute_Interact(HitActor);
-		}
-		
+		}	
 	}
 }

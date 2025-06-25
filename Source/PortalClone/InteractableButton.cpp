@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "InteractableButton.h"
 
 // Sets default values
@@ -20,11 +19,11 @@ void AInteractableButton::PlayAnimation() {
 
 	if (!SkeletalMesh->IsPlaying()) {
 
-		SkeletalMesh->PlayAnimation(AnimSequence, false);
+		SkeletalMesh->PlayAnimation(PressAnimation, false);
 
-		if (TargetActor && TargetActor->Implements<UActivatableInterface>()) {
+		if (ActivatableTarget && ActivatableTarget->Implements<UActivatableInterface>()) {
 
-			IActivatableInterface::Execute_Activate(TargetActor);
+			IActivatableInterface::Execute_Activate(ActivatableTarget);
 		}
 	}
 }

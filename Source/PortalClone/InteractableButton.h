@@ -17,16 +17,15 @@ public:
 	// Sets default values for this actor's properties
 	AInteractableButton();
 
-
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USkeletalMeshComponent* SkeletalMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
-	UAnimSequence* AnimSequence;
+	UAnimSequence* PressAnimation;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Activation")
-	AActor* TargetActor;
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "ActivatableTarget")
+	AActor* ActivatableTarget;
 
 private:
 	virtual void Interact_Implementation() override;

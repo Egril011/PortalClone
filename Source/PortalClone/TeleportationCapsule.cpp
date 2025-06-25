@@ -18,7 +18,7 @@ ATeleportationCapsule::ATeleportationCapsule()
 	SkeletonMeshDoor->SetupAttachment(SkeletonMeshCapsule);
 
 	/*Attache the collider to the skeleton*/
-	BoxCollisionPlayerDetection = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxColliderPlayerDectection"));
+	BoxCollisionPlayerDetection = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxColliderPlayerDetection"));
 	BoxCollisionPlayerDetection->SetupAttachment(SkeletonMeshCapsule);
 
 	BoxCollisionLeftWall = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxColliderLeftWall"));
@@ -34,7 +34,7 @@ ATeleportationCapsule::ATeleportationCapsule()
 	BoxCollisionTopWall->SetupAttachment(SkeletonMeshCapsule);
 
 	BoxCollisionPlayerDetection->OnComponentBeginOverlap.AddDynamic(this,
-		&ATeleportationCapsule::OverLapBegin);
+		&ATeleportationCapsule::OnOverlapBegin);
 
 	//Attache the scene to the skeleton
 	SceneTeleportation = CreateDefaultSubobject<USceneComponent>(
@@ -43,9 +43,15 @@ ATeleportationCapsule::ATeleportationCapsule()
 	SceneTeleportation->SetupAttachment(SkeletonMeshCapsule);
 }
 
+//Interface inplemetation
+void ATeleportationCapsule::Activate_Implementation() {
+
+	OpenDoor();
+}
+
 void ATeleportationCapsule::OpenDoor() {
 
-	if (!SkeletonMeshCapsule->IsPlaying() && AnimOpenDoor) {
+	if (!SkeletonMeshDoor->IsPlaying() && AnimOpenDoor) {
 
 		SkeletonMeshDoor->PlayAnimation(AnimOpenDoor, false);
 
@@ -56,26 +62,26 @@ void ATeleportationCapsule::OpenDoor() {
 	GetWorld()->GetTimerManager().ClearTimer(TimeHandleCloseDoor);
 
 	//Start the delay to close the door after x sec
-	/*GetWorld()->GetTimerManager().SetTimer(
+	GetWorld()->GetTimerManager().SetTimer(
 		TimeHandleCloseDoor,
 		this,
 		&ATeleportationCapsule::CloseDoor,
 		15.0f,
 		false
-	);*/
+	);
 }
 
-//void ATeleportationCapsule::CloseDoor() {
-//	
-//	if (!SkeletonMeshCapsule->IsPlaying() && AnimCloseDoor) {
-//
-//		SkeletonMeshCapsule->PlayAnimation(AnimCloseDoor, false);
-//
-//		GetWorld()->GetTimerManager().ClearTimer(TimeHandleCloseDoor);
-//	}
-//}
+void ATeleportationCapsule::CloseDoor() {
+	
+	if (!SkeletonMeshCapsule->IsPlaying() && AnimCloseDoor) {
 
-void ATeleportationCapsule::OverLapBegin(UPrimitiveComponent* OverlappedComp,
+		SkeletonMeshCapsule->PlayAnimation(AnimCloseDoor, false);
+
+		GetWorld()->GetTimerManager().ClearTimer(TimeHandleCloseDoor);
+	}
+}
+
+void ATeleportationCapsule::OnOverlapBegin(UPrimitiveComponent* OverlappedComp,
 	AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult& SweepResult) {
 
@@ -100,3 +106,4 @@ void ATeleportationCapsule::PlayerTeleportation(APortalCloneCharacter* Player) {
 	Player->SetActorLocation(Localisation);
 	Player->SetActorRotation(Rotator);
 }
+

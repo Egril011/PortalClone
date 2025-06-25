@@ -85,7 +85,6 @@ public:
 
 
 private:
-
 	//** Sprint function *//
 	void Sprint();
 	void StopSprinting();

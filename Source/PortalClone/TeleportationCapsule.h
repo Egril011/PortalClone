@@ -6,10 +6,11 @@
 #include "GameFramework/Actor.h"
 #include "Components/BoxComponent.h"
 #include "PortalCloneCharacter.h"
+#include "ActivatableInterface.h"
 #include "TeleportationCapsule.generated.h"
 
 UCLASS()
-class PORTALCLONE_API ATeleportationCapsule : public AActor
+class PORTALCLONE_API ATeleportationCapsule : public AActor, public IActivatableInterface
 {
 	GENERATED_BODY()
 	
@@ -17,16 +18,12 @@ public:
 	// Sets default values for this actor's properties
 	ATeleportationCapsule();
 
-public:
-	//Play the animation to open the door
-	void OpenDoor();
-
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	UAnimSequence* AnimOpenDoor;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
-	//UAnimSequence* AnimCloseDoor;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
+	UAnimSequence* AnimCloseDoor;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skeleton")
 	USkeletalMeshComponent* SkeletonMeshCapsule;
@@ -49,12 +46,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collider")
 	UBoxComponent* BoxCollisionTopWall;
 
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Teleportation")
 	USceneComponent* SceneTeleportation;
 
 	UFUNCTION()
-	void OverLapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 		bool bFromSweep, const FHitResult& SweepResult);
 
@@ -62,9 +58,15 @@ private:
 
 	FTimerHandle TimeHandleCloseDoor;
 
+	//Play the animation to open the door
+	void OpenDoor();
+
 	//Play the animation to close the door
-	//void CloseDoor();
+	void CloseDoor();
 
 	//Teleport the player 
 	void PlayerTeleportation(APortalCloneCharacter* Player);
+
+	//Open the door and then close it 
+	virtual void Activate_Implementation() override;
 };
