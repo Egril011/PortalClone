@@ -7,6 +7,8 @@
 #include "Components/BoxComponent.h"
 #include "PressurePlate.generated.h"
 
+class ADoorPressedPlate;
+
 UCLASS()
 class PORTALCLONE_API APressurePlate : public AActor
 {
@@ -17,6 +19,9 @@ public:
 	APressurePlate();
 	
 	void BeginPlay();
+
+public:
+	bool IsActivate() const { return _IsActivate; }
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Skeleton")
@@ -39,6 +44,12 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collider")
 	UBoxComponent* BoxCollision;
+
+	UPROPERTY(EditAnywhere)
+	ADoorPressedPlate* DoorPressedPlate;
+
+private: 
+	bool _IsActivate;
 };
 
 

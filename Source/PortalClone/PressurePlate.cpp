@@ -2,6 +2,7 @@
 
 
 #include "PressurePlate.h"
+#include "DoorPressedPlate.h"
 
 // Sets default values
 APressurePlate::APressurePlate()
@@ -35,10 +36,17 @@ void APressurePlate::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor*
 	if (!OtherActor || OtherActor == this) {
 		return;
 	}
-
+	      
 	if (StaticMesh && ActivateColour)
 	{
 		StaticMesh->SetMaterial(1, ActivateColour);
+		
+		_IsActivate = true;
+
+		if (DoorPressedPlate) {
+
+			DoorPressedPlate->AreAllPlatesActivated();
+		}
 	}
 }
 
@@ -49,9 +57,12 @@ void APressurePlate::OnOverlapEnd(UPrimitiveComponent* OverlappedComp,
 		return;
 	}
 
-	// Example logic
 	if (StaticMesh && NoActivateColour)
 	{
 		StaticMesh->SetMaterial(1, NoActivateColour);
+
+		_IsActivate = false;
+
+		DoorPressedPlate->PlayCloseDoor();
 	}
 }
