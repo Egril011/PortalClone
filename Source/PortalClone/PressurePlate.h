@@ -50,6 +50,8 @@ protected:
 
 private: 
 	bool _IsActivate;
+	
+	bool _isAllActivate;
 };
 
 

@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "DoorPressedPlate.h"
 #include "PressurePlate.h"
 
@@ -9,35 +8,48 @@ ADoorPressedPlate::ADoorPressedPlate()
 {
 	SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
 	RootComponent = SkeletalMesh;
+
+	DoorState = EDoorAnimation::Close;
 }
 
-void ADoorPressedPlate::AreAllPlatesActivated() {
+void ADoorPressedPlate::ArePlateChanged() {
+
+	if (AreAllPlatesActivated()) {
+		PlayOpenDoor();
+	}
+	else {
+		PlayCloseDoor();
+	}
+}
+
+bool ADoorPressedPlate::AreAllPlatesActivated() const {
 
 	for (APressurePlate* Plate : RequiredPressurePlate) {
 		
 		if (!Plate->IsActivate())
-			return;
+			return false;
 	}
-
-	_isOpen = true;
-	PlayOpenDoor();
+	return true;
 }
 
 void ADoorPressedPlate::PlayOpenDoor() {
 
-	if (SkeletalMesh && !SkeletalMesh->IsPlaying()) {
+	if (SkeletalMesh && DoorState == EDoorAnimation::Close &&
+		!SkeletalMesh->IsPlaying()) {
 		
 		SkeletalMesh->PlayAnimation(OpenDoorAnimation, false);
+		
+		DoorState = EDoorAnimation::Open;
 	}
 }
 
 void ADoorPressedPlate::PlayCloseDoor() {
 
-	if(SkeletalMesh && !SkeletalMesh->IsPlaying() && _isOpen == true){
+	if(SkeletalMesh && DoorState == EDoorAnimation::Open &&
+		!SkeletalMesh->IsPlaying()){
 	
 		SkeletalMesh->PlayAnimation(CloseDoorAnimation, false);
 
-		_isOpen = false;
+		DoorState = EDoorAnimation::Close;
 	}
 }
-

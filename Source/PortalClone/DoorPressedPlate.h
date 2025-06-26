@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "EDoorAnimation.h"
 #include "DoorPressedPlate.generated.h"
 
 class APressurePlate;
@@ -17,14 +18,9 @@ public:
 	// Sets default values for this actor's properties
 	ADoorPressedPlate();
 
-	//Check if all the plate are pressed
-	void AreAllPlatesActivated();
-
-	//Play its animation (close the door)
-	void PlayCloseDoor();
-
-	//Look if the door is open
-	bool IsOpen() const { return _isOpen; }
+	//Check if the plates states changed
+	void ArePlateChanged();
+	
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SkeletalMesh")
@@ -40,8 +36,16 @@ protected:
 	UAnimSequence* CloseDoorAnimation;
 
 private:
+	
+	//get the door state
+	EDoorAnimation DoorState;
+
+	//Check if all the plate are pressed
+	bool AreAllPlatesActivated() const;
+
+	//Play its animation (close the door)
+	void PlayCloseDoor();
+
 	//Play its animation (open the door)
 	void PlayOpenDoor();
-	
-	bool _isOpen; 
 };

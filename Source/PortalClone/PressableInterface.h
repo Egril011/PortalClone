@@ -4,20 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "ActivatableInterface.generated.h"
+#include "PressableInterface.generated.h"
 
 UINTERFACE(MinimalAPI)
-class UActivatableInterface : public UInterface
+class UPressableInterface : public UInterface
 {
 	GENERATED_BODY()
 	
 };
 
-class IActivatableInterface {
+class IPressableInterface {
 
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Activation")
-	void Activate();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "PressurePlate")
+	void OnPlatePressed();
 };

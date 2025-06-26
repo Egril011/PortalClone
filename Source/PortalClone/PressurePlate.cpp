@@ -3,6 +3,7 @@
 
 #include "PressurePlate.h"
 #include "DoorPressedPlate.h"
+#include "PressableInterface.h"
 
 // Sets default values
 APressurePlate::APressurePlate()
@@ -36,8 +37,11 @@ void APressurePlate::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor*
 	if (!OtherActor || OtherActor == this) {
 		return;
 	}
-	      
-	if (StaticMesh && ActivateColour)
+
+	/*Check if  the overlapping object implements the interface then change its colour and 
+	then check if the door can open*/
+	if (StaticMesh && ActivateColour && 
+		OtherActor->GetClass()->ImplementsInterface(UPressableInterface::StaticClass()))
 	{
 		StaticMesh->SetMaterial(1, ActivateColour);
 		
@@ -45,7 +49,7 @@ void APressurePlate::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor*
 
 		if (DoorPressedPlate) {
 
-			DoorPressedPlate->AreAllPlatesActivated();
+			DoorPressedPlate->ArePlateChanged();
 		}
 	}
 }
@@ -57,12 +61,15 @@ void APressurePlate::OnOverlapEnd(UPrimitiveComponent* OverlappedComp,
 		return;
 	}
 
-	if (StaticMesh && NoActivateColour)
+	/*Check if the overlapping object implements the interface then change its colour and
+	then close the door and disable the plate*/
+	if (StaticMesh && NoActivateColour &&
+		OtherActor->GetClass()->ImplementsInterface(UPressableInterface::StaticClass()))
 	{
 		StaticMesh->SetMaterial(1, NoActivateColour);
 
 		_IsActivate = false;
 
-		DoorPressedPlate->PlayCloseDoor();
+		DoorPressedPlate->ArePlateChanged();
 	}
 }
