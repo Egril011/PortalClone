@@ -9,6 +9,7 @@
 #include "PortalCloneWeaponComponent.generated.h"
 
 class APortalCloneCharacter;
+class UTrackGunAbility;
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PORTALCLONE_API UPortalCloneWeaponComponent : public USkeletalMeshComponent
@@ -67,6 +68,9 @@ protected:
 private:
 	/** The Character holding this weapon*/
 	APortalCloneCharacter* Character;
+
+	UPROPERTY()
+	UTrackGunAbility* GunAbilities;
 
 	UPROPERTY()
 	UPhysicsHandleComponent* PhysicsHandle;

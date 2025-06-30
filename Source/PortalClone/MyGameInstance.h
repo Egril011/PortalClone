@@ -3,17 +3,14 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "EGunTimeState.h"
+#include "EGunStateHandler.h"
 #include "MyGameInstance.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class PORTALCLONE_API UMyGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 
 	public:
-		EGunTimeState CurrentGunState = EGunTimeState::None; 
+		EGunStateHandler CurrentGunState = EGunStateHandler::None; 
 };

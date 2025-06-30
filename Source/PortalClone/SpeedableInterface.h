@@ -18,7 +18,10 @@ class ISpeedableInterface {
 	GENERATED_BODY()
 
 public:
-	virtual void Applyspeed() = 0;
-	virtual void RemoveSpeed() = 0;
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void ApplySpeedEffect();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void RemoveSpeedEffect();
 
 };

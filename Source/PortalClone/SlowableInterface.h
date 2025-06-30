@@ -18,6 +18,9 @@ class ISlowableInterface
 	GENERATED_BODY()
 
 public:
-	virtual void ApplySlowEffect() = 0;
-	virtual void RemoveSlowEffect() = 0;
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void ApplySlowEffect();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void RemoveSlowEffect();
 };

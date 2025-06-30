@@ -11,7 +11,8 @@
 #include "Animation/AnimInstance.h"
 #include "Engine/LocalPlayer.h"
 #include "Engine/World.h"
-#include "GunTimeStateHandler.h"
+#include "MyGameInstance.h"
+#include "TrackGunAbility.h"
 
 
 UPortalCloneWeaponComponent::UPortalCloneWeaponComponent() {
@@ -65,6 +66,8 @@ bool UPortalCloneWeaponComponent::AttachWeapon(APortalCloneCharacter* TargetChar
 	// Attach the weapon to the First Person Character
 	FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, true);
 	AttachToComponent(Character->GetMesh1P(), AttachmentRules, FName(TEXT("GripPoint")));
+
+	GunAbilities = NewObject<UTrackGunAbility>(this);
 
 	// Set up action bindings
 	if (APlayerController* PlayerController = Cast<APlayerController>(Character->GetController()))
@@ -135,7 +138,7 @@ void UPortalCloneWeaponComponent::FireEffect() {
 		UMyGameInstance* GI = Cast<UMyGameInstance>(GetWorld()->GetGameInstance());
 
 		/*Debug*/
-		if (GI->CurrentGunState == EGunTimeState::Slow) {
+		if (GI->CurrentGunState == EGunStateHandler::Freeze) {
 			DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 10.0f, 0, 1.0f);
 		}
 		else {
@@ -143,7 +146,7 @@ void UPortalCloneWeaponComponent::FireEffect() {
 		}
 
 		//Call the method that will apply the state based on the gun's effect
-		GunTimeStateHandler::ApplyState(HitActor, GI);
+		GunAbilities->ApplyEffect(HitActor, GI->CurrentGunState);
 	}
 }
  
@@ -154,10 +157,10 @@ void UPortalCloneWeaponComponent::ChangeGunEffect() {
 	if (!GI) 
 	return;
 
-	// Toggle between Slow and Speed effects
-	if (GI->CurrentGunState == EGunTimeState::Slow) {
+	//Toggle between Slow and Speed effects
+	if (GI->CurrentGunState == EGunStateHandler::Freeze) {
 		
-		GI->CurrentGunState = EGunTimeState::Speed;
+		GI->CurrentGunState = EGunStateHandler::Speed;
 
 		if (GEngine)
 		{
@@ -165,7 +168,7 @@ void UPortalCloneWeaponComponent::ChangeGunEffect() {
 		}
 	}
 	else {
-		GI->CurrentGunState = EGunTimeState::Slow;
+		GI->CurrentGunState = EGunStateHandler::Freeze;
 
 		if (GEngine)
 		{
@@ -176,47 +179,50 @@ void UPortalCloneWeaponComponent::ChangeGunEffect() {
 
 void UPortalCloneWeaponComponent::GrabObject() {
 
-	if (PhysicsHandle->GrabbedComponent) {
+	if (GunAbilities->CanGrabObject()) {
 		
-		DropObject();
-	}
-	else {
+		if (PhysicsHandle->GrabbedComponent) {
 
-		//Start the LineTrace
-		FVector Start = GetSocketLocation(MuzzleSocketName);
-		FVector ForwardVector = GetSocketRotation(MuzzleSocketName).Vector();
-		FVector End = Start + (ForwardVector * 1000.0f);
+			DropObject();
+		}
+		else {
 
-		FHitResult HitResult;
+			//Start the LineTrace
+			FVector Start = GetSocketLocation(MuzzleSocketName);
+			FVector ForwardVector = GetSocketRotation(MuzzleSocketName).Vector();
+			FVector End = Start + (ForwardVector * 1000.0f);
 
-		bool bHit = GetWorld()->LineTraceSingleByChannel(
-			HitResult,
-			Start,
-			End,
-			ECC_Visibility
-		);
+			FHitResult HitResult;
 
-		if (bHit) {
+			bool bHit = GetWorld()->LineTraceSingleByChannel(
+				HitResult,
+				Start,
+				End,
+				ECC_Visibility
+			);
 
-			/*Debug*/
-			DrawDebugLine(GetWorld(), Start, End, FColor::Yellow, false, 10.0f, 0, 1.0f);
+			if (bHit) {
 
-			Primitive = HitResult.GetComponent();
+				/*Debug*/
+				DrawDebugLine(GetWorld(), Start, End, FColor::Yellow, false, 10.0f, 0, 1.0f);
 
-			if (Primitive && Primitive->IsSimulatingPhysics()) {
+				Primitive = HitResult.GetComponent();
 
-				Primitive->SetSimulatePhysics(true);
+				if (Primitive && Primitive->IsSimulatingPhysics()) {
 
-				PhysicsHandle->GrabComponentAtLocationWithRotation(
-					Primitive,
-					NAME_None,
-					Primitive->GetComponentLocation(),
-					Primitive->GetComponentRotation()
-				);
+					Primitive->SetSimulatePhysics(true);
 
-				Primitive->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+					PhysicsHandle->GrabComponentAtLocationWithRotation(
+						Primitive,
+						NAME_None,
+						Primitive->GetComponentLocation(),
+						Primitive->GetComponentRotation()
+					);
 
-				SetComponentTickEnabled(true);
+					Primitive->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+
+					SetComponentTickEnabled(true);
+				}
 			}
 		}
 	}
@@ -224,21 +230,28 @@ void UPortalCloneWeaponComponent::GrabObject() {
 
 void UPortalCloneWeaponComponent::DropObject() {
 
-	if (PhysicsHandle && PhysicsHandle->GrabbedComponent) {
+	if (GunAbilities->CanDropObject()) {
 
-		Primitive->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
-		
-		PhysicsHandle->ReleaseComponent();
+		if (PhysicsHandle && PhysicsHandle->GrabbedComponent) {
 
-		SetComponentTickEnabled(false);
+			Primitive->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
+
+			PhysicsHandle->ReleaseComponent();
+
+			SetComponentTickEnabled(false);
+		}
 	}
 }
 
 void UPortalCloneWeaponComponent::ThrowObject() {
 
-	PhysicsHandle->ReleaseComponent();
+	if (GunAbilities->CanThrowObject()) {
 
-	Primitive->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
+		PhysicsHandle->ReleaseComponent();
 
-	Primitive->AddImpulse(GetSocketRotation(MuzzleSocketName).Vector() * 1000.f * Primitive->GetMass(), NAME_None, false);
+		Primitive->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
+
+		Primitive->AddImpulse(GetSocketRotation(MuzzleSocketName).Vector() 
+			* 1000.f * Primitive->GetMass(), NAME_None, false);
+	}
 }

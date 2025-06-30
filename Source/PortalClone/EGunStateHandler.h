@@ -6,9 +6,9 @@
 
 
 UENUM(BlueprintType)
-enum class EGunTimeState : uint8
+enum class EGunStateHandler : uint8
 {
     None,
-    Slow,
+    Freeze,
     Speed,
 };
