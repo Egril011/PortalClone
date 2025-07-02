@@ -8,13 +8,13 @@ void UTrackGunAbility::ApplyEffect(AActor* Target, EGunStateHandler GunState) {
 
 	switch (GunState) {
 		case EGunStateHandler::Freeze:
-			if (CanFreezeObject) {
+			if (CanFreezeObject()) {
 				ApplyFreezeEffect(Target);
 			}
 		break;
 
 		case EGunStateHandler::Speed:
-			if (CanSpeedObject) {
+			if (CanSpeedObject()) {
 				ApplySpeedUpEffect(Target);
 			}
 		break;

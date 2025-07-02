@@ -2,6 +2,7 @@
 
 
 #include "CubeKillZone.h"
+#include "PortalCloneWeaponComponent.h"
 #include "PressableInterface.h"
 
 // Sets default values
@@ -19,7 +20,21 @@ void ACubeKillZone::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* 
 
 	if (OtherActor->GetClass()->ImplementsInterface(UPressableInterface::StaticClass())) {
 
-		CubeRespawn->Respawn(OtherActor->GetClass());
-		OtherActor->Destroy();
+		//Search if the player grab an object 
+		for (TObjectIterator<UPhysicsHandleComponent> IT; IT; ++IT) {
+
+			UPhysicsHandleComponent* Handle = *IT;
+
+			if (Handle->GrabbedComponent == OtherComp) {
+				Handle->ReleaseComponent();
+				break;
+			}
+		}
+
+		OtherActor->SetActorHiddenInGame(true);
+		OtherActor->SetActorEnableCollision(false);
+		OtherActor->SetActorTickEnabled(true);
+
+		CubeRespawn->SpawnActor();
 	}
 }

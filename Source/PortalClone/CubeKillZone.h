@@ -8,6 +8,8 @@
 #include "CubeRespawn.h"
 #include "CubeKillZone.generated.h"
 
+class UPortalCloneWeaponComponent;
+
 UCLASS()
 class PORTALCLONE_API ACubeKillZone : public AActor
 {

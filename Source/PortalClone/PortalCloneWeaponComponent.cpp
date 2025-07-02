@@ -69,6 +69,11 @@ bool UPortalCloneWeaponComponent::AttachWeapon(APortalCloneCharacter* TargetChar
 
 	GunAbilities = NewObject<UTrackGunAbility>(this);
 
+	/*Unlock the abilities*/
+	GunAbilities->UnlockGrabObject();
+	GunAbilities->UnlockDropObject();
+	GunAbilities->UnlockThrowObject();
+
 	// Set up action bindings
 	if (APlayerController* PlayerController = Cast<APlayerController>(Character->GetController()))
 	{
@@ -109,6 +114,8 @@ void UPortalCloneWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReas
 	// maintain the EndPlay call chain
 	Super::EndPlay(EndPlayReason);
 }
+
+
 
 void UPortalCloneWeaponComponent::FireEffect() {
 	

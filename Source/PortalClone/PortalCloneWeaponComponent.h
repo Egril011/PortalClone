@@ -65,6 +65,9 @@ protected:
 	UFUNCTION()
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+	UPROPERTY()
+	UPhysicsHandleComponent* PhysicsHandle;
+
 private:
 	/** The Character holding this weapon*/
 	APortalCloneCharacter* Character;
@@ -73,26 +76,19 @@ private:
 	UTrackGunAbility* GunAbilities;
 
 	UPROPERTY()
-	UPhysicsHandleComponent* PhysicsHandle;
-
-	UPROPERTY()
 	UPrimitiveComponent* Primitive;
 
 	UPROPERTY()
 	USceneComponent* MuzzleSceneGrabbedObject;
 
-	//method to drop the object
-	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	void DropObject();
-
-	//method to throw the object
-	UFUNCTION(BlueprintCallable, Category = "Weapon")
-	void ThrowObject();
-
 	//method to grab item
 	UFUNCTION(BlueprintCallable, Category = "PortalWeapon")
 	void GrabObject();
 
+	//method to throw the object
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void ThrowObject();
+	
 	//method to shot the effect
 	UFUNCTION(BlueprintCallable, Category = "PortalWeapon")
 	void FireEffect();
@@ -100,4 +96,10 @@ private:
 	//method to change the gun state
 	UFUNCTION(BlueprintCallable, Category = "PortalWeapon")
 	void ChangeGunEffect();
+
+	//method to drop the object
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void DropObject();
+
+
 };

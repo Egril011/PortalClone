@@ -15,8 +15,8 @@ public:
 	// Sets default values for this actor's properties
 	ACubeRespawn();
 	
-	//Respawn the cube that was detroyed
-	void Respawn(UClass* Actor);
+	//Spawn the Actor 
+	AActor* SpawnActor();
 
 	void BeginPlay();
 
@@ -24,7 +24,18 @@ protected:
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly)
 	USceneComponent* SpawnCubeLocalisation;
 
+	UPROPERTY(EditInstanceOnly)
+	TSubclassOf<AActor> Target;
+
+	UPROPERTY(EditInstanceOnly)
+	int ListSize;
+
+	UPROPERTY()
+	TArray<AActor*> ActorList;
+
 private:
 	FVector Location;
 	FRotator Rotator;
+
+	void InitializePool();
 };
