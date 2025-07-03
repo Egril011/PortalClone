@@ -4,7 +4,7 @@
 #include "SpeedableInterface.h"
 #include "SlowableInterface.h"
 
-void UTrackGunAbility::ApplyEffect(AActor* Target, EGunStateHandler GunState) {
+void UTrackGunAbility::ApplyEffect(AActor* Target) {
 
 	switch (GunState) {
 		case EGunStateHandler::Freeze:
@@ -38,4 +38,27 @@ void UTrackGunAbility::ApplySpeedUpEffect(AActor* Target) {
 
 		ISpeedableInterface::Execute_ApplySpeedEffect(Target);
 	}
+}
+
+void UTrackGunAbility::ChangeGunEffect(){
+
+	//Toggle between Slow and Speed effects
+	if (GunState == EGunStateHandler::Freeze) {
+
+		GunState = EGunStateHandler::Speed;
+
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Speed mode"));
+		}
+	}
+	else {
+		GunState = EGunStateHandler::Freeze;
+
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Slow mode"));
+		}
+	}
+
 }

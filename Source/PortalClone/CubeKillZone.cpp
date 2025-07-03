@@ -2,8 +2,8 @@
 
 
 #include "CubeKillZone.h"
-#include "PortalCloneWeaponComponent.h"
 #include "PressableInterface.h"
+#include "PhysicsEngine/PhysicsHandleComponent.h"
 
 // Sets default values
 ACubeKillZone::ACubeKillZone()

@@ -25,5 +25,4 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, Category = "Collider")
 	UBoxComponent* BoxCollider;
-
 };

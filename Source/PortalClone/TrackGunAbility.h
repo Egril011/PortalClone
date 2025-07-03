@@ -36,7 +36,10 @@ public:
 	void LockSpeedObect() {	bSpeedObject = false; }
 
 	//Apply the appropriate effect depending on the gun's state
-	void ApplyEffect(AActor* Target, EGunStateHandler GunState);
+	void ApplyEffect(AActor* Target);
+
+	//Change the Gun's state
+	void ChangeGunEffect();
 
 private:
 	bool bGrabObject;
@@ -44,6 +47,8 @@ private:
 	bool bDropObject;
 	bool bFreezeObject;
 	bool bSpeedObject;
+
+	EGunStateHandler GunState;
 
 	void ApplyFreezeEffect(AActor* Target);
 	void ApplySpeedUpEffect(AActor* Target);
