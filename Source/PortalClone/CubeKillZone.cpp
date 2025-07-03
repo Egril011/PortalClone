@@ -27,6 +27,12 @@ void ACubeKillZone::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* 
 
 			if (Handle->GrabbedComponent == OtherComp) {
 				Handle->ReleaseComponent();
+
+				//Disable the velocity
+				if (OtherComp && OtherComp->IsSimulatingPhysics()) {
+					OtherComp->SetPhysicsLinearVelocity(FVector::ZeroVector);
+					OtherComp->SetPhysicsAngularVelocityInDegrees(FVector::ZeroVector);
+				}
 				break;
 			}
 		}

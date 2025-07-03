@@ -13,4 +13,7 @@ class PORTALCLONE_API UMyGameInstance : public UGameInstance
 
 	public:
 		EGunStateHandler CurrentGunState = EGunStateHandler::None; 
+
+		FVector SpawnLocation;
+		FRotator SpawnRotation;
 };
