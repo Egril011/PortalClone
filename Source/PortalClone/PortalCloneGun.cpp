@@ -1,20 +1,23 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
-#include "TrackGunAbility.h"
+#include "PortalCloneGun.h"
 #include "PortalCloneCharacter.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
-#include "MyGameInstance.h"
 #include "UObject/UnrealType.h"        
 #include "UObject/Class.h"     
 #include "UObject/ObjectMacros.h"
 #include "UObject/UObjectGlobals.h"
 #include "UObject/PropertyAccessUtil.h"
-#include "PortalCloneGun.h"
+#include "GunFireComponent.h"
+#include "GunGrabComponent.h"
+#include "TrackGunStateComponent.h"
 
 // Sets default values
 APortalCloneGun::APortalCloneGun()
 {
+	PrimaryActorTick.bCanEverTick = true;
+	SetActorTickEnabled(true);
+
 	//Set the Muzzle scene to the original
 	GunSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMesh"));
 	RootComponent = GunSkeletalMesh;
@@ -28,6 +31,11 @@ APortalCloneGun::APortalCloneGun()
 	SphereCollider->SetupAttachment(GunSkeletalMesh);
 
 	SphereCollider->OnComponentBeginOverlap.AddDynamic(this, &APortalCloneGun::OnOverlapBegin);
+
+	//Components
+	GunFireComponent = CreateDefaultSubobject<UGunFireComponent>(TEXT("GunFireComponent"));
+	GunGrabComponent = CreateDefaultSubobject<UGunGrabComponent>(TEXT("GunGrabComponent"));
+	TrackGunAbility = CreateDefaultSubobject<UTrackGunStateComponent>(TEXT("TrackGunAbility"));
 }
 
 void APortalCloneGun::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
@@ -67,6 +75,50 @@ void APortalCloneGun::AttachWeapon(APortalCloneCharacter* TargetCharacter) {
 				FBoolProperty* BoolProp = CastField<FBoolProperty>(Prop);
 				BoolProp->SetPropertyValue_InContainer(AnimInstance, true);
 			}
+		}
+
+		//remove the collider 
+		SphereCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		SphereCollider->OnComponentBeginOverlap.RemoveDynamic(this, &APortalCloneGun::OnOverlapBegin);
+
+		UnlockGunInput();
+	}
+}
+
+
+
+void APortalCloneGun::UnlockGunInput() {
+
+	if (bBlockInput)
+		return;
+
+	// Set up action bindings
+	if (APlayerController* PlayerController = Cast<APlayerController>(Character->GetController()))
+	{
+		bBlockInput = true;
+
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			// Set the priority of the mapping to 1, so that it overrides the Jump action with the Fire action when using touch input
+			Subsystem->AddMappingContext(FireMappingContext, 1);
+		}
+
+		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerController->InputComponent))
+		{
+			EnhancedInputComponent->BindAction(FireEffectAction,
+				ETriggerEvent::Triggered,
+				GunFireComponent,
+				&UGunFireComponent::FireEffect);
+
+			EnhancedInputComponent->BindAction(GrabObjectAction, 
+				ETriggerEvent::Started, 
+				GunGrabComponent, 
+				&UGunGrabComponent::GrabObject);
+
+			EnhancedInputComponent->BindAction(ChangeGunStateAction, 
+				ETriggerEvent::Started, 
+				TrackGunAbility, 
+				&UTrackGunStateComponent::ChangeGunEffect);
 		}
 	}
 }

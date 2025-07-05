@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "PortalCloneGun.h"
-#include "MyGameInstance.h"
 #include "GunFireComponent.h"
+#include "PortalCloneGun.h"
+#include "TrackGunStateComponent.h"
 
 // Sets default values for this component's properties
 UGunFireComponent::UGunFireComponent()
@@ -10,10 +10,32 @@ UGunFireComponent::UGunFireComponent()
 
 }
 
-void UGunFireComponent::FireEffect() {
+void UGunFireComponent::BeginPlay() {
+
+	Super::BeginPlay();
+
+	if (AActor* O = GetOwner())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UGunFireComponent::BeginPlay – Owner = %s (%s)"),
+			*O->GetName(), *O->GetClass()->GetName());
+	}
+
+	GunRef = Cast<APortalCloneGun>(GetOwner());
 
 	if (!GunRef)
+	{
+		UE_LOG(LogTemp, Error, TEXT("UGunFireComponent: Failed to cast Owner to APortalCloneGun!"));
 		return;
+	}
+}
+
+void UGunFireComponent::FireEffect() {
+
+	if (!GunRef) {
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Cyan, TEXT("nullptd"));
+		return;
+	}
+
 
 	//Start the LineTrace
 	FVector Start = GunRef->GunSkeletalMesh->GetSocketLocation(GunRef->MuzzleSocketName());
@@ -35,21 +57,9 @@ void UGunFireComponent::FireEffect() {
 
 		AActor* HitActor = HitResult.GetActor();
 
-		UMyGameInstance* GI = Cast<UMyGameInstance>(GetWorld()->GetGameInstance());
-
 		/*Debug*/
-		if (GI->CurrentGunState == EGunStateHandler::Freeze) {
-			DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 10.0f, 0, 1.0f);
-		}
-		else {
-			DrawDebugLine(GetWorld(), Start, End, FColor::Blue, false, 10.0f, 0, 1.0f);
-		}
+		DrawDebugLine(GetWorld(), Start, End, FColor::Cyan, false, 10.0f, 0, 1.0f);
 
 		//Call the method that will apply the state based on the gun's effect
 	}
-}
-
-void UGunFireComponent::InitializeGunRef(APortalCloneGun* GunRef){
-
-	this->GunRef = GunRef;
 }

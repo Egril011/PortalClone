@@ -8,7 +8,7 @@
 UENUM(BlueprintType)
 enum class EGunStateHandler : uint8
 {
-    None,
+    Default,
     Freeze,
     Speed,
 };

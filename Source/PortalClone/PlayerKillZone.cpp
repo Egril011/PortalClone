@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "PlayerKillZone.h"
 #include "PortalCloneCharacter.h"
 #include "MyGameMode.h"
 #include "Kismet/GameplayStatics.h"
-#include "PlayerKillZone.h"
 
 // Sets default values
 APlayerKillZone::APlayerKillZone()

@@ -10,7 +10,7 @@
 #include "Components/SphereComponent.h"
 #include "PortalCloneGun.generated.h"
 
-class UTrackGunAbility;
+class UTrackGunStateComponent;
 class UGunFireComponent;
 class UGunGrabComponent;
 
@@ -39,22 +39,13 @@ public:
 	UPROPERTY(EditAnyWhere)
 	USkeletalMeshComponent* GunSkeletalMesh;
 
-	FName MuzzleSocketName() const { return MuzzleSocketName_; }
-
 	UPROPERTY()
 	USceneComponent* MuzzleSceneGrabbedObject;
 
 	UPROPERTY()
 	UPhysicsHandleComponent* PhysicsHandle;
 
-	UPROPERTY()
-	UTrackGunAbility * TrackGunAbility;
-
-	UPROPERTY()
-	UGunFireComponent* GunFireComponent;
-	
-	UPROPERTY()
-	UGunGrabComponent* GunGrabComponent;
+	FName MuzzleSocketName() const { return MuzzleSocketName_; }
 
 protected:
 	UPROPERTY()
@@ -75,4 +66,18 @@ private:
 
 	/** Attaches the actor to a FirstPersonCharacter */
 	void AttachWeapon(APortalCloneCharacter* TargetCharacter);
+
+	void UnlockGunInput();
+
+	UPROPERTY()
+	UTrackGunStateComponent* TrackGunAbility;
+
+	UPROPERTY()
+	UGunFireComponent* GunFireComponent;
+
+	UPROPERTY()
+	UGunGrabComponent* GunGrabComponent;
+
+	UPROPERTY()
+	bool  bIsEquipped = false;
 };

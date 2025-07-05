@@ -17,18 +17,22 @@ public:
 	// Sets default values for this component's properties
 	UGunGrabComponent();
 
+	//method to grab an object
+	void GrabObject();
+
+	virtual void TickComponent(float DeltaTime,
+		ELevelTick TickType,
+		FActorComponentTickFunction*
+		ThisTickFunction) override;
+
 protected: 
-	void TickComponent(float DeltaTime, ELevelTick TickType,
-		FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void BeginPlay() override;
 
 private :
-
+	UPROPERTY()
 	APortalCloneGun* GunRef;
 
 	UPrimitiveComponent* Primitive;
-
-	//method to grab an object
-	void GrabObject();
 
 	//method to throw the object
 	void ThrowObject();

@@ -7,6 +7,7 @@
 #include "GunFireComponent.generated.h"
 
 class APortalCloneGun;
+class UTrackGunStateComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PORTALCLONE_API UGunFireComponent : public UActorComponent
@@ -17,13 +18,17 @@ public:
 	// Sets default values for this component's properties
 	UGunFireComponent();
 
-
-private: 
-	APortalCloneGun* GunRef;
-
 	//method to shot the effect
 	void FireEffect();
 
-	//Initalize the GunRef
-	void InitializeComponent();  
+protected: 
+
+	virtual void BeginPlay() override;
+
+private: 
+	UPROPERTY()
+	APortalCloneGun* GunRef;
+
+	UPROPERTY()
+	UTrackGunStateComponent* TrackGunAbilityRef;
 };

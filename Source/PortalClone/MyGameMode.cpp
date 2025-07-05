@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "MyGameMode.h"
 #include "MyGameInstance.h"
 #include "PortalCloneCharacter.h"
-#include "MyGameMode.h"
 
 void AMyGameMode::PlayerRespawn(AController* PlayerController) {
 

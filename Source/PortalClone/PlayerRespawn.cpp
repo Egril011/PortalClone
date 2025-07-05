@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "PlayerRespawn.h"
 #include "MyGameInstance.h"
 #include "PortalCloneCharacter.h"
-#include "PlayerRespawn.h"
 
 // Sets default values
 APlayerRespawn::APlayerRespawn() {
