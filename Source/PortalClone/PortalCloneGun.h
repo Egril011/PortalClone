@@ -6,7 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "InputAction.h"
 #include "PortalCloneCharacter.h"
-#include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "Components/SphereComponent.h"
 #include "PortalCloneGun.generated.h"
 
@@ -23,6 +22,9 @@ public:
 	// Sets default values for this actor's properties
 	APortalCloneGun();
 
+	UPROPERTY(EditAnyWhere)
+	USkeletalMeshComponent* GunSkeletalMesh;
+
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputMappingContext* FireMappingContext;
@@ -36,14 +38,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* GrabObjectAction;
 
-	UPROPERTY(EditAnyWhere)
-	USkeletalMeshComponent* GunSkeletalMesh;
-
-	UPROPERTY()
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	USceneComponent* MuzzleSceneGrabbedObject;
 
 	UPROPERTY()
-	UPhysicsHandleComponent* PhysicsHandle;
+	UTrackGunStateComponent* TrackGunAbility;
+
+	UPROPERTY()
+	UGunFireComponent* GunFireComponent;
+
+	UPROPERTY()
+	UGunGrabComponent* GunGrabComponent;
 
 	FName MuzzleSocketName() const { return MuzzleSocketName_; }
 
@@ -68,16 +73,4 @@ private:
 	void AttachWeapon(APortalCloneCharacter* TargetCharacter);
 
 	void UnlockGunInput();
-
-	UPROPERTY()
-	UTrackGunStateComponent* TrackGunAbility;
-
-	UPROPERTY()
-	UGunFireComponent* GunFireComponent;
-
-	UPROPERTY()
-	UGunGrabComponent* GunGrabComponent;
-
-	UPROPERTY()
-	bool  bIsEquipped = false;
 };

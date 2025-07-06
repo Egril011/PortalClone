@@ -8,6 +8,7 @@
 
 class APortalCloneGun;
 class UTrackGunStateComponent;
+class UGunGrabComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PORTALCLONE_API UGunFireComponent : public UActorComponent
@@ -31,4 +32,7 @@ private:
 
 	UPROPERTY()
 	UTrackGunStateComponent* TrackGunAbilityRef;
+
+	UPROPERTY()
+	UGunGrabComponent* GrabComponent; 
 };

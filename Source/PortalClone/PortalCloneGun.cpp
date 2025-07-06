@@ -22,10 +22,8 @@ APortalCloneGun::APortalCloneGun()
 	GunSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMesh"));
 	RootComponent = GunSkeletalMesh;
 
-	MuzzleSceneGrabbedObject = CreateDefaultSubobject<USceneComponent>(TEXT("MuzzleScene"));
+	MuzzleSceneGrabbedObject = CreateDefaultSubobject<USceneComponent>(TEXT("SceneGrab"));
 	MuzzleSceneGrabbedObject->SetupAttachment(GunSkeletalMesh);
-
-	PhysicsHandle = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("PhysicsHandle"));
 
 	SphereCollider = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollider"));
 	SphereCollider->SetupAttachment(GunSkeletalMesh);
@@ -51,6 +49,10 @@ void APortalCloneGun::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor
 			if (Player) {
 				
 				AttachWeapon(Player);
+
+				//remove the collider 
+				SphereCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				SphereCollider->OnComponentBeginOverlap.RemoveDynamic(this, &APortalCloneGun::OnOverlapBegin);
 			}
 		}
 	}
@@ -77,26 +79,15 @@ void APortalCloneGun::AttachWeapon(APortalCloneCharacter* TargetCharacter) {
 			}
 		}
 
-		//remove the collider 
-		SphereCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		SphereCollider->OnComponentBeginOverlap.RemoveDynamic(this, &APortalCloneGun::OnOverlapBegin);
-
 		UnlockGunInput();
 	}
 }
 
-
-
 void APortalCloneGun::UnlockGunInput() {
-
-	if (bBlockInput)
-		return;
 
 	// Set up action bindings
 	if (APlayerController* PlayerController = Cast<APlayerController>(Character->GetController()))
 	{
-		bBlockInput = true;
-
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			// Set the priority of the mapping to 1, so that it overrides the Jump action with the Fire action when using touch input

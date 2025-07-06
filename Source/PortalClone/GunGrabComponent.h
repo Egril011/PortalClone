@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "PhysicsEngine/PhysicsHandleComponent.h"
 #include "GunGrabComponent.generated.h"
 
 class APortalCloneGun;
@@ -20,10 +21,16 @@ public:
 	//method to grab an object
 	void GrabObject();
 
+	//method to throw the object
+	void ThrowObject();
+
 	virtual void TickComponent(float DeltaTime,
 		ELevelTick TickType,
 		FActorComponentTickFunction*
 		ThisTickFunction) override;
+
+	UPROPERTY()
+	UPhysicsHandleComponent* PhysicsHandle;
 
 protected: 
 	virtual void BeginPlay() override;
@@ -33,9 +40,6 @@ private :
 	APortalCloneGun* GunRef;
 
 	UPrimitiveComponent* Primitive;
-
-	//method to throw the object
-	void ThrowObject();
 
 	//method to drop the object
 	void DropObject();

@@ -3,6 +3,7 @@
 #include "GunFireComponent.h"
 #include "PortalCloneGun.h"
 #include "TrackGunStateComponent.h"
+#include "GunGrabComponent.h"
 
 // Sets default values for this component's properties
 UGunFireComponent::UGunFireComponent()
@@ -14,28 +15,29 @@ void UGunFireComponent::BeginPlay() {
 
 	Super::BeginPlay();
 
-	if (AActor* O = GetOwner())
+	if (AActor* Owner = GetOwner())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UGunFireComponent::BeginPlay – Owner = %s (%s)"),
-			*O->GetName(), *O->GetClass()->GetName());
-	}
+		if (Owner->IsA<APortalCloneGun>()) {
 
-	GunRef = Cast<APortalCloneGun>(GetOwner());
+			GunRef = Cast<APortalCloneGun>(Owner);
 
-	if (!GunRef)
-	{
-		UE_LOG(LogTemp, Error, TEXT("UGunFireComponent: Failed to cast Owner to APortalCloneGun!"));
-		return;
+			TrackGunAbilityRef = GunRef->TrackGunAbility;
+			GrabComponent = GunRef->GunGrabComponent;
+		}
 	}
 }
 
 void UGunFireComponent::FireEffect() {
 
 	if (!GunRef) {
-		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Cyan, TEXT("nullptd"));
 		return;
 	}
 
+	//if the play have grabbed an object throw it 
+	if (GrabComponent->PhysicsHandle->GrabbedComponent) {
+		GrabComponent->ThrowObject();
+		return;
+	}
 
 	//Start the LineTrace
 	FVector Start = GunRef->GunSkeletalMesh->GetSocketLocation(GunRef->MuzzleSocketName());
@@ -61,5 +63,6 @@ void UGunFireComponent::FireEffect() {
 		DrawDebugLine(GetWorld(), Start, End, FColor::Cyan, false, 10.0f, 0, 1.0f);
 
 		//Call the method that will apply the state based on the gun's effect
+		TrackGunAbilityRef->ApplyEffect(HitActor);
 	}
 }
