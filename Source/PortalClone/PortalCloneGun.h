@@ -7,11 +7,15 @@
 #include "InputAction.h"
 #include "PortalCloneCharacter.h"
 #include "Components/SphereComponent.h"
+#include "Delegates/Delegate.h"
 #include "PortalCloneGun.generated.h"
 
 class UTrackGunStateComponent;
 class UGunFireComponent;
 class UGunGrabComponent;
+class UGunVFXComponent;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnShootVFX);
 
 UCLASS()
 class PORTALCLONE_API APortalCloneGun : public AActor
@@ -22,8 +26,13 @@ public:
 	// Sets default values for this actor's properties
 	APortalCloneGun();
 
+	//Skeleton
 	UPROPERTY(EditAnyWhere)
 	USkeletalMeshComponent* GunSkeletalMesh;
+
+	/*BroadCast*/
+	UPROPERTY(BlueprintAssignable, Category = "Event")
+	FOnShootVFX OnShootVFX;
 
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -41,16 +50,20 @@ public:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	USceneComponent* MuzzleSceneGrabbedObject;
 
-	UPROPERTY()
+	FName MuzzleSocketName() const { return MuzzleSocketName_; }
+
+	/*Gun Components*/
+	UPROPERTY(EditAnywhere, Category = "GunComponent")
 	UTrackGunStateComponent* TrackGunAbility;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, Category = "GunComponent")
 	UGunFireComponent* GunFireComponent;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, Category = "GunComponent")
 	UGunGrabComponent* GunGrabComponent;
 
-	FName MuzzleSocketName() const { return MuzzleSocketName_; }
+	UPROPERTY(EditAnywhere, Category = "GunComponent")
+	UGunVFXComponent* GunVFXComponent;
 
 protected:
 	UPROPERTY()
@@ -73,4 +86,6 @@ private:
 	void AttachWeapon(APortalCloneCharacter* TargetCharacter);
 
 	void UnlockGunInput();
+
+	bool bGunInputUnlocked = false;
 };

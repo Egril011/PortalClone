@@ -2,6 +2,7 @@
 
 #include "GunGrabComponent.h"
 #include "PortalCloneGun.h"
+#include "GunVFXComponent.h"
 
 // Sets default values for this component's properties
 UGunGrabComponent::UGunGrabComponent()

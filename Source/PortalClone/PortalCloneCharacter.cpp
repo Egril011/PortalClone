@@ -74,7 +74,7 @@ void APortalCloneCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &APortalCloneCharacter::StopSprinting);
 
 		//Interact
-		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &APortalCloneCharacter::Interact);
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &APortalCloneCharacter::CheckInteractable);
 	}
 	else
 	{
@@ -127,7 +127,7 @@ void APortalCloneCharacter::StopSprinting() {
 	GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
 }
 
-void APortalCloneCharacter::Interact() {
+void APortalCloneCharacter::CheckInteractable() {
 
 	// Start the LineTrace
 	FVector Start = GetActorLocation();

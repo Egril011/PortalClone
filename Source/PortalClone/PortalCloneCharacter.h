@@ -90,6 +90,6 @@ private:
 	void StopSprinting();
 
 	//method to intect with objects
-	void Interact();
+	void CheckInteractable();
 };
 

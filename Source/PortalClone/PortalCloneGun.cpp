@@ -11,6 +11,7 @@
 #include "GunFireComponent.h"
 #include "GunGrabComponent.h"
 #include "TrackGunStateComponent.h"
+#include "GunVFXComponent.h"
 
 // Sets default values
 APortalCloneGun::APortalCloneGun()
@@ -34,6 +35,7 @@ APortalCloneGun::APortalCloneGun()
 	GunFireComponent = CreateDefaultSubobject<UGunFireComponent>(TEXT("GunFireComponent"));
 	GunGrabComponent = CreateDefaultSubobject<UGunGrabComponent>(TEXT("GunGrabComponent"));
 	TrackGunAbility = CreateDefaultSubobject<UTrackGunStateComponent>(TEXT("TrackGunAbility"));
+	GunVFXComponent = CreateDefaultSubobject<UGunVFXComponent>(TEXT("GunVFXComponent"));
 }
 
 void APortalCloneGun::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
@@ -79,11 +81,15 @@ void APortalCloneGun::AttachWeapon(APortalCloneCharacter* TargetCharacter) {
 			}
 		}
 
+		if(!bGunInputUnlocked)
 		UnlockGunInput();
 	}
 }
 
 void APortalCloneGun::UnlockGunInput() {
+
+	if (bGunInputUnlocked || !Character) return;
+	bGunInputUnlocked = true;
 
 	// Set up action bindings
 	if (APlayerController* PlayerController = Cast<APlayerController>(Character->GetController()))
@@ -105,6 +111,8 @@ void APortalCloneGun::UnlockGunInput() {
 				ETriggerEvent::Started, 
 				GunGrabComponent, 
 				&UGunGrabComponent::GrabObject);
+
+			OnShootVFX.AddDynamic(GunVFXComponent, &UGunVFXComponent::ShootEffect);
 
 			EnhancedInputComponent->BindAction(ChangeGunStateAction, 
 				ETriggerEvent::Started, 
