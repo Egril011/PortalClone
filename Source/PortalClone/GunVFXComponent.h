@@ -21,8 +21,12 @@ public:
 
 public:
 	virtual void BeginPlay() override;
-	  
-	void ShootEffect();
+	
+	UFUNCTION()
+	void StartGunVFXEffect();
+
+	UFUNCTION()
+	void StopGunVFXEffect();
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VFX")
@@ -31,4 +35,5 @@ protected:
 private:
 	APortalCloneGun* GunRef;
 
+	UNiagaraComponent* ActiveVFX;
 };

@@ -78,6 +78,9 @@ void UGunGrabComponent::GrabObject() {
 
 		if (Primitive && Primitive->IsSimulatingPhysics()) {
 
+			//Call the broadcast
+			GunRef->OnShootVFX.Broadcast();
+
 			Primitive->SetSimulatePhysics(true);
 
 			PhysicsHandle->GrabComponentAtLocationWithRotation(
@@ -106,6 +109,8 @@ void UGunGrabComponent::DropObject() {
 		SetComponentTickEnabled(false);
 		Deactivate();
 
+		GunRef->OnEndShootVFX.Broadcast();
+
 		Primitive = nullptr;
 	}
 }
@@ -122,6 +127,18 @@ void UGunGrabComponent::ThrowObject() {
 	SetComponentTickEnabled(false);
 	Deactivate();
 
+	GunRef->OnEndShootVFX.Broadcast();
+
 	Primitive = nullptr;
+}
+
+bool UGunGrabComponent::IsHoldingObject() {
+
+	if (PhysicsHandle->GrabbedComponent) {
+		ThrowObject();
+		return true;
+	}
+
+	return false;
 }
 

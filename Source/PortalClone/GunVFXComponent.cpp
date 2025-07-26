@@ -24,11 +24,27 @@ void UGunVFXComponent::BeginPlay() {
 	}
 }
 
-void UGunVFXComponent::ShootEffect() {
+void UGunVFXComponent::StartGunVFXEffect() {
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Work"));
+
+	if (!GunRef) {
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("GunNull"));
+	}
+	if (!VFXEffect) {
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("VFXNull"));
+	}
+
+	//looking if there is another effect activate
+	if (ActiveVFX) {
+		ActiveVFX->Deactivate();
+		ActiveVFX->DestroyComponent();
+		ActiveVFX = nullptr;
+	}
 
 	if (GunRef && VFXEffect) {
-
-		UNiagaraFunctionLibrary::SpawnSystemAttached(
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green,TEXT("Work1")); 
+		ActiveVFX = UNiagaraFunctionLibrary::SpawnSystemAttached(
 			VFXEffect,
 			GunRef->GunSkeletalMesh,
 			GunRef->MuzzleSocketName(),
@@ -40,4 +56,15 @@ void UGunVFXComponent::ShootEffect() {
 	}
 }
 
+void UGunVFXComponent::StopGunVFXEffect() {
+
+	if (VFXEffect) {
+
+		if (ActiveVFX) {
+			ActiveVFX->Deactivate();
+			ActiveVFX->DestroyComponent();
+			ActiveVFX = nullptr;
+		}
+	}
+}
 

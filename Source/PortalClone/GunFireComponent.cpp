@@ -21,8 +21,11 @@ void UGunFireComponent::BeginPlay() {
 
 			GunRef = Cast<APortalCloneGun>(Owner);
 
-			TrackGunAbilityRef = GunRef->TrackGunAbility;
-			GrabComponent = GunRef->GunGrabComponent;
+			if (GunRef) {
+				
+				TrackGunAbilityRef = GunRef->TrackGunAbility;
+				GrabComponent = GunRef->GunGrabComponent;
+			}
 		}
 	}
 }
@@ -33,9 +36,8 @@ void UGunFireComponent::FireEffect() {
 		return;
 	}
 
-	//if the play have grabbed an object throw it 
-	if (GrabComponent->PhysicsHandle->GrabbedComponent) {
-		GrabComponent->ThrowObject();
+	//if the play have grabbed an object
+	if (GrabComponent->IsHoldingObject()) {
 		return;
 	}
 

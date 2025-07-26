@@ -79,3 +79,7 @@ DerivedDataCache/*
 #Ignore the Generated expect Level
 Content/Level
 !Content/Level/*.usmap
+
+# OS Specific
+.DS_Store
+Thumbs.db

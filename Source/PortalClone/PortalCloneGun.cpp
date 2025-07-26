@@ -112,7 +112,8 @@ void APortalCloneGun::UnlockGunInput() {
 				GunGrabComponent, 
 				&UGunGrabComponent::GrabObject);
 
-			OnShootVFX.AddDynamic(GunVFXComponent, &UGunVFXComponent::ShootEffect);
+			OnShootVFX.AddDynamic(GunVFXComponent, &UGunVFXComponent::StartGunVFXEffect);
+			OnEndShootVFX.AddDynamic(GunVFXComponent, &UGunVFXComponent::StopGunVFXEffect);
 
 			EnhancedInputComponent->BindAction(ChangeGunStateAction, 
 				ETriggerEvent::Started, 

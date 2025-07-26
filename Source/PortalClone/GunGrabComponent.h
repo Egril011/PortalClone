@@ -21,26 +21,29 @@ public:
 	//method to grab an object
 	void GrabObject();
 
-	//method to throw the object
-	void ThrowObject();
+	//Is the player holding an object
+	bool IsHoldingObject();
+
+protected: 
+	virtual void BeginPlay() override;
 
 	virtual void TickComponent(float DeltaTime,
 		ELevelTick TickType,
 		FActorComponentTickFunction*
 		ThisTickFunction) override;
 
-	UPROPERTY()
-	UPhysicsHandleComponent* PhysicsHandle;
-
-protected: 
-	virtual void BeginPlay() override;
-
 private :
 	UPROPERTY()
 	APortalCloneGun* GunRef;
+
+	UPROPERTY()
+	UPhysicsHandleComponent* PhysicsHandle;
 
 	UPrimitiveComponent* Primitive;
 
 	//method to drop the object
 	void DropObject();
+
+	//method to throw the object
+	void ThrowObject();
 };

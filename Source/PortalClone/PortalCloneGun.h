@@ -16,6 +16,7 @@ class UGunGrabComponent;
 class UGunVFXComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnShootVFX);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEndShootVFX);
 
 UCLASS()
 class PORTALCLONE_API APortalCloneGun : public AActor
@@ -33,6 +34,9 @@ public:
 	/*BroadCast*/
 	UPROPERTY(BlueprintAssignable, Category = "Event")
 	FOnShootVFX OnShootVFX;
+
+	UPROPERTY(BlueprintAssignable, Category = "Event")
+	FOnEndShootVFX OnEndShootVFX;
 
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -85,6 +89,7 @@ private:
 	/** Attaches the actor to a FirstPersonCharacter */
 	void AttachWeapon(APortalCloneCharacter* TargetCharacter);
 
+	/* Unlocj the Gun's input */
 	void UnlockGunInput();
 
 	bool bGunInputUnlocked = false;
