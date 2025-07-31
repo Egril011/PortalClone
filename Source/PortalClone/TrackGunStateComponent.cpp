@@ -3,6 +3,8 @@
 #include "TrackGunStateComponent.h"
 #include "SpeedableInterface.h"
 #include "SlowableInterface.h"
+#include "GunGrabComponent.h"
+#include "PortalCloneGun.h"
 
 // Sets default values for this component's properties
 UTrackGunStateComponent::UTrackGunStateComponent()
@@ -17,62 +19,68 @@ UTrackGunStateComponent::UTrackGunStateComponent()
 	GunState = EGunStateHandler::Default;
 }
 
-void UTrackGunStateComponent::ApplyEffect(AActor* Target) {
+void UTrackGunStateComponent::BeginPlay() {
+
+	Super::BeginPlay();
+
+	if (AActor* Owner = GetOwner()) {
+
+		if (Owner->IsA<APortalCloneGun>()) {
+
+			GunRef = Cast<APortalCloneGun>(Owner);
+
+			if (GunRef) {
+				GrabComponent = GunRef->GunGrabComponent;
+			}
+		}
+	}
+}
+
+void UTrackGunStateComponent::UseCurrentAbility(FHitResult& HitResult) {
 
 	switch (GunState) {
 	case EGunStateHandler::Freeze:
 		if (CanFreezeObject()) {
-			ApplyFreezeEffect(Target);
+			
 		}
 		break;
 
-	case EGunStateHandler::Speed:
-		if (CanSpeedObject()) {
-			ApplySpeedUpEffect(Target);
-		}
-		break;
+	case EGunStateHandler::Grab:
+		GrabComponent->GrabObject(HitResult);
 
 	default:
 		break;
 	}
 }
 
-void UTrackGunStateComponent::ApplyFreezeEffect(AActor* Target) {
+void UTrackGunStateComponent::ChangeGunState(EGunStateHandler NewGunState) {
+	GunState = NewGunState;
+	if (GEngine)
+	{
+		FString StateName;
 
-	if (Target->GetClass()->ImplementsInterface(USlowableInterface::StaticClass())) {
-
-		ISlowableInterface::Execute_ApplySlowEffect(Target);
-	}
-}
-
-void UTrackGunStateComponent::ApplySpeedUpEffect(AActor* Target) {
-
-	if (Target->GetClass()->ImplementsInterface(USpeedableInterface::StaticClass())) {
-
-		ISpeedableInterface::Execute_ApplySpeedEffect(Target);
-	}
-}
-
-void UTrackGunStateComponent::ChangeGunEffect() {
-
-	//Toggle between Slow and Speed effects
-	if (GunState == EGunStateHandler::Freeze) {
-
-		GunState = EGunStateHandler::Speed;
-
-		if (GEngine)
+		switch (GunState)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Speed mode"));
+		case EGunStateHandler::Freeze:
+			StateName = "Freeze";
+			break;
+		case EGunStateHandler::Grab:
+			StateName = "Grab";
+			break;
+		case EGunStateHandler::Recall:
+			StateName = "Recall";
+			break;
+		default:
+			StateName = "None";
+			break;
 		}
-	}
-	else {
-		GunState = EGunStateHandler::Freeze;
 
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Slow mode"));
-		}
+		GEngine->AddOnScreenDebugMessage(
+			-1, // Message key (-1 means add a new message)
+			5.0f, // Duration
+			FColor::Cyan,
+			FString::Printf(TEXT("GunState changed to: %s"), *StateName)
+		);
 	}
-
 }
 

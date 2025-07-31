@@ -8,6 +8,7 @@
 #include "PortalCloneCharacter.h"
 #include "Components/SphereComponent.h"
 #include "Delegates/Delegate.h"
+#include "Blueprint/UserWidget.h"
 #include "PortalCloneGun.generated.h"
 
 class UTrackGunStateComponent;
@@ -15,8 +16,10 @@ class UGunFireComponent;
 class UGunGrabComponent;
 class UGunVFXComponent;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnShootVFX);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnShootVFX, FName, VFXName);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEndShootVFX);
+
+class UAbilityWheelWidget;
 
 UCLASS()
 class PORTALCLONE_API APortalCloneGun : public AActor
@@ -43,19 +46,11 @@ public:
 	class UInputMappingContext* FireMappingContext;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* FireEffectAction;
+	UInputAction* FireAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* ChangeGunStateAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* GrabObjectAction;
-
-	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
-	USceneComponent* MuzzleSceneGrabbedObject;
-
-	FName MuzzleSocketName() const { return MuzzleSocketName_; }
-
+	
 	/*Gun Components*/
 	UPROPERTY(EditAnywhere, Category = "GunComponent")
 	UTrackGunStateComponent* TrackGunAbility;
@@ -69,6 +64,16 @@ public:
 	UPROPERTY(EditAnywhere, Category = "GunComponent")
 	UGunVFXComponent* GunVFXComponent;
 
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
+	USceneComponent* MuzzleSceneGrabbedObject;
+
+	FName MuzzleSocketName() const { return MuzzleSocketName_; }
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Widget)
+	TSubclassOf<UUserWidget> AbilityWheelWidgetClass;
+
+	UAbilityWheelWidget* AbilityWheelWidgetInstance;
+	
 protected:
 	UPROPERTY()
 	USphereComponent* SphereCollider;
@@ -88,9 +93,11 @@ private:
 
 	/** Attaches the actor to a FirstPersonCharacter */
 	void AttachWeapon(APortalCloneCharacter* TargetCharacter);
-
-	/* Unlocj the Gun's input */
+ 
+	/* Unlock the Gun's input */
 	void UnlockGunInput();
+
+	void Test();
 
 	bool bGunInputUnlocked = false;
 };

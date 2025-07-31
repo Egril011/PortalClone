@@ -41,62 +41,35 @@ void UGunGrabComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	}
 }
 
-void UGunGrabComponent::GrabObject() {
-
+void UGunGrabComponent::GrabObject(const FHitResult& HitResult)
+{
 	if (!GunRef)
-	return;
-
-	//if the play have grabbed an object drop it 
-	if (PhysicsHandle->GrabbedComponent) {
-		DropObject();
 		return;
-	}
+	
+	Primitive = HitResult.GetComponent();
 
-	//Start the LineTrace
-	FVector Start = GunRef->GunSkeletalMesh->
-		GetSocketLocation(GunRef->MuzzleSocketName());
-	FVector ForwardVector = GunRef->GunSkeletalMesh->
-		GetSocketRotation(GunRef->MuzzleSocketName()).Vector();
+	if (Primitive && Primitive->IsSimulatingPhysics())
+	{
+		//Call the broadcast
+		GunRef->OnShootVFX.Broadcast("Grab");
 
-	FVector End = Start + (ForwardVector * 1000.0f);
+		Primitive->SetSimulatePhysics(true);
 
-	FHitResult HitResult;
+		PhysicsHandle->GrabComponentAtLocationWithRotation(
+			Primitive,
+			GunRef->MuzzleSocketName(),
+			Primitive->GetComponentLocation(),
+			Primitive->GetComponentRotation()
+		);
 
-	bool bHit = GetWorld()->LineTraceSingleByChannel(
-		HitResult,
-		Start,
-		End,
-		ECC_Visibility
-	);
-
-	if (bHit) {
-
-		/*Debug*/
-		DrawDebugLine(GetWorld(), Start, End, FColor::Yellow, false, 10.0f, 0, 1.0f);
-
-		Primitive = HitResult.GetComponent();
-
-		if (Primitive && Primitive->IsSimulatingPhysics()) {
-
-			//Call the broadcast
-			GunRef->OnShootVFX.Broadcast();
-
-			Primitive->SetSimulatePhysics(true);
-
-			PhysicsHandle->GrabComponentAtLocationWithRotation(
-				Primitive,
-				GunRef->MuzzleSocketName(),
-				Primitive->GetComponentLocation(),
-				Primitive->GetComponentRotation()
-			);
-
-			Primitive->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+		Primitive->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 				
-			SetComponentTickEnabled(true);
-			Activate(true);
-		}
+		SetComponentTickEnabled(true);
+		Activate(true);
 	}
 }
+
+
 
 void UGunGrabComponent::DropObject() {
 

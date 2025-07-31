@@ -1,5 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "PortalCloneGun.h"
+
+#include "AbilityWheelWidget.h"
 #include "PortalCloneCharacter.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
@@ -12,6 +14,8 @@
 #include "GunGrabComponent.h"
 #include "TrackGunStateComponent.h"
 #include "GunVFXComponent.h"
+#include "Blueprint/UserWidget.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 APortalCloneGun::APortalCloneGun()
@@ -66,6 +70,8 @@ void APortalCloneGun::AttachWeapon(APortalCloneCharacter* TargetCharacter) {
 
 	if (Character) {
 		
+		Character->EquippedGun = this;
+		
 		AttachToComponent(Character->GetMesh1P(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("GripPoint"));
 		SetOwner(Character);
 
@@ -102,23 +108,32 @@ void APortalCloneGun::UnlockGunInput() {
 
 		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerController->InputComponent))
 		{
-			EnhancedInputComponent->BindAction(FireEffectAction,
-				ETriggerEvent::Triggered,
+			EnhancedInputComponent->BindAction(FireAction,
+				ETriggerEvent::Started,
 				GunFireComponent,
-				&UGunFireComponent::FireEffect);
-
-			EnhancedInputComponent->BindAction(GrabObjectAction, 
-				ETriggerEvent::Started, 
-				GunGrabComponent, 
-				&UGunGrabComponent::GrabObject);
-
-			OnShootVFX.AddDynamic(GunVFXComponent, &UGunVFXComponent::StartGunVFXEffect);
-			OnEndShootVFX.AddDynamic(GunVFXComponent, &UGunVFXComponent::StopGunVFXEffect);
+				&UGunFireComponent::Fire);
 
 			EnhancedInputComponent->BindAction(ChangeGunStateAction, 
 				ETriggerEvent::Started, 
-				TrackGunAbility, 
-				&UTrackGunStateComponent::ChangeGunEffect);
+				this, 
+				&APortalCloneGun::Test);
+
+			OnShootVFX.AddDynamic(GunVFXComponent, &UGunVFXComponent::PlayVFX);
+			OnEndShootVFX.AddDynamic(GunVFXComponent, &UGunVFXComponent::StopVFX);
+		}
+	}
+}
+
+void APortalCloneGun::Test()
+{
+	if (!AbilityWheelWidgetInstance && AbilityWheelWidgetClass)
+	{
+		AbilityWheelWidgetInstance = CreateWidget<UAbilityWheelWidget>(UGameplayStatics::GetPlayerController(GetWorld(),0), AbilityWheelWidgetClass);
+
+		if (AbilityWheelWidgetInstance)
+		{
+			AbilityWheelWidgetInstance->AddToViewport();
+			UE_LOG(LogTemp, Warning, TEXT("Ability Wheel Widget created and added to viewport."));
 		}
 	}
 }

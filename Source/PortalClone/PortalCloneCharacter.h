@@ -8,6 +8,7 @@
 #include "PortalCloneCharacter.generated.h"
 
 class UInputComponent;
+class APortalCloneGun;
 class USkeletalMeshComponent;
 class UCameraComponent;
 class UInputAction;
@@ -25,7 +26,7 @@ class APortalCloneCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Mesh, meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* Mesh1P;
 
-	/** First person camera */
+	/** First-person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FirstPersonCameraComponent;
 
@@ -61,6 +62,9 @@ class APortalCloneCharacter : public ACharacter
 
 public:
 	APortalCloneCharacter();
+
+	UPROPERTY(BlueprintReadOnly, Category = EqippedGun)
+	APortalCloneGun* EquippedGun;
 
 protected:
 	virtual void BeginPlay() override; 

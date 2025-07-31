@@ -19,7 +19,7 @@ public:
 	UGunGrabComponent();
 
 	//method to grab an object
-	void GrabObject();
+	void GrabObject(const FHitResult& HitResult);
 
 	//Is the player holding an object
 	bool IsHoldingObject();

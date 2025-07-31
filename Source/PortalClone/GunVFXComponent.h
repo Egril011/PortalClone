@@ -23,14 +23,14 @@ public:
 	virtual void BeginPlay() override;
 	
 	UFUNCTION()
-	void StartGunVFXEffect();
+	void PlayVFX(FName VFXEffect);
 
 	UFUNCTION()
-	void StopGunVFXEffect();
+	void StopVFX();
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VFX")
-	UNiagaraSystem* VFXEffect;
+	TMap<FName, UNiagaraSystem*> VFXMap;
 
 private:
 	APortalCloneGun* GunRef;

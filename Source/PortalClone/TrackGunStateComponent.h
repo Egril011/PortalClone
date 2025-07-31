@@ -7,6 +7,9 @@
 #include "EGunStateHandler.h"
 #include "TrackGunStateComponent.generated.h"
 
+class UGunGrabComponent;
+class APortalCloneGun;
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PORTALCLONE_API UTrackGunStateComponent : public UActorComponent
 {
@@ -16,7 +19,7 @@ public:
 	// Sets default values for this component's properties
 	UTrackGunStateComponent();
 	
-	/*Encapuslation and the methodes to unlcok or lock an ability*/
+	/*Encapsulation and the methods to unlock or lock an ability*/
 	bool CanGrabObject() const { return bGrabObject; }
 	void UnlockGrabObject() { bGrabObject = true; }
 	void LockGrabObject() { bGrabObject = false; }
@@ -35,13 +38,16 @@ public:
 
 	bool CanSpeedObject() const { return bSpeedObject; }
 	void UnlockSpeedObject() { bSpeedObject = true; }
-	void LockSpeedObect() { bSpeedObject = false; }
+	void LockSpeedObject() { bSpeedObject = false; }
 
 	//Apply the appropriate effect depending on the gun's state
-	void ApplyEffect(AActor* Target);
+	void UseCurrentAbility(FHitResult& HitResult);
 
 	//Change the Gun's state
-	void ChangeGunEffect();
+	void ChangeGunState(EGunStateHandler NewGunState);
+
+protected:
+	virtual void BeginPlay() override;
 
 private:
 	bool bGrabObject;
@@ -51,7 +57,6 @@ private:
 	bool bSpeedObject;
 
 	EGunStateHandler GunState;
-
-	void ApplyFreezeEffect(AActor* Target);
-	void ApplySpeedUpEffect(AActor* Target);
+	UGunGrabComponent* GrabComponent;
+	APortalCloneGun* GunRef;
 };

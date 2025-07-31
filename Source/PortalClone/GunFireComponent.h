@@ -20,7 +20,7 @@ public:
 	UGunFireComponent();
 
 	//method to shot the effect
-	void FireEffect();
+	void Fire();
 
 protected: 
 

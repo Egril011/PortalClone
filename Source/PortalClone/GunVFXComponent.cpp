@@ -24,16 +24,7 @@ void UGunVFXComponent::BeginPlay() {
 	}
 }
 
-void UGunVFXComponent::StartGunVFXEffect() {
-
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Work"));
-
-	if (!GunRef) {
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("GunNull"));
-	}
-	if (!VFXEffect) {
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("VFXNull"));
-	}
+void UGunVFXComponent::PlayVFX(FName VFXEffectName) {
 
 	//looking if there is another effect activate
 	if (ActiveVFX) {
@@ -42,29 +33,29 @@ void UGunVFXComponent::StartGunVFXEffect() {
 		ActiveVFX = nullptr;
 	}
 
-	if (GunRef && VFXEffect) {
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green,TEXT("Work1")); 
-		ActiveVFX = UNiagaraFunctionLibrary::SpawnSystemAttached(
-			VFXEffect,
-			GunRef->GunSkeletalMesh,
-			GunRef->MuzzleSocketName(),
-			FVector(0.0f, 0.0f, 0.0f), 
-			FRotator(0.0f, 0.0f, 0.0f),
-			EAttachLocation::SnapToTarget,
-			true
-		);
+	if (GunRef && !VFXMap.IsEmpty()) { 
+
+		if (VFXMap.Contains(VFXEffectName)) {
+
+			ActiveVFX = UNiagaraFunctionLibrary::SpawnSystemAttached(
+				VFXMap[VFXEffectName],
+				GunRef->GunSkeletalMesh,
+				GunRef->MuzzleSocketName(),
+				FVector(0.0f, 0.0f, 0.0f),
+				FRotator(0.0f, 0.0f, 0.0f),
+				EAttachLocation::SnapToTarget,
+				true
+			);
+		}
 	}
 }
 
-void UGunVFXComponent::StopGunVFXEffect() {
+void UGunVFXComponent::StopVFX() {
 
-	if (VFXEffect) {
-
-		if (ActiveVFX) {
-			ActiveVFX->Deactivate();
-			ActiveVFX->DestroyComponent();
-			ActiveVFX = nullptr;
-		}
+	if (ActiveVFX) {
+		ActiveVFX->Deactivate();
+		ActiveVFX->DestroyComponent();
+		ActiveVFX = nullptr;
 	}
 }
 

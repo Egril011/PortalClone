@@ -10,5 +10,6 @@ enum class EGunStateHandler : uint8
 {
     Default,
     Freeze,
-    Speed,
+    Grab,
+    Recall
 };

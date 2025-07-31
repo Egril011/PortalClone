@@ -30,15 +30,15 @@ void UGunFireComponent::BeginPlay() {
 	}
 }
 
-void UGunFireComponent::FireEffect() {
+void UGunFireComponent::Fire() {
 
 	if (!GunRef) {
 		return;
 	}
 
-	//if the play have grabbed an object
+	//if the play has grabbed an object
 	if (GrabComponent->IsHoldingObject()) {
-		return;
+		return;   
 	}
 
 	//Start the LineTrace
@@ -58,13 +58,10 @@ void UGunFireComponent::FireEffect() {
 	);
 
 	if (bHit) {
-
-		AActor* HitActor = HitResult.GetActor();
-
 		/*Debug*/
 		DrawDebugLine(GetWorld(), Start, End, FColor::Cyan, false, 10.0f, 0, 1.0f);
 
 		//Call the method that will apply the state based on the gun's effect
-		TrackGunAbilityRef->ApplyEffect(HitActor);
+		TrackGunAbilityRef->UseCurrentAbility(HitResult);
 	}
 }
