@@ -19,7 +19,7 @@ public:
 	// Sets default values for this component's properties
 	UGunFireComponent();
 
-	//method to shot the effect
+	//method to shoot the effect
 	void Fire();
 
 protected: 

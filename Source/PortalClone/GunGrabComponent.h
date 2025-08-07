@@ -22,7 +22,13 @@ public:
 	void GrabObject(const FHitResult& HitResult);
 
 	//Is the player holding an object
-	bool IsHoldingObject();
+	bool IsHoldingObject() const;
+
+	//method to throw the object
+	void ThrowObject();
+
+	//method to handle the drop input
+	void InputDropObject();
 
 protected: 
 	virtual void BeginPlay() override;
@@ -35,7 +41,7 @@ protected:
 private :
 	UPROPERTY()
 	APortalCloneGun* GunRef;
-
+	
 	UPROPERTY()
 	UPhysicsHandleComponent* PhysicsHandle;
 
@@ -43,7 +49,4 @@ private :
 
 	//method to drop the object
 	void DropObject();
-
-	//method to throw the object
-	void ThrowObject();
 };

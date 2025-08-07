@@ -41,7 +41,7 @@ public:
 	void LockSpeedObject() { bSpeedObject = false; }
 
 	//Apply the appropriate effect depending on the gun's state
-	void UseCurrentAbility(FHitResult& HitResult);
+	void UseCurrentAbility(const FHitResult& HitResult);
 
 	//Change the Gun's state
 	void ChangeGunState(EGunStateHandler NewGunState);

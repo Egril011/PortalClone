@@ -2,7 +2,6 @@
 
 #include "GunGrabComponent.h"
 #include "PortalCloneGun.h"
-#include "GunVFXComponent.h"
 
 // Sets default values for this component's properties
 UGunGrabComponent::UGunGrabComponent()
@@ -69,12 +68,10 @@ void UGunGrabComponent::GrabObject(const FHitResult& HitResult)
 	}
 }
 
-
-
 void UGunGrabComponent::DropObject() {
-
-	if (PhysicsHandle && PhysicsHandle->GrabbedComponent) {
-
+	
+	if (PhysicsHandle && PhysicsHandle->GrabbedComponent)
+	{
 		Primitive->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
 
 		PhysicsHandle->ReleaseComponent();
@@ -85,6 +82,14 @@ void UGunGrabComponent::DropObject() {
 		GunRef->OnEndShootVFX.Broadcast();
 
 		Primitive = nullptr;
+	}
+}
+
+void UGunGrabComponent::InputDropObject()
+{
+	if (IsHoldingObject())
+	{
+		DropObject();
 	}
 }
 
@@ -105,13 +110,12 @@ void UGunGrabComponent::ThrowObject() {
 	Primitive = nullptr;
 }
 
-bool UGunGrabComponent::IsHoldingObject() {
-
+bool UGunGrabComponent::IsHoldingObject() const
+{
 	if (PhysicsHandle->GrabbedComponent) {
-		ThrowObject();
 		return true;
 	}
-
+	
 	return false;
 }
 

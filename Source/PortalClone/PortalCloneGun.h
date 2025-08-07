@@ -41,7 +41,7 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Event")
 	FOnEndShootVFX OnEndShootVFX;
 
-	/** MappingContext */
+	/** MappingContext and Inputs*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputMappingContext* FireMappingContext;
 
@@ -50,6 +50,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* ChangeGunStateAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* DropObjectAction;
 	
 	/*Gun Components*/
 	UPROPERTY(EditAnywhere, Category = "GunComponent")
@@ -69,11 +72,6 @@ public:
 
 	FName MuzzleSocketName() const { return MuzzleSocketName_; }
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Widget)
-	TSubclassOf<UUserWidget> AbilityWheelWidgetClass;
-
-	UAbilityWheelWidget* AbilityWheelWidgetInstance;
-	
 protected:
 	UPROPERTY()
 	USphereComponent* SphereCollider;
@@ -87,7 +85,7 @@ private:
 	/** The Character holding this weapon*/
 	APortalCloneCharacter* Character;
 
-	//To get the Muzzle'name from the gun's skeleton 
+	//To get the Muzzle's name from the gun's skeleton 
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	FName MuzzleSocketName_ = TEXT("Muzzle");
 
@@ -96,8 +94,6 @@ private:
  
 	/* Unlock the Gun's input */
 	void UnlockGunInput();
-
-	void Test();
 
 	bool bGunInputUnlocked = false;
 };

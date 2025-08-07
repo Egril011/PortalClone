@@ -1,8 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TrackGunStateComponent.h"
-#include "SpeedableInterface.h"
-#include "SlowableInterface.h"
 #include "GunGrabComponent.h"
 #include "PortalCloneGun.h"
 
@@ -36,7 +34,7 @@ void UTrackGunStateComponent::BeginPlay() {
 	}
 }
 
-void UTrackGunStateComponent::UseCurrentAbility(FHitResult& HitResult) {
+void UTrackGunStateComponent::UseCurrentAbility(const FHitResult& HitResult) {
 
 	switch (GunState) {
 	case EGunStateHandler::Freeze:
@@ -47,7 +45,12 @@ void UTrackGunStateComponent::UseCurrentAbility(FHitResult& HitResult) {
 
 	case EGunStateHandler::Grab:
 		GrabComponent->GrabObject(HitResult);
+		break;
 
+	case EGunStateHandler::Recall:
+
+		break;
+		
 	default:
 		break;
 	}
@@ -55,32 +58,5 @@ void UTrackGunStateComponent::UseCurrentAbility(FHitResult& HitResult) {
 
 void UTrackGunStateComponent::ChangeGunState(EGunStateHandler NewGunState) {
 	GunState = NewGunState;
-	if (GEngine)
-	{
-		FString StateName;
-
-		switch (GunState)
-		{
-		case EGunStateHandler::Freeze:
-			StateName = "Freeze";
-			break;
-		case EGunStateHandler::Grab:
-			StateName = "Grab";
-			break;
-		case EGunStateHandler::Recall:
-			StateName = "Recall";
-			break;
-		default:
-			StateName = "None";
-			break;
-		}
-
-		GEngine->AddOnScreenDebugMessage(
-			-1, // Message key (-1 means add a new message)
-			5.0f, // Duration
-			FColor::Cyan,
-			FString::Printf(TEXT("GunState changed to: %s"), *StateName)
-		);
-	}
 }
 

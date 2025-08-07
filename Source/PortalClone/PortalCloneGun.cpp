@@ -50,9 +50,7 @@ void APortalCloneGun::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor
 
 		if (OtherActor->IsA(APortalCloneCharacter::StaticClass())) {
 
-			APortalCloneCharacter* Player = Cast<APortalCloneCharacter>(OtherActor);
-
-			if (Player) {
+			if (APortalCloneCharacter* Player = Cast<APortalCloneCharacter>(OtherActor)) {
 				
 				AttachWeapon(Player);
 
@@ -116,24 +114,15 @@ void APortalCloneGun::UnlockGunInput() {
 			EnhancedInputComponent->BindAction(ChangeGunStateAction, 
 				ETriggerEvent::Started, 
 				this, 
-				&APortalCloneGun::Test);
+				&APortalCloneGun::ShowtheAbilityWheel);
+
+			EnhancedInputComponent->BindAction(DropObjectAction,
+				ETriggerEvent::Started,
+				GunGrabComponent,
+				&UGunGrabComponent::InputDropObject);
 
 			OnShootVFX.AddDynamic(GunVFXComponent, &UGunVFXComponent::PlayVFX);
 			OnEndShootVFX.AddDynamic(GunVFXComponent, &UGunVFXComponent::StopVFX);
-		}
-	}
-}
-
-void APortalCloneGun::Test()
-{
-	if (!AbilityWheelWidgetInstance && AbilityWheelWidgetClass)
-	{
-		AbilityWheelWidgetInstance = CreateWidget<UAbilityWheelWidget>(UGameplayStatics::GetPlayerController(GetWorld(),0), AbilityWheelWidgetClass);
-
-		if (AbilityWheelWidgetInstance)
-		{
-			AbilityWheelWidgetInstance->AddToViewport();
-			UE_LOG(LogTemp, Warning, TEXT("Ability Wheel Widget created and added to viewport."));
 		}
 	}
 }

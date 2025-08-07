@@ -36,11 +36,14 @@ void UGunFireComponent::Fire() {
 		return;
 	}
 
-	//if the play has grabbed an object
-	if (GrabComponent->IsHoldingObject()) {
-		return;   
+	/*If the player is firing again,
+	// and he has grabbed an object, it will throw it */
+	if (GrabComponent && GrabComponent->IsHoldingObject())
+	{
+		GrabComponent->ThrowObject();
+		return;
 	}
-
+	
 	//Start the LineTrace
 	FVector Start = GunRef->GunSkeletalMesh->GetSocketLocation(GunRef->MuzzleSocketName());
 	FVector ForwardVector = GunRef->GunSkeletalMesh->
