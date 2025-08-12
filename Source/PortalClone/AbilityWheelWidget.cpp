@@ -3,98 +3,102 @@
 
 #include "AbilityWheelWidget.h"
 
-#include <ThirdParty/ShaderConductor/ShaderConductor/External/DirectXShaderCompiler/include/dxc/DXIL/DxilConstants.h>
-
 #include "PortalCloneCharacter.h"
 #include "PortalCloneGun.h"
 #include "TrackGunStateComponent.h"
 #include "Components/Button.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 void UAbilityWheelWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-
+	bIsFocusable = true;
+	
 	if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
 	{
 		PlayerController->bShowMouseCursor = true;
 
+		//Set the input only for the Widget
 		FInputModeUIOnly InputMode;
 		InputMode.SetWidgetToFocus(TakeWidget());
 		InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-
 		PlayerController->SetInputMode(InputMode);
-	}
-	
-	if (AbilityFreeze)
-	{
-		AbilityFreeze->OnClicked.AddDynamic(this, &UAbilityWheelWidget::OnFreezeClicked);
-	}
 
-	if (AbilityGrab)
-	{
-		AbilityGrab->OnClicked.AddDynamic(this, &UAbilityWheelWidget::OnGrabClicked);
-	}
+		//stop the camera moving 
+		PlayerController->SetIgnoreLookInput(true);
+		PlayerController->SetIgnoreMoveInput(true);
+		
+		//Get the player to prevent it from moving and get a reference to TrackAbility
+		if (APortalCloneCharacter* Character = Cast<APortalCloneCharacter>(PlayerController->GetPawn()))
+		{
+			Character->GetCharacterMovement()->DisableMovement();
 
-	if (AbilityRecall)
-	{
-		AbilityRecall->OnClicked.AddDynamic(this, &UAbilityWheelWidget::OnRecallClicked) ;
+			if (!Character->EquippedGun)
+				return;
+
+			if (Character->EquippedGun->IsA<APortalCloneGun>())
+			{
+				TrackGunAbility = Character->EquippedGun->TrackGunAbility;
+			}
+		}
+
+		//show the buttons that the player has unlocked
+		SetupAbility(AbilityFreeze,
+			TrackGunAbility->CanFreezeObject(),
+			FName("OnFreezeClicked"));
+
+		SetupAbility(AbilityGrab,
+			TrackGunAbility->CanGrabObject(),
+			FName("OnGrabClicked"));
+
+		SetupAbility(AbilityRecall,
+			TrackGunAbility->CanRecallObject(),
+			FName("OnRecallClicked"));
 	}
+}
+
+FReply UAbilityWheelWidget::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	if (InKeyEvent.GetKey() == EKeys::Q)
+	{
+		OnRequestClose.Broadcast();
+		return FReply::Handled();
+	}
+	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);
 }
 
 void UAbilityWheelWidget::OnFreezeClicked()
 {
-	if (APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0))
-	{
-		if (APortalCloneCharacter* CharacterRef = Cast<APortalCloneCharacter>(PlayerController->GetPawn()))
-		{
-			GunStateComponent = CharacterRef->EquippedGun->TrackGunAbility;
-			if (GunStateComponent)
-			{
-				GunStateComponent->ChangeGunState(EGunStateHandler::Freeze);
-
-				PlayerController->bShowMouseCursor = false;
-
-				PlayerController->SetInputMode(FInputModeGameOnly());
-			}
-		}
-	}
+	TrackGunAbility->ChangeGunState(EGunStateHandler::Freeze);
 }
 
 void UAbilityWheelWidget::OnGrabClicked()
 {
-	if (APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0))
-	{
-		if (APortalCloneCharacter* CharacterRef = Cast<APortalCloneCharacter>(PlayerController->GetPawn()))
-		{
-			GunStateComponent = CharacterRef->EquippedGun->TrackGunAbility;
-			if (GunStateComponent)
-			{
-				GunStateComponent->ChangeGunState(EGunStateHandler::Grab);
-
-				PlayerController->bShowMouseCursor = false;
-
-				PlayerController->SetInputMode(FInputModeGameOnly());
-			}
-		}
-	}
+	TrackGunAbility->ChangeGunState(EGunStateHandler::Grab);
 }
 
 void UAbilityWheelWidget::OnRecallClicked()
 {
-	if (APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0))
+	TrackGunAbility->ChangeGunState(EGunStateHandler::Recall);
+}
+
+void UAbilityWheelWidget::SetupAbility(UButton* Button, const bool bIsUnlocked, const FName HandlerName)
+{
+	if (!Button)
+		return;
+
+	Button->SetVisibility(bIsUnlocked ? ESlateVisibility::Visible : ESlateVisibility::Collapsed);
+
+	if (bIsUnlocked)
 	{
-		if (APortalCloneCharacter* CharacterRef = Cast<APortalCloneCharacter>(PlayerController->GetPawn()))
+		Button->OnClicked.Clear();
+
+		if (FindFunction(HandlerName))
 		{
-			GunStateComponent = CharacterRef->EquippedGun->TrackGunAbility;
-			if (GunStateComponent)
-			{
-				GunStateComponent->ChangeGunState(EGunStateHandler::Recall);
-
-				PlayerController->bShowMouseCursor = false;
-
-				PlayerController->SetInputMode(FInputModeGameOnly());
-			}
+			FScriptDelegate Delegate;
+			Delegate.BindUFunction(this, HandlerName);
+			Button->OnClicked.Add(Delegate);
 		}
 	}
 }

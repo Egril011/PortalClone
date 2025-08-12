@@ -8,26 +8,35 @@
 
 class UTrackGunStateComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnRequestClose);
+
 UCLASS()
 class PORTALCLONE_API UAbilityWheelWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
-	virtual void NativeConstruct() override;
-	
+	virtual void NativeConstruct() override;\
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+
+	//BroadCast
+	UPROPERTY(BlueprintAssignable, Category="Event")
+	FOnRequestClose OnRequestClose;
+
+protected:
+	//Change the gun's state for the freeze
 	UPROPERTY(meta = (BindWidget))
 	class UButton* AbilityFreeze;
 
+	//Change the gun's state for the grab
 	UPROPERTY(meta = (BindWidget))
 	class UButton* AbilityGrab;
 
+	//Change the gun's state for the recall
 	UPROPERTY(meta = (BindWidget))
 	class UButton* AbilityRecall;
 
 private:
-	UTrackGunStateComponent* GunStateComponent;
-
 	UFUNCTION()
 	void OnFreezeClicked();
 
@@ -36,4 +45,8 @@ private:
 
 	UFUNCTION()
 	void OnRecallClicked();
+
+	void SetupAbility(UButton* Button, bool bIsUnlocked, FName HandlerName);
+
+	UTrackGunStateComponent*  TrackGunAbility;
 };

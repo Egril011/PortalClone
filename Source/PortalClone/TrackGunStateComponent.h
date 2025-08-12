@@ -23,25 +23,17 @@ public:
 	bool CanGrabObject() const { return bGrabObject; }
 	void UnlockGrabObject() { bGrabObject = true; }
 	void LockGrabObject() { bGrabObject = false; }
-
-	bool CanThrowObject() const { return bThrowObject; }
-	void UnlockThrowObject() { bThrowObject = true; }
-	void LockThrowObject() { bThrowObject = false; }
-
-	bool CanDropObject() const { return bDropObject; }
-	void UnlockDropObject() { bDropObject = true; }
-	void LockDropObject() { bDropObject = false; }
-
+	
 	bool CanFreezeObject() const { return bFreezeObject; }
 	void UnlockFreezeObject() { bFreezeObject = true; }
 	void LockFreezeObject() { bFreezeObject = false; }
 
-	bool CanSpeedObject() const { return bSpeedObject; }
-	void UnlockSpeedObject() { bSpeedObject = true; }
-	void LockSpeedObject() { bSpeedObject = false; }
+	bool CanRecallObject() const { return bRecallObject; }
+	void UnlockRecallObject() { bRecallObject = true; }
+	void LockRecallObject() { bRecallObject = false; }
 
 	//Apply the appropriate effect depending on the gun's state
-	void UseCurrentAbility(const FHitResult& HitResult);
+	void UseCurrentAbility(const FHitResult& HitResult) const;
 
 	//Change the Gun's state
 	void ChangeGunState(EGunStateHandler NewGunState);
@@ -51,10 +43,8 @@ protected:
 
 private:
 	bool bGrabObject;
-	bool bThrowObject;
-	bool bDropObject;
 	bool bFreezeObject;
-	bool bSpeedObject;
+	bool bRecallObject;
 
 	EGunStateHandler GunState;
 	UGunGrabComponent* GrabComponent;

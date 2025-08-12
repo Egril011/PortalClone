@@ -8,13 +8,13 @@
 #include "PortalCloneCharacter.h"
 #include "Components/SphereComponent.h"
 #include "Delegates/Delegate.h"
-#include "Blueprint/UserWidget.h"
 #include "PortalCloneGun.generated.h"
 
 class UTrackGunStateComponent;
 class UGunFireComponent;
 class UGunGrabComponent;
 class UGunVFXComponent;
+class UAbilityWheelComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnShootVFX, FName, VFXName);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEndShootVFX);
@@ -67,6 +67,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "GunComponent")
 	UGunVFXComponent* GunVFXComponent;
 
+	UPROPERTY(EditAnywhere, Category = "GunComponent")
+	UAbilityWheelComponent* AbilityWheelComponent;
+
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	USceneComponent* MuzzleSceneGrabbedObject;
 
@@ -83,6 +86,7 @@ protected:
 
 private:
 	/** The Character holding this weapon*/
+	UPROPERTY()
 	APortalCloneCharacter* Character;
 
 	//To get the Muzzle's name from the gun's skeleton 

@@ -18,13 +18,14 @@ class PORTALCLONE_API UGunVFXComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UGunVFXComponent();
-
-public:
-	virtual void BeginPlay() override;
 	
+	virtual void BeginPlay() override;
+
+	//method to play the VFX
 	UFUNCTION()
 	void PlayVFX(FName VFXEffect);
 
+	//method to stop the VFX
 	UFUNCTION()
 	void StopVFX();
 

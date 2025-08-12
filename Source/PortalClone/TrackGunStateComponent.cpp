@@ -5,15 +5,13 @@
 #include "PortalCloneGun.h"
 
 // Sets default values for this component's properties
-UTrackGunStateComponent::UTrackGunStateComponent()
+UTrackGunStateComponent::UTrackGunStateComponent(): GrabComponent(nullptr), GunRef(nullptr)
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
 	bGrabObject = false;
-	bThrowObject = false;
-	bDropObject = false;
 	bFreezeObject = false;
-	bSpeedObject = false;
+	bRecallObject = false;
 	GunState = EGunStateHandler::Default;
 }
 
@@ -34,17 +32,20 @@ void UTrackGunStateComponent::BeginPlay() {
 	}
 }
 
-void UTrackGunStateComponent::UseCurrentAbility(const FHitResult& HitResult) {
-
+void UTrackGunStateComponent::UseCurrentAbility(const FHitResult& HitResult) const
+{
 	switch (GunState) {
 	case EGunStateHandler::Freeze:
-		if (CanFreezeObject()) {
+		if (bFreezeObject) {
 			
 		}
 		break;
 
 	case EGunStateHandler::Grab:
-		GrabComponent->GrabObject(HitResult);
+		if (bGrabObject && GrabComponent)
+		{
+			GrabComponent->GrabObject(HitResult);
+		}
 		break;
 
 	case EGunStateHandler::Recall:
@@ -56,7 +57,7 @@ void UTrackGunStateComponent::UseCurrentAbility(const FHitResult& HitResult) {
 	}
 }
 
-void UTrackGunStateComponent::ChangeGunState(EGunStateHandler NewGunState) {
+void UTrackGunStateComponent::ChangeGunState(const EGunStateHandler NewGunState) {
 	GunState = NewGunState;
 }
 

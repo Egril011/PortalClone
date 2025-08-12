@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "PortalCloneGun.h"
 
-#include "AbilityWheelWidget.h"
+#include "AbilityWheelComponent.h"
 #include "PortalCloneCharacter.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
@@ -9,20 +9,14 @@
 #include "UObject/Class.h"     
 #include "UObject/ObjectMacros.h"
 #include "UObject/UObjectGlobals.h"
-#include "UObject/PropertyAccessUtil.h"
 #include "GunFireComponent.h"
 #include "GunGrabComponent.h"
 #include "TrackGunStateComponent.h"
 #include "GunVFXComponent.h"
-#include "Blueprint/UserWidget.h"
-#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 APortalCloneGun::APortalCloneGun()
 {
-	PrimaryActorTick.bCanEverTick = true;
-	SetActorTickEnabled(true);
-
 	//Set the Muzzle scene to the original
 	GunSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMesh"));
 	RootComponent = GunSkeletalMesh;
@@ -40,6 +34,7 @@ APortalCloneGun::APortalCloneGun()
 	GunGrabComponent = CreateDefaultSubobject<UGunGrabComponent>(TEXT("GunGrabComponent"));
 	TrackGunAbility = CreateDefaultSubobject<UTrackGunStateComponent>(TEXT("TrackGunAbility"));
 	GunVFXComponent = CreateDefaultSubobject<UGunVFXComponent>(TEXT("GunVFXComponent"));
+	AbilityWheelComponent = CreateDefaultSubobject<UAbilityWheelComponent>(TEXT("AbilityWheelComponent"));
 }
 
 void APortalCloneGun::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
@@ -111,15 +106,15 @@ void APortalCloneGun::UnlockGunInput() {
 				GunFireComponent,
 				&UGunFireComponent::Fire);
 
-			EnhancedInputComponent->BindAction(ChangeGunStateAction, 
-				ETriggerEvent::Started, 
-				this, 
-				&APortalCloneGun::ShowtheAbilityWheel);
-
 			EnhancedInputComponent->BindAction(DropObjectAction,
 				ETriggerEvent::Started,
 				GunGrabComponent,
 				&UGunGrabComponent::InputDropObject);
+				
+			EnhancedInputComponent->BindAction(ChangeGunStateAction,
+				ETriggerEvent::Started,
+				AbilityWheelComponent,
+				&UAbilityWheelComponent::ToggleAbilityWheel);
 
 			OnShootVFX.AddDynamic(GunVFXComponent, &UGunVFXComponent::PlayVFX);
 			OnEndShootVFX.AddDynamic(GunVFXComponent, &UGunVFXComponent::StopVFX);

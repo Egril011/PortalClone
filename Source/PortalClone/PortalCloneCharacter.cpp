@@ -147,7 +147,7 @@ void APortalCloneCharacter::CheckInteractable() {
 
 		AActor* HitActor = HitResult.GetActor();
 
-		//See if the hitted object has the interface
+		//See if the player hit an object that has the interface
 		if (HitActor->Implements<UInteractableInterface>()) {
 			IInteractableInterface::Execute_Interact(HitActor);
 		}	

@@ -84,6 +84,7 @@ protected:
 public:
 	/** Returns Mesh1P subobject **/
 	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
+	
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
@@ -93,7 +94,7 @@ private:
 	void Sprint();
 	void StopSprinting();
 
-	//method to intect with objects
+	//method to interact with objects
 	void CheckInteractable();
 };
 
