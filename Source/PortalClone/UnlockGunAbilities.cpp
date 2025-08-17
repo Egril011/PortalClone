@@ -22,10 +22,10 @@ void AUnlockGunAbilities::Interact_Implementation()
 		{
 			const APortalCloneCharacter* PortalPlayer = Cast<APortalCloneCharacter>(Player);
 
-			if (!PortalPlayer)
+			if (!IsValid(PortalPlayer))
 				return;
 
-			if (!PortalPlayer->EquippedGun)
+			if (!IsValid(PortalPlayer->EquippedGun))
 				return;
 
 			if (!PortalPlayer->EquippedGun->IsA<APortalCloneGun>())
@@ -33,7 +33,7 @@ void AUnlockGunAbilities::Interact_Implementation()
 
 			UTrackGunStateComponent* TrackGunStateComponent = PortalPlayer->EquippedGun->TrackGunAbility;
 
-			if (!TrackGunStateComponent)
+			if (!IsValid(TrackGunStateComponent))
 				return;
 
 			for (const auto UnlockAbility : GunStateHandlers)

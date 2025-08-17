@@ -1,0 +1,8 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "RecallableInterface.h"
+
+URecallableInterface::URecallableInterface()
+{
+}
