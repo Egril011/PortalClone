@@ -5,10 +5,13 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "PressableInterface.h"
+#include "RecallableInterface.h"
 #include "NormalCube.generated.h"
 
+class URecallComponent;
+
 UCLASS()
-class PORTALCLONE_API ANormalCube : public AActor, public IPressableInterface
+class PORTALCLONE_API ANormalCube : public AActor, public IPressableInterface, public IRecallableInterface
 {
 	GENERATED_BODY()
 	
@@ -22,5 +25,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StaticMesh")
 	UStaticMeshComponent* StaticMesh;
 
+	//Component
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
+	URecallComponent* RecallComponent;
+	
 	virtual void OnPlatePressed_Implementation() override;
+	virtual void Recallable_Implementation() override;
 };

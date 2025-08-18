@@ -3,10 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UObject/Interface.h"
+#include "RecallableInterface.generated.h" 
 
 UINTERFACE(MinimalAPI)
-
-class PORTALCLONE_API URecallableInterface : public UInterface
+class URecallableInterface : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -16,6 +17,6 @@ class IRecallableInterface
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="Recallable")
 	void Recallable();
 };

@@ -3,6 +3,3 @@
 
 #include "RecallableInterface.h"
 
-URecallableInterface::URecallableInterface()
-{
-}

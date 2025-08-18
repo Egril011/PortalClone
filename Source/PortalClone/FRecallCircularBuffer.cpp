@@ -55,3 +55,10 @@ int FRecallCircularBuffer::GetSize() const
 	return Count;
 }
 
+void FRecallCircularBuffer::Clear()
+{
+	Head = 0;
+	Count = 0;
+	Buffer.SetNumZeroed(Capacity);
+}
+

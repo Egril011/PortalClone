@@ -6,10 +6,12 @@
 #include "GameFramework/Actor.h"
 #include "InputAction.h"
 #include "PortalCloneCharacter.h"
+#include "RecallComponent.h"
 #include "Components/SphereComponent.h"
 #include "Delegates/Delegate.h"
 #include "PortalCloneGun.generated.h"
 
+class UGunRecallComponent;
 class UTrackGunStateComponent;
 class UGunFireComponent;
 class UGunGrabComponent;
@@ -63,6 +65,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "GunComponent")
 	UGunGrabComponent* GunGrabComponent;
+
+	UPROPERTY(EditAnywhere, Category = "GunComponent")
+	UGunRecallComponent* GunRecallComponent;
 
 	UPROPERTY(EditAnywhere, Category = "GunComponent")
 	UGunVFXComponent* GunVFXComponent;

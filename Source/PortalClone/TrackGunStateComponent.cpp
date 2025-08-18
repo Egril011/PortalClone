@@ -2,6 +2,7 @@
 
 #include "TrackGunStateComponent.h"
 #include "GunGrabComponent.h"
+#include "GunRecallComponent.h"
 #include "PortalCloneGun.h"
 
 // Sets default values for this component's properties
@@ -27,6 +28,7 @@ void UTrackGunStateComponent::BeginPlay() {
 
 			if (GunRef) {
 				GrabComponent = GunRef->GunGrabComponent;
+				GunRecallComponent = GunRef->GunRecallComponent;
 			}
 		}
 	}
@@ -49,7 +51,8 @@ void UTrackGunStateComponent::UseCurrentAbility(const FHitResult& HitResult) con
 		break;
 
 	case EGunStateHandler::Recall:
-
+		if (bRecallObject && GunRecallComponent)
+			GunRecallComponent->Recall(HitResult);		
 		break;
 		
 	default:

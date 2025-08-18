@@ -13,7 +13,7 @@
 void UAbilityWheelWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	bIsFocusable = true;
+	SetIsFocusable(true);
 	
 	if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
 	{

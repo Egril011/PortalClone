@@ -20,6 +20,7 @@ public:
 	
 	bool IsFull() const;
 	int GetSize() const;
+	void Clear();
 
 private:
 	struct FCircularBufferSave

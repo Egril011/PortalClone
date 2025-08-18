@@ -7,6 +7,7 @@
 #include "EGunStateHandler.h"
 #include "TrackGunStateComponent.generated.h"
 
+class UGunRecallComponent;
 class UGunGrabComponent;
 class APortalCloneGun;
 
@@ -48,5 +49,6 @@ private:
 
 	EGunStateHandler GunState;
 	UGunGrabComponent* GrabComponent;
+	UGunRecallComponent* GunRecallComponent;
 	APortalCloneGun* GunRef;
 };

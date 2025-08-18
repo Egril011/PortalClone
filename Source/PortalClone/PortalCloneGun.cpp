@@ -11,8 +11,10 @@
 #include "UObject/UObjectGlobals.h"
 #include "GunFireComponent.h"
 #include "GunGrabComponent.h"
+#include "GunRecallComponent.h"
 #include "TrackGunStateComponent.h"
 #include "GunVFXComponent.h"
+#include "RecallComponent.h"
 
 // Sets default values
 APortalCloneGun::APortalCloneGun()
@@ -35,6 +37,7 @@ APortalCloneGun::APortalCloneGun()
 	TrackGunAbility = CreateDefaultSubobject<UTrackGunStateComponent>(TEXT("TrackGunAbility"));
 	GunVFXComponent = CreateDefaultSubobject<UGunVFXComponent>(TEXT("GunVFXComponent"));
 	AbilityWheelComponent = CreateDefaultSubobject<UAbilityWheelComponent>(TEXT("AbilityWheelComponent"));
+	GunRecallComponent = CreateDefaultSubobject<UGunRecallComponent>(TEXT("RecallComponent"));
 }
 
 void APortalCloneGun::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
