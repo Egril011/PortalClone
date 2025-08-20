@@ -16,7 +16,7 @@ public:
 	// Sets default values for this component's properties
 	URecallComponent();
 
-	void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction);
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	void StartRecall();
 
@@ -25,6 +25,9 @@ protected:
 	virtual void BeginPlay() override;
 	
 private:
+	UPROPERTY(EditAnywhere, Category = "Recall", meta = (AllowPrivateAccess = "true"))
+	float RecallSpeed;
+	
 	// Timer variables 
 	FTimerHandle TimerHandle;
 	float IntervalTime = 0.10f;
@@ -34,12 +37,16 @@ private:
 	float RotThresDegree = 3.0f;
 
 	bool bRecalling;
+	
 	FVector LastPosition;
 	FQuat LastRotation;
-	int IndexFromNewest;
-	float RecallStepAcc;
 	
-	FRecallCircularBuffer RecallCircularBuffer{250};
+	int IndexFromNewest;
+	int IndexFromOlder;
+
+	float RecallDeltaTimeAcc;
+	
+	FRecallCircularBuffer RecallCircularBuffer;
 
 	void RecordObject();
 	void Recalling(float DeltaTime);

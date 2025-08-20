@@ -3,11 +3,11 @@
 
 #include "RecallComponent.h"
 
-#include "Constraint.h"
-#include "Net/Core/Analytics/NetStatsUtils.h"
-
 // Sets default values for this component's properties
-URecallComponent::URecallComponent(): bRecalling(false), LastPosition(), LastRotation(), IndexFromNewest(0)
+URecallComponent::URecallComponent() : RecallSpeed(1), bRecalling(false), LastPosition(), LastRotation(),
+                                       IndexFromNewest(0),
+                                       IndexFromOlder(0),
+                                       RecallDeltaTimeAcc(0), RecallCircularBuffer(250)
 {
 	PrimaryComponentTick.bStartWithTickEnabled = true;
 	PrimaryComponentTick.bCanEverTick = true;
@@ -22,6 +22,7 @@ void URecallComponent::BeginPlay()
 	LastPosition = GetOwner()->GetActorLocation();
 	LastRotation = GetOwner()->GetActorQuat();
 
+	//Start the timer
 	GetWorld()->GetTimerManager().SetTimer(
 		TimerHandle,
 		this,
@@ -38,7 +39,6 @@ void URecallComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	if (bRecalling)
 		Recalling(DeltaTime);
 }
-
 
 void URecallComponent::RecordObject()
 {
@@ -59,23 +59,9 @@ void URecallComponent::RecordObject()
 		LastPosition = PositionSave;
 		LastRotation = RotationSave;
 		
-		if (GEngine)
-		{
-			FString DebugMsg = FString::Printf(
-				TEXT("Last Pos: %s  |  Last Rot: %s"),
-				*LastPosition.ToString(),
-				*LastRotation.ToString()
-			);
-
-			GEngine->AddOnScreenDebugMessage(
-				-1,
-				5.f,
-				FColor::Red,
-				DebugMsg
-			);
-		}
+		FString DebugMsg1 = FString::Printf(TEXT("Count: %d"), RecallCircularBuffer.GetSize());
+		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, DebugMsg1);
 	}
-
 }
 
 void URecallComponent::StartRecall()
@@ -86,9 +72,14 @@ void URecallComponent::StartRecall()
 		return;
 	}
 	
+	bRecalling = true;
 	IndexFromNewest = 0;
-	RecallStepAcc = 0.0f;
-	
+	IndexFromOlder  = 1;
+	RecallDeltaTimeAcc = 0.f;
+
+	GetWorld()->GetTimerManager().PauseTimer(TimerHandle);
+
+	//Remove the physic and the gravity from the object
 	if (UPrimitiveComponent* Root = Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent()))
 	{
 		if (Root->IsAnySimulatingPhysics())
@@ -98,53 +89,76 @@ void URecallComponent::StartRecall()
 		Root->SetPhysicsLinearVelocity(FVector::ZeroVector);
 		Root->SetPhysicsAngularVelocityInDegrees(FVector::ZeroVector);
 	}
-
-	bRecalling = true;
 }
 
-void URecallComponent::Recalling(float DeltaTime)
+void URecallComponent::Recalling(const float DeltaTime)
 {
 	if (!bRecalling)
 		return;
-
-	RecallStepAcc += DeltaTime * 1;
-
-	while (RecallStepAcc >= IntervalTime)
+	
+	RecallDeltaTimeAcc -= DeltaTime * RecallSpeed;
+	
+	while (true)
 	{
-		FVector Position;
-		FQuat Rotation;
-		float TimeSeconds;
+		// A = Newest & B = older
+		FVector PositionA, PositionB;
+		FQuat RotationA, RotationB;
+		float TimeSecondsA, TimeSecondsB;
 
-		if (!RecallCircularBuffer.GetNewest(IndexFromNewest,Position, Rotation,TimeSeconds))
+		// Search the information if they exist
+		if (!RecallCircularBuffer.GetNewest(IndexFromNewest, PositionA, RotationA, TimeSecondsA) ||
+			!RecallCircularBuffer.GetNewest(IndexFromOlder, PositionB, RotationB, TimeSecondsB))
 		{
 			StopRecall();
 			return;
 		}
 
-		GetOwner()->SetActorLocationAndRotation(Position, Rotation, false, nullptr, ETeleportType::TeleportPhysics);
+		float TimeDuration = TimeSecondsA - TimeSecondsB;
 
-		if (GEngine)
+		if (TimeDuration <= KINDA_SMALL_NUMBER)
 		{
-			FString DebugMsg = FString::Printf(
-				TEXT("New Pos: %s  |  new Rot: %s"),
-				*Position.ToString(),
-				*Rotation.ToString()
-			);
+			IndexFromNewest++;
+			IndexFromOlder++;
+			continue;
+		}
+		
+		float TargetTime = TimeSecondsA + RecallDeltaTimeAcc;
 
-			GEngine->AddOnScreenDebugMessage(
-				-1,
-				5.f,
-				FColor::Red,
-				DebugMsg
-			);
+		if (TargetTime >= TimeSecondsB && TargetTime <= TimeSecondsA)
+		{
+			float Alpha = (TargetTime - TimeSecondsB) / TimeDuration;
+
+			FVector NewPosition = FMath::Lerp(PositionB, PositionA, Alpha);
+			FQuat NewRotation = FQuat::Slerp(RotationB, RotationA, Alpha).GetNormalized();
+
+			GetOwner()->SetActorLocationAndRotation(NewPosition, NewRotation, false, nullptr, ETeleportType::TeleportPhysics);
+			break;
 		}
 
-		IndexFromNewest++;
-		RecallStepAcc -= IntervalTime;
-
-		if (IndexFromNewest >= RecallCircularBuffer.GetSize())
+		if (TargetTime < TimeSecondsB)
 		{
+			RecallDeltaTimeAcc += TimeDuration; 
+			IndexFromNewest++;
+			IndexFromOlder++;
+
+			if (IndexFromOlder >= RecallCircularBuffer.GetSize())
+			{
+				GetOwner()->SetActorLocationAndRotation(PositionB, RotationB,
+					false, nullptr, ETeleportType::None);
+				
+				StopRecall();
+				return;
+			}
+			continue;
+		}
+
+		if (TargetTime > TimeSecondsA)
+		{
+			GetOwner()->SetActorLocationAndRotation(PositionA, RotationA,
+				false, nullptr, ETeleportType::None);
+
 			StopRecall();
+			return;
 		}
 	}
 }
@@ -160,10 +174,9 @@ void URecallComponent::StopRecall()
 	{
 		Root->SetEnableGravity(true);
 		Root->SetSimulatePhysics(true);
-
-		GEngine->AddOnScreenDebugMessage(-1,5.0f, FColor::Red, "StopRecall");
 	}
 
+	GetWorld()->GetTimerManager().UnPauseTimer(TimerHandle);
 	RecallCircularBuffer.Clear();
 }
 

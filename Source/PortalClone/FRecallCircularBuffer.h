@@ -7,6 +7,7 @@
 class PORTALCLONE_API FRecallCircularBuffer
 {
 public:
+	FRecallCircularBuffer(); 
 	explicit FRecallCircularBuffer(int _capacity);
 	~FRecallCircularBuffer();
 

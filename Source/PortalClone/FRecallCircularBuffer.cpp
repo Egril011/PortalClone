@@ -3,6 +3,10 @@
 
 #include "FRecallCircularBuffer.h"
 
+FRecallCircularBuffer::FRecallCircularBuffer()
+{
+}
+
 FRecallCircularBuffer::FRecallCircularBuffer(int _capacity): Capacity(_capacity)
 {
 	if (Capacity <= 0)
@@ -25,7 +29,9 @@ void FRecallCircularBuffer::Push_Head(const FVector& Position, const FQuat& Rota
 	Head = (Head + 1) % Capacity;
 
 	if (Count < Capacity)
+	{
 		Count++;
+	}
 }
 
 bool FRecallCircularBuffer::GetNewest(int IndexFromNewest, FVector& OutPosition, FQuat& OutRotation,

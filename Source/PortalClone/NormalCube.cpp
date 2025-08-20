@@ -29,5 +29,6 @@ void ANormalCube::Recallable_Implementation()
 {
 	if (!RecallComponent)
 		return;
+	
 	RecallComponent->StartRecall();
 }
