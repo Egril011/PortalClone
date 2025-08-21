@@ -58,9 +58,6 @@ void URecallComponent::RecordObject()
 
 		LastPosition = PositionSave;
 		LastRotation = RotationSave;
-		
-		FString DebugMsg1 = FString::Printf(TEXT("Count: %d"), RecallCircularBuffer.GetSize());
-		GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, DebugMsg1);
 	}
 }
 
@@ -115,6 +112,7 @@ void URecallComponent::Recalling(const float DeltaTime)
 
 		float TimeDuration = TimeSecondsA - TimeSecondsB;
 
+		// make sure TimeDuration is grater than 0.0001
 		if (TimeDuration <= KINDA_SMALL_NUMBER)
 		{
 			IndexFromNewest++;
@@ -156,8 +154,7 @@ void URecallComponent::Recalling(const float DeltaTime)
 		{
 			GetOwner()->SetActorLocationAndRotation(PositionA, RotationA,
 				false, nullptr, ETeleportType::None);
-
-			StopRecall();
+			
 			return;
 		}
 	}
