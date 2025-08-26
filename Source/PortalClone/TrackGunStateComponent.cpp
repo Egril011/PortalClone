@@ -52,7 +52,7 @@ void UTrackGunStateComponent::UseCurrentAbility(const FHitResult& HitResult) con
 
 	case EGunStateHandler::Recall:
 		if (bRecallObject && GunRecallComponent)
-			GunRecallComponent->Recall(HitResult);		
+			GunRecallComponent->Recall(HitResult);
 		break;
 		
 	default:

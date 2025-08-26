@@ -8,6 +8,8 @@
 #include "ActivatableInterface.h"
 #include "InteractableButton.generated.h"
 
+class UInteractableTriggerComponent;
+
 UCLASS()
 class PORTALCLONE_API AInteractableButton : public AActor, public IInteractableInterface
 {
@@ -26,6 +28,9 @@ protected:
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "ActivatableTarget")
 	AActor* ActivatableTarget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "InteractableWidget")
+	UInteractableTriggerComponent* InteractableTriggerComponent;
 
 private:
 	virtual void Interact_Implementation() override;

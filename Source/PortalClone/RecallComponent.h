@@ -7,6 +7,8 @@
 #include "Components/ActorComponent.h"
 #include "RecallComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnRecallEvent);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PORTALCLONE_API URecallComponent : public UActorComponent
 {
@@ -19,6 +21,12 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	void StartRecall();
+
+	//to know if it's recalling 
+	bool IsRecalling() const {return bRecalling;};
+	
+	UPROPERTY(BlueprintAssignable, Category="Recall")
+	FOnRecallEvent OnRecallFinished;
 
 protected:
 	// Called when the game starts

@@ -68,6 +68,9 @@ void URecallComponent::StartRecall()
 		StopRecall();
 		return;
 	}
+
+	if (bRecalling)
+		return;
 	
 	bRecalling = true;
 	IndexFromNewest = 0;
@@ -174,6 +177,7 @@ void URecallComponent::StopRecall()
 	}
 
 	GetWorld()->GetTimerManager().UnPauseTimer(TimerHandle);
+	OnRecallFinished.Broadcast();
 	RecallCircularBuffer.Clear();
 }
 

@@ -4,6 +4,7 @@
 #include "PressurePlate.h"
 #include "DoorPressedPlate.h"
 #include "PressableInterface.h"
+#include "RecallComponent.h"
 
 // Sets default values
 APressurePlate::APressurePlate()
@@ -27,7 +28,7 @@ void APressurePlate::BeginPlay() {
 
 	Super::BeginPlay();
 
-	StaticMesh->SetMaterial(1, NoActivateColour);
+	TogglePlate(false);
 }
 
 void APressurePlate::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
@@ -43,14 +44,7 @@ void APressurePlate::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor*
 	if (StaticMesh && ActivateColour && 
 		OtherActor->GetClass()->ImplementsInterface(UPressableInterface::StaticClass()))
 	{
-		StaticMesh->SetMaterial(1, ActivateColour);
-		
-		_IsActivate = true;
-
-		if (DoorPressedPlate) {
-
-			DoorPressedPlate->ArePlateChanged();
-		}
+		TogglePlate(true);
 	}
 }
 
@@ -66,10 +60,29 @@ void APressurePlate::OnOverlapEnd(UPrimitiveComponent* OverlappedComp,
 	if (StaticMesh && NoActivateColour &&
 		OtherActor->GetClass()->ImplementsInterface(UPressableInterface::StaticClass()))
 	{
-		StaticMesh->SetMaterial(1, NoActivateColour);
-
-		_IsActivate = false;
-
-		DoorPressedPlate->ArePlateChanged();
+		if (auto* Recall = OtherActor->FindComponentByClass<URecallComponent>())
+		{
+			if (Recall->IsRecalling())
+			{
+				Recall->OnRecallFinished.AddUniqueDynamic(this, &APressurePlate::HandleRecallObject);
+				return;
+			}
+		}
+		TogglePlate(false);
 	}
+}
+
+void APressurePlate::TogglePlate(bool bActivate)
+{
+	bIsActivate = bActivate;
+	
+	StaticMesh->SetMaterial(1, this->bIsActivate ? ActivateColour : NoActivateColour);
+
+	if (DoorPressedPlate)
+		DoorPressedPlate->ArePlateChanged();
+}
+
+void APressurePlate::HandleRecallObject()
+{
+	TogglePlate(false);
 }

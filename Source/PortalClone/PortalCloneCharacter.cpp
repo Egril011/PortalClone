@@ -116,24 +116,28 @@ void APortalCloneCharacter::BeginPlay() {
 	NormalSpeed = GetCharacterMovement()->MaxWalkSpeed;
 }
 
-void APortalCloneCharacter::Sprint() {
+void APortalCloneCharacter::Sprint()
+{
 	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
-
-	if (GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Green, TEXT("Sprinting"));
 }
 
-void APortalCloneCharacter::StopSprinting() {
+void APortalCloneCharacter::StopSprinting()
+{
 	GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
 }
 
 void APortalCloneCharacter::CheckInteractable() {
 
 	// Start the LineTrace
-	FVector Start = GetActorLocation();
-	FVector ForwardVector = GetActorRotation().Vector();
-	FVector End = Start + (ForwardVector * 200.0f);
+	FVector CameraLocation;
+	FRotator CameraRotation;
 
+	GetController()->GetPlayerViewPoint(CameraLocation, CameraRotation);
+	
+	FVector Start = CameraLocation;
+	FVector ForwardVector = CameraRotation.Vector();
+	FVector End = Start + (ForwardVector * 500.0f);
+	
 	FHitResult HitResult;
 
 	bool bHit = GetWorld()->LineTraceSingleByChannel(

@@ -55,6 +55,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* DropObjectAction;
+
+	//Give a pointer to the character 
+	APortalCloneCharacter* GetCharacter() const {return Character.Get() ;};
 	
 	/*Gun Components*/
 	UPROPERTY(EditAnywhere, Category = "GunComponent")
@@ -92,7 +95,7 @@ protected:
 private:
 	/** The Character holding this weapon*/
 	UPROPERTY()
-	APortalCloneCharacter* Character;
+	TObjectPtr<APortalCloneCharacter> Character;
 
 	//To get the Muzzle's name from the gun's skeleton 
 	UPROPERTY(EditAnywhere, Category = "Weapon")

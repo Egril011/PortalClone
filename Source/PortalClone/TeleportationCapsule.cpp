@@ -43,7 +43,7 @@ ATeleportationCapsule::ATeleportationCapsule()
 	SceneTeleportation->SetupAttachment(SkeletonMeshCapsule);
 }
 
-//Interface inplemetation
+//Interface implementation
 void ATeleportationCapsule::Activate_Implementation() {
 
 	OpenDoor();

@@ -45,26 +45,38 @@ void UGunFireComponent::Fire() {
 	}
 	
 	//Start the LineTrace
-	FVector Start = GunRef->GunSkeletalMesh->GetSocketLocation(GunRef->MuzzleSocketName());
-	FVector ForwardVector = GunRef->GunSkeletalMesh->
-		GetSocketRotation(GunRef->MuzzleSocketName()).Vector();
+	FVector CameraLocation;
+	FRotator CameraRotation;
 
-	FVector End = Start + (ForwardVector * 1000.0f);
+	APortalCloneCharacter* Character = GunRef->GetCharacter();
+	
+	if (!IsValid(Character))
+		return;
 
-	FHitResult HitResult;
+	if (APlayerController* PlayerController = Cast<APlayerController>(Character->GetController()))
+	{
+		PlayerController->GetPlayerViewPoint(CameraLocation, CameraRotation);
 
-	bool bHit = GetWorld()->LineTraceSingleByChannel(
-		HitResult,
-		Start,
-		End,
-		ECC_Visibility
-	);
+		FVector Start = CameraLocation;
+		FVector ForwardVector = CameraRotation.Vector();
 
-	if (bHit) {
-		/*Debug*/
-		DrawDebugLine(GetWorld(), Start, End, FColor::Cyan, false, 10.0f, 0, 1.0f);
+		FVector End = Start + (ForwardVector * 1000.0f);
 
-		//Call the method that will apply the state based on the gun's effect
-		TrackGunAbilityRef->UseCurrentAbility(HitResult);
+		FHitResult HitResult;
+
+		bool bHit = GetWorld()->LineTraceSingleByChannel(
+			HitResult,
+			Start,
+			End,
+			ECC_Visibility
+		);
+
+		if (bHit) {
+			/*Debug*/
+			DrawDebugLine(GetWorld(), Start, End, FColor::Cyan, false, 10.0f, 0, 1.0f);
+
+			//Call the method that will apply the state based on the gun's effect
+			TrackGunAbilityRef->UseCurrentAbility(HitResult);
+		}
 	}
 }

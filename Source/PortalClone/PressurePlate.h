@@ -17,11 +17,10 @@ class PORTALCLONE_API APressurePlate : public AActor
 public:	
 	// Sets default values for this actor's properties
 	APressurePlate();
-	
-	void BeginPlay();
 
-public:
-	bool IsActivate() const { return _IsActivate; }
+	virtual void BeginPlay() override;
+	
+	bool IsActivate() const { return bIsActivate; }
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Skeleton")
@@ -49,7 +48,12 @@ protected:
 	ADoorPressedPlate* DoorPressedPlate;
 
 private: 
-	bool _IsActivate;
+	bool bIsActivate;
+	
+	void TogglePlate(bool bActivate);
+
+	UFUNCTION()
+	void HandleRecallObject();
 };
 
 
