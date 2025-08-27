@@ -39,6 +39,9 @@ public:
 	//Change the Gun's state
 	void ChangeGunState(EGunStateHandler NewGunState);
 
+	//Handle the mouse's right input
+	void HandleMouseRightInput();
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -49,6 +52,5 @@ private:
 
 	EGunStateHandler GunState;
 	UGunGrabComponent* GrabComponent;
-	UGunRecallComponent* GunRecallComponent;
-	APortalCloneGun* GunRef;
+	UGunRecallComponent* RecallComponent;
 };

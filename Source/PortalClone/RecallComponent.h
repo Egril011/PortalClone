@@ -20,11 +20,14 @@ public:
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	//Start the Recall
 	void StartRecall();
 
-	//to know if it's recalling 
+	//Stop the Recall
+	void StopRecall();
+
 	bool IsRecalling() const {return bRecalling;};
-	
+
 	UPROPERTY(BlueprintAssignable, Category="Recall")
 	FOnRecallEvent OnRecallFinished;
 
@@ -58,5 +61,4 @@ private:
 
 	void RecordObject();
 	void Recalling(float DeltaTime);
-	void StopRecall();
 };

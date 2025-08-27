@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "GunRecallComponent.generated.h"
 
+class URecallComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PORTALCLONE_API UGunRecallComponent : public UActorComponent
@@ -16,10 +17,18 @@ public:
 	// Sets default values for this component's properties
 	UGunRecallComponent();
 
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
-public:
 	void Recall(const FHitResult& HitResult);
+	void CancelRecall();
+
+private:
+	UPROPERTY()
+	TObjectPtr<AActor> ActorRef;
+
+	UPROPERTY()
+	TObjectPtr<URecallComponent> RecallComponent;
+	
+	bool bIsRecalling;
+
+	UFUNCTION()
+	void CleanUp();
 };

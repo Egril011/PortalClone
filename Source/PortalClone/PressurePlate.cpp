@@ -39,10 +39,9 @@ void APressurePlate::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor*
 		return;
 	}
 
-	/*Check if  the overlapping object implements the interface then change its colour and 
+	/*Check if the overlapping object implements the interface then change its colour and 
 	then check if the door can open*/
-	if (StaticMesh && ActivateColour && 
-		OtherActor->GetClass()->ImplementsInterface(UPressableInterface::StaticClass()))
+	if (StaticMesh && ActivateColour && OtherActor->Implements<UPressableInterface>())
 	{
 		TogglePlate(true);
 	}
@@ -57,14 +56,18 @@ void APressurePlate::OnOverlapEnd(UPrimitiveComponent* OverlappedComp,
 
 	/*Check if the overlapping object implements the interface then change its colour and
 	then close the door and disable the plate*/
-	if (StaticMesh && NoActivateColour &&
-		OtherActor->GetClass()->ImplementsInterface(UPressableInterface::StaticClass()))
+	if (StaticMesh && NoActivateColour && OtherActor->Implements<UPressableInterface>())
 	{
 		if (auto* Recall = OtherActor->FindComponentByClass<URecallComponent>())
 		{
-			if (Recall->IsRecalling())
+			if (!IsValid(Recall))
+				return;
+				
+			RecallComponent = Recall;	
+
+			if (RecallComponent->IsRecalling())
 			{
-				Recall->OnRecallFinished.AddUniqueDynamic(this, &APressurePlate::HandleRecallObject);
+				RecallComponent->OnRecallFinished.AddUniqueDynamic(this, &APressurePlate::HandleRecallObject);
 				return;
 			}
 		}
@@ -84,5 +87,6 @@ void APressurePlate::TogglePlate(bool bActivate)
 
 void APressurePlate::HandleRecallObject()
 {
+	RecallComponent->OnRecallFinished.RemoveDynamic(this, &APressurePlate::HandleRecallObject);
 	TogglePlate(false);
 }

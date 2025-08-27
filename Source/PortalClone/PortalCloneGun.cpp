@@ -7,14 +7,11 @@
 #include "EnhancedInputComponent.h"
 #include "UObject/UnrealType.h"        
 #include "UObject/Class.h"     
-#include "UObject/ObjectMacros.h"
-#include "UObject/UObjectGlobals.h"
 #include "GunFireComponent.h"
 #include "GunGrabComponent.h"
 #include "GunRecallComponent.h"
 #include "TrackGunStateComponent.h"
 #include "GunVFXComponent.h"
-#include "RecallComponent.h"
 
 // Sets default values
 APortalCloneGun::APortalCloneGun()
@@ -108,17 +105,17 @@ void APortalCloneGun::UnlockGunInput() {
 				ETriggerEvent::Started,
 				GunFireComponent,
 				&UGunFireComponent::Fire);
-
-			EnhancedInputComponent->BindAction(DropObjectAction,
-				ETriggerEvent::Started,
-				GunGrabComponent,
-				&UGunGrabComponent::InputDropObject);
 				
 			EnhancedInputComponent->BindAction(ChangeGunStateAction,
 				ETriggerEvent::Started,
 				AbilityWheelComponent,
 				&UAbilityWheelComponent::ToggleAbilityWheel);
 
+			EnhancedInputComponent->BindAction(HandleMouseRightInput,
+				ETriggerEvent::Started,
+				TrackGunAbility,
+				&UTrackGunStateComponent::HandleMouseRightInput);
+			
 			OnShootVFX.AddDynamic(GunVFXComponent, &UGunVFXComponent::PlayVFX);
 			OnEndShootVFX.AddDynamic(GunVFXComponent, &UGunVFXComponent::StopVFX);
 		}

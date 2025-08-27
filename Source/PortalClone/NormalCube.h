@@ -31,4 +31,5 @@ protected:
 	
 	virtual void OnPlatePressed_Implementation() override;
 	virtual void Recallable_Implementation() override;
+	virtual void CancelRecall_Implementation() override;
 };

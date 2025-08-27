@@ -19,4 +19,7 @@ class IRecallableInterface
 public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="Recallable")
 	void Recallable();
+	
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category="Recallable")
+	void CancelRecall();
 };

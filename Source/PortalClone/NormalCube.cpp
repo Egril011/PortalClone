@@ -32,3 +32,11 @@ void ANormalCube::Recallable_Implementation()
 	
 	RecallComponent->StartRecall();
 }
+
+void ANormalCube::CancelRecall_Implementation()
+{
+	if (!RecallComponent)
+		return;
+	
+	RecallComponent->StopRecall();
+}

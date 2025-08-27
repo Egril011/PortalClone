@@ -6,7 +6,7 @@
 #include "PortalCloneGun.h"
 
 // Sets default values for this component's properties
-UTrackGunStateComponent::UTrackGunStateComponent(): GrabComponent(nullptr), GunRef(nullptr)
+UTrackGunStateComponent::UTrackGunStateComponent() : GrabComponent(nullptr), RecallComponent(nullptr)
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
@@ -22,14 +22,12 @@ void UTrackGunStateComponent::BeginPlay() {
 
 	if (AActor* Owner = GetOwner()) {
 
-		if (Owner->IsA<APortalCloneGun>()) {
-
-			GunRef = Cast<APortalCloneGun>(Owner);
-
-			if (GunRef) {
-				GrabComponent = GunRef->GunGrabComponent;
-				GunRecallComponent = GunRef->GunRecallComponent;
-			}
+		if (UGunGrabComponent* GunGrabComponent = Owner->FindComponentByClass<UGunGrabComponent>()){
+			GrabComponent = GunGrabComponent;
+		}
+		if (UGunRecallComponent* GunRecallComponent = Owner->FindComponentByClass<UGunRecallComponent>())
+		{
+			RecallComponent = GunRecallComponent;
 		}
 	}
 }
@@ -51,8 +49,8 @@ void UTrackGunStateComponent::UseCurrentAbility(const FHitResult& HitResult) con
 		break;
 
 	case EGunStateHandler::Recall:
-		if (bRecallObject && GunRecallComponent)
-			GunRecallComponent->Recall(HitResult);
+		if (bRecallObject && RecallComponent)
+			RecallComponent->Recall(HitResult);
 		break;
 		
 	default:
@@ -62,5 +60,17 @@ void UTrackGunStateComponent::UseCurrentAbility(const FHitResult& HitResult) con
 
 void UTrackGunStateComponent::ChangeGunState(const EGunStateHandler NewGunState) {
 	GunState = NewGunState;
+}
+
+void UTrackGunStateComponent::HandleMouseRightInput()
+{
+	if (GunState == EGunStateHandler::Grab)
+	{
+		GrabComponent->InputDropObject();
+	}
+	if (GunState == EGunStateHandler::Recall)
+	{
+		RecallComponent->CancelRecall();
+	}
 }
 

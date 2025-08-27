@@ -7,6 +7,7 @@
 #include "Components/BoxComponent.h"
 #include "PressurePlate.generated.h"
 
+class URecallComponent;
 class ADoorPressedPlate;
 
 UCLASS()
@@ -49,7 +50,9 @@ protected:
 
 private: 
 	bool bIsActivate;
-	
+	URecallComponent* RecallComponent;
+
+	//Toggle the plate's colour and the door
 	void TogglePlate(bool bActivate);
 
 	UFUNCTION()

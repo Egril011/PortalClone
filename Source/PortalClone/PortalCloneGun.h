@@ -54,8 +54,8 @@ public:
 	UInputAction* ChangeGunStateAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* DropObjectAction;
-
+	UInputAction* HandleMouseRightInput;
+	
 	//Give a pointer to the character 
 	APortalCloneCharacter* GetCharacter() const {return Character.Get() ;};
 	
