@@ -7,6 +7,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "GenericTeamAgentInterface.h"
 #include "InputActionValue.h"
 #include "Engine/LocalPlayer.h"
 #include "InteractableInterface.h"
@@ -35,7 +36,6 @@ APortalCloneCharacter::APortalCloneCharacter()
 	Mesh1P->bCastDynamicShadow = false;
 	Mesh1P->CastShadow = false;
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
-
 }
 
 //////////////////////////////////////////////////////////////////////////// Input

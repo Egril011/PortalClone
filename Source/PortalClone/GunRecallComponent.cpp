@@ -64,5 +64,3 @@ void UGunRecallComponent::CleanUp()
 	ActorRef = nullptr;
 	bIsRecalling = false;
 }
-
-
