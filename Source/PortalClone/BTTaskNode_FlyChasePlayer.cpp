@@ -5,7 +5,6 @@
 
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Kismet/GameplayStatics.h"
 
 UBTTaskNode_FlyChasePlayer::UBTTaskNode_FlyChasePlayer()
 {

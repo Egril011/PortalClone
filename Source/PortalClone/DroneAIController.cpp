@@ -3,9 +3,10 @@
 
 #include "DroneAIController.h"
 
+#include "DroneAIPawn.h"
+#include "LaserComponent.h"
+#include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "GameFramework/Character.h"
-#include "GameFramework/FloatingPawnMovement.h"
 #include "Kismet/GameplayStatics.h"
 #include "Microsoft/AllowMicrosoftPlatformTypes.h"
 #include "Perception/AIPerceptionComponent.h"
@@ -31,9 +32,9 @@ ADroneAIController::ADroneAIController()
 void ADroneAIController::BeginPlay()
 {
 	Super::BeginPlay();
-	check(DronePerceptionComponent);
+	if(!IsValid(DronePerceptionComponent))
+		return;
 	
-	UE_LOG(LogTemp, Warning, TEXT("BeginPlay: binding delegates"));
 	DronePerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(
 		this, &ADroneAIController::OnTargetPerceptionUpdated);
 }
@@ -41,9 +42,32 @@ void ADroneAIController::BeginPlay()
 void ADroneAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
+	
+	ADroneAIPawn* AIDronePawn = Cast<ADroneAIPawn>(InPawn);
+	if (!AIDronePawn)
+		return;
+	
+	UBlackboardComponent* BB = nullptr;
+	if (!UseBlackboard(DroneBehaviorTree->BlackboardAsset, BB))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Null"));
+		return;
+	}
+
+	ULaserComponent* LaserComponent = AIDronePawn->GetCurrentLaserComponent();
+	if (!LaserComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("No LaserComponent found!"));
+		return;
+	}
+
+	const FName LaserKey = TEXT("CurrentLaserCompKey");
+	BB->SetValueAsObject(LaserKey,LaserComponent);
 
 	if (DroneBehaviorTree)
+	{
 		RunBehaviorTree(DroneBehaviorTree);
+	}
 }
 
 void ADroneAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)

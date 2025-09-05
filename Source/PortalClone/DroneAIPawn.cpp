@@ -4,6 +4,7 @@
 #include "DroneAIPawn.h"
 
 #include "DroneAIController.h"
+#include "LaserComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
 
 // Sets default values
@@ -24,21 +25,25 @@ ADroneAIPawn::ADroneAIPawn() : DroneAIMesh(nullptr)
 	bUseControllerRotationPitch = true;
 }
 
-// Called when the game starts or when spawned
-void ADroneAIPawn::BeginPlay()
+void ADroneAIPawn::PossessedBy(AController* NewController)
 {
-	Super::BeginPlay();
-}
+	Super::PossessedBy(NewController);
 
-// Called every frame
-void ADroneAIPawn::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
+	if (LaserComponent)
+	{
+		CurrentLaser = NewObject<ULaserComponent>(this, LaserComponent);
+		CurrentLaser->RegisterComponent();
+	}
 }
 
 // Called to bind functionality to input
 void ADroneAIPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+
+TObjectPtr<ULaserComponent> ADroneAIPawn::GetCurrentLaserComponent() const
+{
+	return CurrentLaser;
 }
 

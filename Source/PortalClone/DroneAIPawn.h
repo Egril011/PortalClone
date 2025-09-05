@@ -6,6 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "DroneAIPawn.generated.h"
 
+class ULaserComponent;
 class UFloatingPawnMovement;
 
 UCLASS()
@@ -18,19 +19,23 @@ public:
 	ADroneAIPawn();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
+	virtual void PossessedBy(AController* NewController) override;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Drone AI")
 	UStaticMeshComponent* DroneAIMesh;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drone AI|Movement")
 	UFloatingPawnMovement* DroneMovement;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Drone|Component")
+	TSubclassOf<ULaserComponent> LaserComponent;
 
+	UPROPERTY()
+	TObjectPtr<ULaserComponent> CurrentLaser;
+
+public:	
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	TObjectPtr<ULaserComponent> GetCurrentLaserComponent() const;;	
 };
