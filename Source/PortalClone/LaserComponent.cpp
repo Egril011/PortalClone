@@ -4,7 +4,6 @@
 #include "LaserComponent.h"
 
 // Sets default values for this component's properties
-ULaserComponent::ULaserComponent()
+ULaserComponent::ULaserComponent() : bLaserSuccess(false)
 {
 }
-

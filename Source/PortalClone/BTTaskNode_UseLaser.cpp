@@ -28,7 +28,7 @@ EBTNodeResult::Type UBTTaskNode_UseLaser::ExecuteTask(UBehaviorTreeComponent& Ow
 		return EBTNodeResult::Failed;
 	}
 
-	//Get the Target that saved into the value
+	//Get the Target that is saved in the blackboard value
 	UObject* TargetSaved = BBComp->GetValueAsObject(TargetLaserCompKey.SelectedKeyName);
 	if (!IsValid(TargetSaved))
 		return EBTNodeResult::Failed;
@@ -37,21 +37,21 @@ EBTNodeResult::Type UBTTaskNode_UseLaser::ExecuteTask(UBehaviorTreeComponent& Ow
 	if (!IsValid(TargetActor))
 		return EBTNodeResult::Failed;
 	
-	//Get the Laser and Cast to it 
+	//Get the Laser component and Cast to it 
 	UObject* ObjectComponent = BBComp->GetValueAsObject(CurrentLaserCompKey.SelectedKeyName);
 	if (!IsValid(ObjectComponent))
 	{
 		return EBTNodeResult::Failed;
 	}
 	
-	ULaserComponent* LaserComp = Cast<ULaserComponent>(ObjectComponent);
-	if (!IsValid(LaserComp))
+	CurrentLaserComp = Cast<ULaserComponent>(ObjectComponent);
+	if (!IsValid(CurrentLaserComp))
 	{
 		return EBTNodeResult::Failed;
 	}
 	
-	LaserComp->OnFireFinished.AddUniqueDynamic(this, &UBTTaskNode_UseLaser::LaserFinished);
-	LaserComp->StartLaser(TargetActor);
+	CurrentLaserComp->OnFireFinished.AddUniqueDynamic(this, &UBTTaskNode_UseLaser::LaserFinished);
+	CurrentLaserComp->StartLaser(TargetActor);
 	
 	return EBTNodeResult::InProgress;
 }
@@ -64,6 +64,7 @@ void UBTTaskNode_UseLaser::LaserFinished()
 	}
 	else
 	{
-		FinishLatentTask(*BehaviorTree, EBTNodeResult::Succeeded);
+		FinishLatentTask(*BehaviorTree, CurrentLaserComp->IsLaserSuccess()?
+			EBTNodeResult::Succeeded : EBTNodeResult::Failed);
 	}
 }
