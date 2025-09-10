@@ -13,7 +13,14 @@ UCLASS()
 class PORTALCLONE_API UNormalLaserComponent : public ULaserComponent
 {
 	GENERATED_BODY()
-
 public:
+	UPROPERTY(EditAnywhere)
+	float TimerTime = 0.f;
+	
+private:
 	virtual void FireLaser() override;
+	virtual void StartLaser(AActor* TargetActor) override;
+
+	TWeakObjectPtr<AActor> TargetActor;
+	FTimerHandle TimerHandleLaser;
 };

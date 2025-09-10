@@ -4,19 +4,27 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTTaskNode.h"
-#include "BTTaskNode_StartLaserCharge.generated.h"
+#include "BTTaskNode_UseLaser.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PORTALCLONE_API UBTTaskNode_StartLaserCharge : public UBTTaskNode
+class PORTALCLONE_API UBTTaskNode_UseLaser : public UBTTaskNode
 {
 	GENERATED_BODY()
-	UBTTaskNode_StartLaserCharge();
+	UBTTaskNode_UseLaser();
 
 	UPROPERTY(EditAnywhere, Category = "BB|Variable")
 	FBlackboardKeySelector CurrentLaserCompKey;
 
+	UPROPERTY(EditAnywhere, Category = "BB|Variable")
+	FBlackboardKeySelector TargetLaserCompKey;
+
+	UBehaviorTreeComponent* BehaviorTree = nullptr;
+
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+
+	UFUNCTION()
+	void LaserFinished();
 };

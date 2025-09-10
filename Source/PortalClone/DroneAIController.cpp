@@ -84,18 +84,16 @@ void ADroneAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus St
 
 	if (!Player)
 		return;
-
-	const FName TargetKey = TEXT("TargetActor");
 	
 	if (Stimulus.WasSuccessfullySensed() && Actor == Player)
 	{
-		BB->SetValueAsObject(TargetKey, Player);
+		BB->SetValueAsObject(TargetKeyName, Player);
 	}
 	else
 	{
-		if (BB->GetValueAsObject(TargetKey) == Player)
+		if (BB->GetValueAsObject(TargetKeyName) == Player)
 		{
-			BB->ClearValue(TargetKey);
+			BB->ClearValue(TargetKeyName);
 		}
 	}
 }

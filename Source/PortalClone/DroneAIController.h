@@ -29,6 +29,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drone AI|BT")
 	UBehaviorTree* DroneBehaviorTree;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drone AI|BT|KeyName")
+	FName TargetKeyName;
 	
 	UFUNCTION()
 	void OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
