@@ -6,6 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "DroneAIPawn.generated.h"
 
+class UBoxComponent;
 class ULaserComponent;
 class UFloatingPawnMovement;
 
@@ -20,6 +21,9 @@ public:
 
 protected:
 	virtual void PossessedBy(AController* NewController) override;
+
+	UPROPERTY(EditAnywhere)
+	UBoxComponent* BoxComponent;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Drone AI")
 	UStaticMeshComponent* DroneAIMesh;

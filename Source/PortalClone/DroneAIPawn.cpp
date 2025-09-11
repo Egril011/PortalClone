@@ -5,6 +5,7 @@
 
 #include "DroneAIController.h"
 #include "LaserComponent.h"
+#include "Components/BoxComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
 
 // Sets default values
@@ -14,6 +15,9 @@ ADroneAIPawn::ADroneAIPawn() : DroneAIMesh(nullptr)
 
 	DroneAIMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Drone_Mesh"));
 	RootComponent = DroneAIMesh;
+
+	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("Drone_Box"));
+	BoxComponent->SetupAttachment(DroneAIMesh);
 	
 	//Allow the Drone to move in X/Y/Z
 	DroneMovement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Drone_Movement"));

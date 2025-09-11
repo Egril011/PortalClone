@@ -56,7 +56,7 @@ EBTNodeResult::Type UBTTaskNode_UseLaser::ExecuteTask(UBehaviorTreeComponent& Ow
 	return EBTNodeResult::InProgress;
 }
 
-void UBTTaskNode_UseLaser::LaserFinished()
+void UBTTaskNode_UseLaser::LaserFinished() 
 {
 	if (!BehaviorTree)
 	{

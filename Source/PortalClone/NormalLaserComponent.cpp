@@ -3,21 +3,54 @@
 
 #include "NormalLaserComponent.h"
 
+#include "PortalCloneCharacter.h"
+#include "PortalCloneGun.h"
+#include "TrackGunStateComponent.h"
+
 void UNormalLaserComponent::FireLaser()
 {
-	FVector OwnerLocation = GetOwner()->GetActorLocation();
+	FVector OwnerLocation = GetOwner()->GetActorLocation(); 
 	FVector TargetLocation = CurrentTargetActor->GetActorLocation();
 
-	DrawDebugLine(
-		GetWorld(),
+	FHitResult HitResult;
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(GetOwner());
+	
+	bool bHit = GetWorld()->LineTraceSingleByChannel(
+		HitResult,
 		OwnerLocation,
 		TargetLocation,
-		FColor::Cyan,
-		true,
-		2.0f,
-		0,
-		2.f);
+		ECC_Visibility,
+		CollisionParams
+		);
 
+	if (bHit)
+	{
+		DrawDebugLine(
+			GetWorld(),
+			OwnerLocation,
+			HitResult.ImpactPoint,
+			FColor::Red,
+			false,
+			2.f,
+			0,
+			0.f);
+	}
+	else
+	{
+		DrawDebugLine(
+			GetWorld(),
+			OwnerLocation,
+			TargetLocation,
+			FColor::Green,
+			false,
+			2.f,
+			0,
+			0.f);
+
+		LaserEffect();
+	}
+	
 	SetLaserSuccess(true);
 	OnFireFinished.Broadcast();
 }
@@ -40,5 +73,26 @@ void UNormalLaserComponent::StartLaser(AActor* TargetActor)
 		TimerTime,
 		false
 		);
+}
+
+void UNormalLaserComponent::LaserEffect()
+{
+	// Get the Player and its gun 
+	if (CurrentTargetActor->IsA<APortalCloneCharacter>())
+	{
+		APortalCloneCharacter* Player = Cast<APortalCloneCharacter>(CurrentTargetActor);
+		if (!IsValid(Player))
+			return;
+
+		APortalCloneGun* EquippedGun = Cast<APortalCloneGun>(Player->EquippedGun);
+		if (!IsValid(EquippedGun))
+			return;
+
+		//Lock its abilities
+		EquippedGun->TrackGunAbility->LockFreezeObject();
+		EquippedGun->TrackGunAbility->LockGrabObject();
+
+		UE_LOG(LogTemp,Warning,TEXT("LaserEffect Success"));
+	}
 }
            

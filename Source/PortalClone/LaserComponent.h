@@ -26,8 +26,13 @@ public:
 	virtual bool IsLaserSuccess() const {return bLaserSuccess;};
 	
 protected:
+	//Fire the Laser
 	virtual void FireLaser() PURE_VIRTUAL(ULaserComponent::FireLaser);
+	
 	virtual void SetLaserSuccess(bool bSuccess) {this->bLaserSuccess = bSuccess;};
+
+	//What effect the laser would do 
+	virtual void LaserEffect() PURE_VIRTUAL(ULaserComponent::LaserEffect);
 
 private:
 	bool bLaserSuccess;

@@ -20,6 +20,7 @@ public:
 private:
 	virtual void FireLaser() override;
 	virtual void StartLaser(AActor* TargetActor) override;
+	virtual void LaserEffect() override;
 
 	TWeakObjectPtr<AActor> CurrentTargetActor;
 	FTimerHandle TimerHandleLaser;
