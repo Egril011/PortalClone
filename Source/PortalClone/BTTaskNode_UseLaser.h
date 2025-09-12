@@ -21,8 +21,8 @@ class PORTALCLONE_API UBTTaskNode_UseLaser : public UBTTaskNode
 	FBlackboardKeySelector TargetLaserCompKey;
 
 	TObjectPtr<UBehaviorTreeComponent> BehaviorTree = nullptr;
-	TObjectPtr<ULaserComponent> CurrentLaserComp = nullptr;
-
+	TObjectPtr<ULaserComponent> LaserComp = nullptr;
+	
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
 	UFUNCTION()

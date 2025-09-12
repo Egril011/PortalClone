@@ -48,25 +48,13 @@ void ADroneAIController::OnPossess(APawn* InPawn)
 		return;
 	
 	UBlackboardComponent* BB = nullptr;
-	if (!UseBlackboard(DroneBehaviorTree->BlackboardAsset, BB))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Null"));
+	if (!UseBlackboard(AIDronePawn->DefaultBehaviorTree->BlackboardAsset, BB))
 		return;
-	}
-
-	ULaserComponent* LaserComponent = AIDronePawn->GetCurrentLaserComponent();
-	if (!LaserComponent)
+	
+	if (AIDronePawn->DefaultBehaviorTree)
 	{
-		UE_LOG(LogTemp, Error, TEXT("No LaserComponent found!"));
-		return;
-	}
-
-	const FName LaserKey = TEXT("CurrentLaserCompKey");
-	BB->SetValueAsObject(LaserKey,LaserComponent);
-
-	if (DroneBehaviorTree)
-	{
-		RunBehaviorTree(DroneBehaviorTree);
+		RunBehaviorTree(AIDronePawn->DefaultBehaviorTree);
+		UE_LOG(LogTemp, Log, TEXT("Drone AI Possessed"));
 	}
 }
 

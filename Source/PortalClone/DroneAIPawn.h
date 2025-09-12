@@ -6,6 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "DroneAIPawn.generated.h"
 
+class UBehaviorTree;
 class UBoxComponent;
 class ULaserComponent;
 class UFloatingPawnMovement;
@@ -19,9 +20,10 @@ public:
 	// Sets default values for this character's properties
 	ADroneAIPawn();
 
-protected:
-	virtual void PossessedBy(AController* NewController) override;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Drone AI")
+	UBehaviorTree* DefaultBehaviorTree;
 
+protected:
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* BoxComponent;
 	
@@ -30,16 +32,8 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drone AI|Movement")
 	UFloatingPawnMovement* DroneMovement;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Drone|Component")
-	TSubclassOf<ULaserComponent> LaserComponent;
-
-	UPROPERTY()
-	TObjectPtr<ULaserComponent> CurrentLaser;
-
+	
 public:	
 	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	TObjectPtr<ULaserComponent> GetCurrentLaserComponent() const;;	
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;	
 };

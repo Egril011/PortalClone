@@ -26,13 +26,10 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drone AI|Perception")
 	UAISenseConfig_Sight* DronePerceptionSight;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drone AI|BT")
-	UBehaviorTree* DroneBehaviorTree;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drone AI|BT|KeyName")
-	FName TargetKeyName;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drone AI|BT")
+	FName TargetKeyName;
+
 	UFUNCTION()
 	void OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
 };

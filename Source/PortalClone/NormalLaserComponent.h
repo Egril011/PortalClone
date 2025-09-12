@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(ClassGroup=(Custum), meta=(BlueprintSpawnableComponent))
 class PORTALCLONE_API UNormalLaserComponent : public ULaserComponent
 {          
 	GENERATED_BODY()

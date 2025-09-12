@@ -4,7 +4,6 @@
 #include "DroneAIPawn.h"
 
 #include "DroneAIController.h"
-#include "LaserComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
 
@@ -29,25 +28,9 @@ ADroneAIPawn::ADroneAIPawn() : DroneAIMesh(nullptr)
 	bUseControllerRotationPitch = true;
 }
 
-void ADroneAIPawn::PossessedBy(AController* NewController)
-{
-	Super::PossessedBy(NewController);
-
-	if (LaserComponent)
-	{
-		CurrentLaser = NewObject<ULaserComponent>(this, LaserComponent);
-		CurrentLaser->RegisterComponent();
-	}
-}
-
 // Called to bind functionality to input
 void ADroneAIPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
-
-TObjectPtr<ULaserComponent> ADroneAIPawn::GetCurrentLaserComponent() const
-{
-	return CurrentLaser;
 }
 
