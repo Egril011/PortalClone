@@ -7,6 +7,7 @@
 #include "EDoorAnimation.h"
 #include "DoorPressedPlate.generated.h"
 
+class UBoxComponent;
 class APressurePlate;
 
 UCLASS()
@@ -28,6 +29,15 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TArray<APressurePlate*> RequiredPressurePlate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collider")
+	UBoxComponent* BoxComponentRightSide;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collider")
+	UBoxComponent* BoxComponentLeftSide;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collider")
+	UBoxComponent* BoxComponentFront;
 
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	UAnimSequence* OpenDoorAnimation;

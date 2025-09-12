@@ -1,5 +1,4 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
 #include "DoorPressedPlate.h"
 #include "PressurePlate.h"
 
@@ -8,6 +7,15 @@ ADoorPressedPlate::ADoorPressedPlate()
 {
 	SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
 	RootComponent = SkeletalMesh;
+
+	BoxComponentRightSide = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponentRightSide"));
+	BoxComponentRightSide->SetupAttachment(SkeletalMesh);
+
+	BoxComponentLeftSide = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponentLeftSide"));
+	BoxComponentLeftSide->SetupAttachment(SkeletalMesh);
+
+	BoxComponentFront = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponentFront"));
+	BoxComponentFront->SetupAttachment(SkeletalMesh);
 
 	DoorState = EDoorAnimation::Close;
 }
@@ -38,6 +46,7 @@ void ADoorPressedPlate::PlayOpenDoor() {
 		!SkeletalMesh->IsPlaying()) {
 		
 		SkeletalMesh->PlayAnimation(OpenDoorAnimation, false);
+		BoxComponentFront->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		
 		DoorState = EDoorAnimation::Open;
 	}
@@ -49,6 +58,7 @@ void ADoorPressedPlate::PlayCloseDoor() {
 		!SkeletalMesh->IsPlaying()){
 	
 		SkeletalMesh->PlayAnimation(CloseDoorAnimation, false);
+		BoxComponentFront->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
 		DoorState = EDoorAnimation::Close;
 	}
