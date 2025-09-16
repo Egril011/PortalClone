@@ -3,7 +3,7 @@
 #include "TrackGunStateComponent.h"
 #include "GunGrabComponent.h"
 #include "GunRecallComponent.h"
-#include "PortalCloneGun.h"
+#include "GunFreezeComponent.h"
 
 // Sets default values for this component's properties
 UTrackGunStateComponent::UTrackGunStateComponent() : GrabComponent(nullptr), RecallComponent(nullptr)
@@ -29,6 +29,9 @@ void UTrackGunStateComponent::BeginPlay() {
 		{
 			RecallComponent = GunRecallComponent;
 		}
+		if (UGunFreezeComponent* GunFreezeComponent = Owner->FindComponentByClass<UGunFreezeComponent>()){
+			FreezeComponent = GunFreezeComponent;
+		}
 	}
 }
 
@@ -36,9 +39,10 @@ void UTrackGunStateComponent::UseCurrentAbility(const FHitResult& HitResult) con
 {
 	switch (GunState) {
 	case EGunStateHandler::Freeze:
-		if (bFreezeObject) {
-			
-		}
+		if (bFreezeObject && FreezeComponent)
+		{
+			FreezeComponent->FreezeObject(HitResult);
+		} 
 		break;
 
 	case EGunStateHandler::Grab:
@@ -73,4 +77,3 @@ void UTrackGunStateComponent::HandleMouseRightInput()
 		RecallComponent->CancelRecall();
 	}
 }
-

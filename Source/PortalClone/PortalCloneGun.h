@@ -6,11 +6,11 @@
 #include "GameFramework/Actor.h"
 #include "InputAction.h"
 #include "PortalCloneCharacter.h"
-#include "RecallComponent.h"
 #include "Components/SphereComponent.h"
 #include "Delegates/Delegate.h"
 #include "PortalCloneGun.generated.h"
 
+class UGunFreezeComponent;
 class UGunRecallComponent;
 class UTrackGunStateComponent;
 class UGunFireComponent;
@@ -77,6 +77,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "GunComponent")
 	UAbilityWheelComponent* AbilityWheelComponent;
+
+	UPROPERTY(EditAnywhere, Category="GunComponent")
+	TObjectPtr<UGunFreezeComponent> GunFreezeComponent;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	USceneComponent* MuzzleSceneGrabbedObject;

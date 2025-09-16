@@ -8,6 +8,7 @@
 #include "UObject/UnrealType.h"        
 #include "UObject/Class.h"     
 #include "GunFireComponent.h"
+#include "GunFreezeComponent.h"
 #include "GunGrabComponent.h"
 #include "GunRecallComponent.h"
 #include "TrackGunStateComponent.h"
@@ -35,6 +36,8 @@ APortalCloneGun::APortalCloneGun()
 	GunVFXComponent = CreateDefaultSubobject<UGunVFXComponent>(TEXT("GunVFXComponent"));
 	AbilityWheelComponent = CreateDefaultSubobject<UAbilityWheelComponent>(TEXT("AbilityWheelComponent"));
 	GunRecallComponent = CreateDefaultSubobject<UGunRecallComponent>(TEXT("RecallComponent"));
+	GunFreezeComponent = CreateDefaultSubobject<UGunFreezeComponent>(TEXT("GunFreezeComponent"));
+	
 }
 
 void APortalCloneGun::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,

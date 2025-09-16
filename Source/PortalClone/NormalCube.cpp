@@ -3,6 +3,7 @@
 
 #include "NormalCube.h"
 
+#include "FreezeComponent.h"
 #include "RecallComponent.h"
 
 // Sets default values
@@ -13,6 +14,7 @@ ANormalCube::ANormalCube()
 
 	//Create the component
 	RecallComponent = CreateDefaultSubobject<URecallComponent>(TEXT("RecallComponent"));
+	FreezeComponent = CreateDefaultSubobject<UFreezeComponent>(TEXT("FreezeComponent"));
 }
 
 void ANormalCube::BeginPlay() {
@@ -39,4 +41,12 @@ void ANormalCube::CancelRecall_Implementation()
 		return;
 	
 	RecallComponent->StopRecall();
+}
+
+void ANormalCube::ApplyFreezeEffect_Implementation()
+{
+	if (!FreezeComponent)
+		return;
+
+	FreezeComponent->StartFreezeEffect();
 }

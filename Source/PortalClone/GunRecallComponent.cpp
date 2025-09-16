@@ -40,7 +40,7 @@ void UGunRecallComponent::Recall(const FHitResult& HitResult)
 	
 	bIsRecalling = true;
 }
-
+/**/
 void UGunRecallComponent::CancelRecall()
 {
 	if (!IsValid(ActorRef))
