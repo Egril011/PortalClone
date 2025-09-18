@@ -9,6 +9,7 @@
 #include "RecallableInterface.h"
 #include "NormalCube.generated.h"
 
+class UWidgetComponent;
 class UFreezeComponent;
 class UGunFreezeComponent;
 class URecallComponent;
@@ -35,6 +36,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
 	TObjectPtr<UFreezeComponent> FreezeComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category= "Widget")
+	TObjectPtr<UWidgetComponent> WidgetComponent;
 	
 	virtual void OnPlatePressed_Implementation() override;
 	virtual void Recallable_Implementation() override;

@@ -5,6 +5,8 @@
 
 #include "FreezeComponent.h"
 #include "RecallComponent.h"
+#include "RoundProgressBarWidget.h"
+#include "Components/WidgetComponent.h"
 
 // Sets default values
 ANormalCube::ANormalCube()
@@ -15,12 +17,24 @@ ANormalCube::ANormalCube()
 	//Create the component
 	RecallComponent = CreateDefaultSubobject<URecallComponent>(TEXT("RecallComponent"));
 	FreezeComponent = CreateDefaultSubobject<UFreezeComponent>(TEXT("FreezeComponent"));
+
+	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
+	WidgetComponent->SetupAttachment(StaticMesh);
+	WidgetComponent->SetWidgetClass(URoundProgressBarWidget::StaticClass());
 }
 
 void ANormalCube::BeginPlay() {
 
 	Super::BeginPlay();
 	StaticMesh->SetSimulatePhysics(true);
+
+	if (WidgetComponent)
+	{
+		if (URoundProgressBarWidget* RoundProgressBarWidget = Cast<URoundProgressBarWidget>(WidgetComponent->GetUserWidgetObject()))
+		{
+			RoundProgressBarWidget->InitializeOwner(FreezeComponent);
+		}
+	}
 }
 
 void ANormalCube::OnPlatePressed_Implementation() {

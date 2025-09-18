@@ -2,8 +2,6 @@
 
 
 #include "FreezeComponent.h"
-#include "Components/WidgetComponent.h"
-
 
 // Sets default values for this component's properties
 UFreezeComponent::UFreezeComponent()
@@ -12,33 +10,57 @@ UFreezeComponent::UFreezeComponent()
 
 void UFreezeComponent::StartFreezeEffect()
 {
-	CreateFreezeWidget();
+	Owner = GetOwner();
+	SetFreezeState(true);
+
+	//Set the Time to decrease the percentage
+	StartTime = GetWorld()->GetTimeSeconds();
+		
+	GetWorld()->GetTimerManager().SetTimer(
+		FreezeTimerHandle,
+		this,
+		&UFreezeComponent::FreezeTimer,
+		0.1f,
+		true);
 }
 
-/*Create the Freeze Widget above the actor*/
-void UFreezeComponent::CreateFreezeWidget()
+void UFreezeComponent::FreezeTimer()
 {
-	AActor* Owner = GetOwner();
+	float Elapsed = GetWorld()->GetTimeSeconds() - StartTime;
+	float Alpha =  Elapsed / Duration;
+	Alpha = FMath::Clamp(Alpha,0.f,1.f);
+
+	float inverseAlpha = 1.0f - Alpha;
+	OnProgressBarDelegate.Broadcast(inverseAlpha);
+	
+	if (Alpha >= 1.f)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(FreezeTimerHandle);
+		SetFreezeState(false);
+	}
+}
+
+void UFreezeComponent::SetFreezeState(bool State) const
+{
 	if (!IsValid(Owner))
 		return;
 
-	if (!IsValid(FreezeWidgetClass))
-		return;
+	if (UStaticMeshComponent* SM = Owner->FindComponentByClass<UStaticMeshComponent>())
+	{
+		if (State)
+		{
+			SM->SetMobility(EComponentMobility::Static);
+			SM->SetSimulatePhysics(false);
+		}
+		else
+		{
+			SM->SetMobility(EComponentMobility::Movable);
+			SM->SetSimulatePhysics(true);
+		}
+	}
+}
 
-	//Creation
-	UWidgetComponent* WidgetComp = NewObject<UWidgetComponent>(Owner);
-	if (!IsValid(WidgetComp))
-		return;
-
-	WidgetComp->SetWidgetClass(FreezeWidgetClass);
-	WidgetComp->AttachToComponent(Owner->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-	WidgetComp->SetTwoSided(true);
-
-	//Set its location and its size
-	WidgetComp->SetWidgetSpace(EWidgetSpace::World);
-	
-	WidgetComp->SetRelativeLocation(FVector(0.f, 0.f, 220.f));
-	WidgetComp->SetRelativeScale3D(FVector(0.75f, 0.75f, 0.75f));
-	
-	WidgetComp->RegisterComponentWithWorld(GetWorld());
+FOnProgressBarChange* UFreezeComponent::GetProgressBarDelegation()
+{
+	return &OnProgressBarDelegate;
 }
