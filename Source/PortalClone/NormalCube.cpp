@@ -62,5 +62,6 @@ void ANormalCube::ApplyFreezeEffect_Implementation()
 	if (!FreezeComponent)
 		return;
 
+	WidgetComponent->SetVisibility(true);
 	FreezeComponent->StartFreezeEffect();
 }

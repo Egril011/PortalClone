@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "EGunStateHandler.h"
 #include "InteractableInterface.h"
+#include "NotificationSubsystem.h"
 #include "GameFramework/Actor.h"
 #include "UnlockGunAbilities.generated.h"
 

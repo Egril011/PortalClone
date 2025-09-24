@@ -3,6 +3,10 @@
 
 #include "MovingPlatform.h"
 
+#include "FreezeComponent.h"
+#include "RoundProgressBarWidget.h"
+#include "Components/WidgetComponent.h"
+
 // Sets default values
 AMovingPlatform::AMovingPlatform()
 {
@@ -16,6 +20,11 @@ AMovingPlatform::AMovingPlatform()
 
 	EndPoint = CreateDefaultSubobject<USceneComponent>(TEXT("EndPoint"));
 	EndPoint->SetupAttachment(RootComponent);
+
+	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
+	WidgetComponent->SetupAttachment(SkeletalMesh);
+
+	FreezeComponent = CreateDefaultSubobject<UFreezeComponent>(TEXT("FreezeComponent"));
 }
 
 void AMovingPlatform::BeginPlay() {
@@ -24,12 +33,25 @@ void AMovingPlatform::BeginPlay() {
 
 	StartLocation = StartPoint->GetComponentLocation();
 	EndLocation = EndPoint->GetComponentLocation();
+
+	if (WidgetComponent)
+	{
+		if (URoundProgressBarWidget* RoundProgressBarWidget = Cast<URoundProgressBarWidget>(WidgetComponent->GetUserWidgetObject()))
+		{
+			RoundProgressBarWidget->InitializeOwner(FreezeComponent);
+		}
+	}
 }
 
 void AMovingPlatform::Tick(float DeltaTime) {
 
 	Super::Tick(DeltaTime);
 
+	if (IsValid(FreezeComponent) && FreezeComponent->IsFrozen())
+	{
+		return;
+	}
+	
 	if (bIsWaiting)
 	{
 		CurrentWaitTime -= DeltaTime;
@@ -39,8 +61,7 @@ void AMovingPlatform::Tick(float DeltaTime) {
 		}
 		return;
 	}
-
-
+	
 	FVector CurrentLocation = GetActorLocation();
 	FVector Destination = bMovingToTarget ? StartLocation : EndLocation;
 
@@ -55,5 +76,14 @@ void AMovingPlatform::Tick(float DeltaTime) {
 		bIsWaiting = true;
 		CurrentWaitTime = WaitTime;
 	}
+}
+
+void AMovingPlatform::ApplyFreezeEffect_Implementation()
+{
+	if (!FreezeComponent)
+		return;
+	
+	WidgetComponent->SetVisibility(true);
+	FreezeComponent->StartFreezeEffect();
 }
 

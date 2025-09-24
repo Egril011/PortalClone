@@ -3,6 +3,7 @@
 
 #include "UnlockGunAbilities.h"
 
+#include "NotificationSubsystem.h"
 #include "PortalCloneCharacter.h"
 #include "PortalCloneGun.h"
 #include "TrackGunStateComponent.h"
@@ -41,15 +42,48 @@ void AUnlockGunAbilities::Interact_Implementation()
 				switch (UnlockAbility)
 				{
 				case EGunStateHandler::Freeze:
-					TrackGunStateComponent->UnlockFreezeObject();
+					if (!TrackGunStateComponent->CanFreezeObject())
+					{
+						TrackGunStateComponent->UnlockFreezeObject();
+
+						//Message to say he has unlocked the freeze ability
+						if (UNotificationSubsystem* NotificationSubsystem = UNotificationSubsystem::NotificationSubsystemGetWord(this))
+						{
+							NotificationSubsystem->ShowNotification("You have unlocked the Freeze ability. \n"
+											   "Now, you can press 'Q' to use the ability"
+											   " and freeze an object for a limited time.");
+						}
+					}
 					break;
 
 				case EGunStateHandler::Grab:
-					TrackGunStateComponent->UnlockGrabObject();
+					if (!TrackGunStateComponent->CanGrabObject())
+					{
+						TrackGunStateComponent->UnlockGrabObject();
+						
+						//Message to say he has unlocked the grab ability
+						if (UNotificationSubsystem* NotificationSubsystem = UNotificationSubsystem::NotificationSubsystemGetWord(this))
+						{
+							NotificationSubsystem->ShowNotification("You have unlocked the Grab ability. \n"
+											   "Now, you can press 'Q' to use the ability"
+											   " and grab an object to move it.");
+						}
+					}
 					break;
 
 				case EGunStateHandler::Recall:
-					TrackGunStateComponent->UnlockRecallObject();
+					if (!TrackGunStateComponent->CanRecallObject())
+					{
+						TrackGunStateComponent->UnlockRecallObject();
+
+						//Message to say he has unlocked the recall ability
+						if (UNotificationSubsystem* NotificationSubsystem = UNotificationSubsystem::NotificationSubsystemGetWord(this))
+						{
+							NotificationSubsystem->ShowNotification("You have unlocked the Recall ability. \n"
+											   "Now, you can press 'Q' to choose the ability"
+											   " and recall an moved object.");
+						}
+					}
 					break;
 					
 				default:

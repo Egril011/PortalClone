@@ -3,11 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FreezableInterface.h"
 #include "GameFramework/Actor.h"
 #include "MovingPlatform.generated.h"
 
+class UFreezeComponent;
+class UWidgetComponent;
+
 UCLASS()
-class PORTALCLONE_API AMovingPlatform : public AActor
+class PORTALCLONE_API AMovingPlatform : public AActor, public IFreezableInterface
 {
 	GENERATED_BODY()
 	
@@ -28,6 +32,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Platform")
 	USceneComponent* EndPoint;
 
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UWidgetComponent> WidgetComponent;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UFreezeComponent> FreezeComponent;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float TimerSpeed = 0.5f;
 
@@ -47,5 +57,5 @@ private:
 	FVector StartLocation;
 	FVector EndLocation;
 
-
+	virtual void ApplyFreezeEffect_Implementation() override;
 };

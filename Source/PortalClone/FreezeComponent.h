@@ -16,10 +16,14 @@ public:
 	// Sets default values for this component's properties
 	UFreezeComponent();
 	void StartFreezeEffect();
+	bool IsFrozen() const {return bFrozen;}
 	
 private:
-	TObjectPtr<AActor> Owner;
-
+	TObjectPtr<AActor> Owner = nullptr;
+	TObjectPtr<UStaticMeshComponent> SM = nullptr;
+	bool bFrozen;
+	bool bIsActorSimulatePhysics;
+	
 	UPROPERTY()
 	FOnProgressBarChange OnProgressBarDelegate;
 	
@@ -32,7 +36,7 @@ private:
 	
 	/*Method*/
 	void FreezeTimer();
-	void SetFreezeState(bool State) const;
+	void SetFreezeState(bool State);
 	
 	virtual FOnProgressBarChange* GetProgressBarDelegation() override;
 };

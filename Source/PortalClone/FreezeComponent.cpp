@@ -11,8 +11,16 @@ UFreezeComponent::UFreezeComponent()
 void UFreezeComponent::StartFreezeEffect()
 {
 	Owner = GetOwner();
-	SetFreezeState(true);
 
+	//Save the initial value from the Physics
+	SM = Owner->FindComponentByClass<UStaticMeshComponent>();
+	if (IsValid(SM))
+	{
+		bIsActorSimulatePhysics = SM->IsSimulatingPhysics();
+	}
+	
+	SetFreezeState(true);
+	
 	//Set the Time to decrease the percentage
 	StartTime = GetWorld()->GetTimeSeconds();
 		
@@ -40,23 +48,25 @@ void UFreezeComponent::FreezeTimer()
 	}
 }
 
-void UFreezeComponent::SetFreezeState(bool State) const
+void UFreezeComponent::SetFreezeState(bool State) 
 {
 	if (!IsValid(Owner))
 		return;
 
-	if (UStaticMeshComponent* SM = Owner->FindComponentByClass<UStaticMeshComponent>())
+	if (!IsValid(SM))
+		return;
+	
+	bFrozen = State;
+	
+	if (State)
 	{
-		if (State)
-		{
-			SM->SetMobility(EComponentMobility::Static);
-			SM->SetSimulatePhysics(false);
-		}
-		else
-		{
-			SM->SetMobility(EComponentMobility::Movable);
-			SM->SetSimulatePhysics(true);
-		}
+		SM->SetMobility(EComponentMobility::Static);
+		SM->SetSimulatePhysics(false);
+	}
+	else
+	{
+		SM->SetMobility(EComponentMobility::Movable);
+		SM->SetSimulatePhysics(bIsActorSimulatePhysics);
 	}
 }
 
