@@ -17,10 +17,16 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
-	void ShowNotification(const FString& NotificationText);
+	
 	static UNotificationSubsystem* NotificationSubsystemGetWord(const TObjectPtr<UObject> Object);
+	void ShowNotification(const FString& NotificationText);
 
+	UFUNCTION()
+	void RemoveNotification();
+	
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<UNotificationWidget> NotificationClass;
+
+	TObjectPtr<UNotificationWidget> Notification = nullptr;
 };

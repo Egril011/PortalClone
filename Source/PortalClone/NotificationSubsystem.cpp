@@ -5,6 +5,7 @@
 
 #include "NotificationWidget.h"
 #include "Blueprint/UserWidget.h"
+#include "Kismet/GameplayStatics.h"
 
 void UNotificationSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -27,12 +28,29 @@ bool UNotificationSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 
 void UNotificationSubsystem::ShowNotification(const FString& NotificationText)
 {
-	UNotificationWidget* Notification = CreateWidget<UNotificationWidget>(GetWorld(), NotificationClass);
-	if (!IsValid(Notification))
+	if (!IsValid(NotificationClass))
 		return;
 	
+	if (!IsValid(Notification))
+	{
+		Notification = CreateWidget<UNotificationWidget>(GetWorld(), NotificationClass);
+	}
+	
+	Notification->OnRequestClose.AddUniqueDynamic(this, &UNotificationSubsystem::RemoveNotification);
 	Notification->ShowNotification(NotificationText);
 	Notification->AddToViewport();
+}
+
+void UNotificationSubsystem::RemoveNotification()
+{
+	Notification->OnRequestClose.RemoveAll(this);
+	Notification->RemoveFromParent();
+
+	if (APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0))
+	{
+		FInputModeGameOnly InputMode;
+		PlayerController->SetInputMode(InputMode);
+	}
 }
 
 UNotificationSubsystem* UNotificationSubsystem::NotificationSubsystemGetWord(const TObjectPtr<UObject> Object)
