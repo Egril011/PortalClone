@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "GunStateWidget.generated.h"
 
+class UGunRecallWidget;
 class UWidgetSwitcher;
 class UGunFreezeWidget;
 class UGunGrabWidget;
@@ -35,4 +36,7 @@ private:
 
 	UPROPERTY(meta=(BindWidget), meta=(AllowPrivateAccess))
 	TObjectPtr<UGunFreezeWidget> GunFreezeWidget;
+
+	UPROPERTY(meta=(BindWidget), meta=(AllowPrivateAccess))
+	TObjectPtr<UGunRecallWidget> GunRecallWidget;
 };

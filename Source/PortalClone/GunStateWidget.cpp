@@ -5,6 +5,7 @@
 #include "EGunStateHandler.h"
 #include "GunFreezeWidget.h"
 #include "GunGrabWidget.h"
+#include "GunRecallWidget.h"
 #include "TrackGunStateComponent.h"
 #include "Components/WidgetSwitcher.h"
 
@@ -16,7 +17,7 @@ void UGunStateWidget::BindGunState(UTrackGunStateComponent* GunStateComponent)
 	GunStateComponent->OnGunStateChanged.AddUniqueDynamic(this,&UGunStateWidget::UpdateWidgetGunState);
 }
 
-void UGunStateWidget::UpdateWidgetGunState(EGunStateHandler GunState)
+void UGunStateWidget::UpdateWidgetGunState(const EGunStateHandler GunState)
 {
 	switch (GunState)
 	{
@@ -31,6 +32,14 @@ void UGunStateWidget::UpdateWidgetGunState(EGunStateHandler GunState)
 		if (IsValid(WidgetSwitcher) && IsValid(GunFreezeWidget))
 		{
 			WidgetSwitcher->SetActiveWidget(GunFreezeWidget);
+		}
+		break;
+
+	case EGunStateHandler::Recall:
+		if (IsValid(WidgetSwitcher) && IsValid(GunRecallWidget))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Recalling WidgetSwitcher"));
+			WidgetSwitcher->SetActiveWidget(GunRecallWidget);
 		}
 		break;
 	default: ;
