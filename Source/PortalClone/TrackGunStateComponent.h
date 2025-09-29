@@ -43,6 +43,10 @@ public:
 	//Handle the mouse's right input
 	void HandleMouseRightInput();
 
+	//Broadcast when the gun's state is changing
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGunStateChanged, EGunStateHandler, GunState);
+	FOnGunStateChanged OnGunStateChanged;
+
 protected:
 	virtual void BeginPlay() override;
 

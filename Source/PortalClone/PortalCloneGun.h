@@ -58,6 +58,10 @@ public:
 	
 	//Give a pointer to the character 
 	APortalCloneCharacter* GetCharacter() const {return Character.Get() ;};
+
+	//The Widget for the Gun
+	UPROPERTY(EditAnywhere, Category="GunWidget")
+	TSubclassOf<UUserWidget> GunWidget;
 	
 	/*Gun Components*/
 	UPROPERTY(EditAnywhere, Category = "GunComponent")

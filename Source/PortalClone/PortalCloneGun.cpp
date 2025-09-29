@@ -11,8 +11,10 @@
 #include "GunFreezeComponent.h"
 #include "GunGrabComponent.h"
 #include "GunRecallComponent.h"
+#include "GunStateWidget.h"
 #include "TrackGunStateComponent.h"
 #include "GunVFXComponent.h"
+#include "Blueprint/UserWidget.h"
 
 // Sets default values
 APortalCloneGun::APortalCloneGun()
@@ -83,6 +85,18 @@ void APortalCloneGun::AttachWeapon(APortalCloneCharacter* TargetCharacter) {
 			}
 		}
 
+		//Create the Widget for the gun (input)
+		if (!IsValid(GunWidget))
+			return;
+
+		auto* Widget = CreateWidget<UGunStateWidget>(GetWorld(), GunWidget);
+		if (!IsValid(Widget))
+			return;
+		
+		Widget->BindGunState(TrackGunAbility);
+		Widget->AddToViewport();
+
+		//Unlock the keys 
 		if(!bGunInputUnlocked)
 		UnlockGunInput();
 	}

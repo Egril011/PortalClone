@@ -64,6 +64,7 @@ void UTrackGunStateComponent::UseCurrentAbility(const FHitResult& HitResult) con
 
 void UTrackGunStateComponent::ChangeGunState(const EGunStateHandler NewGunState) {
 	GunState = NewGunState;
+	OnGunStateChanged.Broadcast(NewGunState);
 }
 
 void UTrackGunStateComponent::HandleMouseRightInput()
