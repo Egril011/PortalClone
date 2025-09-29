@@ -11,7 +11,7 @@ UFreezeComponent::UFreezeComponent()
 void UFreezeComponent::StartFreezeEffect()
 {
 	Owner = GetOwner();
-
+	
 	//Save the initial value from the Physics
 	SM = Owner->FindComponentByClass<UStaticMeshComponent>();
 	if (IsValid(SM))
@@ -30,6 +30,13 @@ void UFreezeComponent::StartFreezeEffect()
 		&UFreezeComponent::FreezeTimer,
 		0.1f,
 		true);
+}
+
+void UFreezeComponent::CancelFreezeEffect()
+{
+	GetWorld()->GetTimerManager().ClearTimer(FreezeTimerHandle);
+
+	SetFreezeState(false);
 }
 
 void UFreezeComponent::FreezeTimer()

@@ -82,7 +82,13 @@ void AMovingPlatform::ApplyFreezeEffect_Implementation()
 {
 	if (!FreezeComponent)
 		return;
-	
+
+	if (FreezeComponent->IsFrozen())
+	{
+		WidgetComponent->SetVisibility(false);
+		FreezeComponent->CancelFreezeEffect();
+		return;
+	}
 	WidgetComponent->SetVisibility(true);
 	FreezeComponent->StartFreezeEffect();
 }

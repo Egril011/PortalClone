@@ -17,6 +17,9 @@ public:
 	UFreezeComponent();
 	void StartFreezeEffect();
 	bool IsFrozen() const {return bFrozen;}
+
+	//Cancels the freeze effect if the player reuse the freeze ability on already frozen object
+	void CancelFreezeEffect();
 	
 private:
 	TObjectPtr<AActor> Owner = nullptr;
