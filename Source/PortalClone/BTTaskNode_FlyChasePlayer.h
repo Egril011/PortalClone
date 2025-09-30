@@ -16,7 +16,7 @@ class PORTALCLONE_API UBTTaskNode_FlyChasePlayer : public UBTTaskNode
 
 	UPROPERTY(EditAnywhere, Category = "BB|Variable")
 	FBlackboardKeySelector TargetActor;
-
+	
 	UPROPERTY(EditAnywhere, Category = "Chasing")
 	int Speed = 150.f;
 
@@ -26,6 +26,7 @@ class PORTALCLONE_API UBTTaskNode_FlyChasePlayer : public UBTTaskNode
 	UPROPERTY(EditAnywhere, Category = "Chasing")
 	float ElevationHeight = 220.f;
 	
+protected:
 	UBTTaskNode_FlyChasePlayer();
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;

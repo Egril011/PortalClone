@@ -4,9 +4,9 @@
 #include "DroneAIController.h"
 
 #include "DroneAIPawn.h"
-#include "LaserComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Elements/Columns/TypedElementAlertColumns.h"
 #include "Kismet/GameplayStatics.h"
 #include "Microsoft/AllowMicrosoftPlatformTypes.h"
 #include "Perception/AIPerceptionComponent.h"
@@ -54,7 +54,33 @@ void ADroneAIController::OnPossess(APawn* InPawn)
 	if (AIDronePawn->DefaultBehaviorTree)
 	{
 		RunBehaviorTree(AIDronePawn->DefaultBehaviorTree);
-		UE_LOG(LogTemp, Log, TEXT("Drone AI Possessed"));
+	}
+}
+
+void ADroneAIController::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	/*Debug the Slight*/
+	if (DronePerceptionSight && GetPawn())
+	{
+		FVector Location = GetPawn()->GetActorLocation();
+		FVector Forward = GetPawn()->GetActorForwardVector();
+		
+		DrawDebugSphere(GetWorld(), Location, DronePerceptionSight->SightRadius, 32, FColor::Green);
+		
+		DrawDebugSphere(GetWorld(), Location, DronePerceptionSight->LoseSightRadius, 32, FColor::Red);
+		
+		DrawDebugCone(
+			GetWorld(),
+			Location,
+			Forward,
+			DronePerceptionSight->SightRadius,
+			FMath::DegreesToRadians(DronePerceptionSight->PeripheralVisionAngleDegrees),
+			FMath::DegreesToRadians(DronePerceptionSight->PeripheralVisionAngleDegrees),
+			32,
+			FColor::Yellow
+		);
 	}
 }
 

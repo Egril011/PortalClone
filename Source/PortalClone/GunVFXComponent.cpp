@@ -2,6 +2,7 @@
 
 #include "GunVFXComponent.h"
 #include "PortalCloneGun.h"
+#include "NiagaraComponent.h"
 
 // Sets default values for this component's properties
 UGunVFXComponent::UGunVFXComponent()
@@ -24,7 +25,7 @@ void UGunVFXComponent::BeginPlay() {
 	}
 }
 
-void UGunVFXComponent::PlayVFX(FName VFXEffectName) {
+void UGunVFXComponent::PlayVFX(FName VFXEffectName, FVector TargetLocation) {
 
 	//looking if there is another effect activate
 	if (ActiveVFX) {
@@ -36,7 +37,6 @@ void UGunVFXComponent::PlayVFX(FName VFXEffectName) {
 	if (GunRef && !VFXMap.IsEmpty()) { 
 
 		if (VFXMap.Contains(VFXEffectName)) {
-
 			ActiveVFX = UNiagaraFunctionLibrary::SpawnSystemAttached(
 				VFXMap[VFXEffectName],
 				GunRef->GunSkeletalMesh,
@@ -46,6 +46,11 @@ void UGunVFXComponent::PlayVFX(FName VFXEffectName) {
 				EAttachLocation::SnapToTarget,
 				true
 			);
+
+			if (ActiveVFX)
+			{
+				ActiveVFX->SetVectorParameter(TEXT("BeamEnd"), TargetLocation);
+			}
 		}
 	}
 }

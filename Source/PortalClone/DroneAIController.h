@@ -20,6 +20,7 @@ public :
 protected:
 	virtual void BeginPlay() override;
 	virtual void OnPossess(APawn* InPawn) override;
+	virtual void Tick(float DeltaTime) override;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drone AI|Perception")
 	UAIPerceptionComponent* DronePerceptionComponent;
@@ -28,7 +29,7 @@ protected:
 	UAISenseConfig_Sight* DronePerceptionSight;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drone AI|BT")
-	FName TargetKeyName;
+	FName TargetKeyName = "TargetActorKey";
 
 	UFUNCTION()
 	void OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);

@@ -15,15 +15,29 @@ class PORTALCLONE_API UBTTaskNode_Patrol : public UBTTaskNode
 {
 	GENERATED_BODY()
 public:
-	
 	UBTTaskNode_Patrol();
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "NaveMesh|RadiusThres")
-	float Radius = 10.f;
-
 	UPROPERTY(EditAnywhere, Category = "Key")
 	FName PawnLocationKey;
-
+	
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+
+private:
+	TObjectPtr<APawn> CurrentPawn = nullptr;
+	TObjectPtr<UNavigationSystemV1> CurrentNav = nullptr;
+	FVector TargetLocation = FVector(0.f, 0.f, 0.f);
+
+	UPROPERTY(EditAnywhere, Category="BTTPatrol|Variable", meta=(AllowPrivateAccess))
+	float Speed = 5.f;
+
+	UPROPERTY(EditAnywhere, Category="BTTPatrol|Variable", meta=(AllowPrivateAccess))
+	float AcceptanceRadius = 150.f;
+
+	UPROPERTY(EditAnywhere, Category = "BTTPatrol|Variable", meta=(AllowPrivateAccess))
+	float Radius = 500.f;
+	
+	//Get a reachable point thanks to the NavMesh
+	bool ReturnReachablePoint(FVector PawnLocation, FVector& OutNewPawnLocation);
 };

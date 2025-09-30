@@ -18,7 +18,7 @@ class UGunGrabComponent;
 class UGunVFXComponent;
 class UAbilityWheelComponent;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnShootVFX, FName, VFXName);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnShootVFX, FName, VFXName, FVector, TargetLocation);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEndShootVFX);
 
 class UAbilityWheelWidget;

@@ -50,7 +50,7 @@ void UGunGrabComponent::GrabObject(const FHitResult& HitResult)
 	if (Primitive && Primitive->IsSimulatingPhysics())
 	{
 		//Call the broadcast
-		GunRef->OnShootVFX.Broadcast("Grab");
+		GunRef->OnShootVFX.Broadcast("Grab", HitResult.ImpactPoint);
 
 		Primitive->SetSimulatePhysics(true);
 

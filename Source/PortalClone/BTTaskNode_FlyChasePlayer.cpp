@@ -60,6 +60,7 @@ void UBTTaskNode_FlyChasePlayer::TickTask(UBehaviorTreeComponent& OwnerComp, uin
 
 	if (Distance < AcceptanceRadius)
 	{
+		bNotifyTick = false;
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		return;
 	}
