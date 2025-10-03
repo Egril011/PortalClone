@@ -5,14 +5,37 @@
 
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "GameFramework/FloatingPawnMovement.h"
 
 UBTTaskNode_FlyChasePlayer::UBTTaskNode_FlyChasePlayer()
 {
-	NodeName = TEXT("Fly: Chase Player");
+	NodeName = TEXT("Fly: Chase Target");
 }
 
 EBTNodeResult::Type UBTTaskNode_FlyChasePlayer::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
+	BBComp = OwnerComp.GetBlackboardComponent();
+	if (!IsValid(BBComp))
+		return EBTNodeResult::Failed;
+
+	AIController = OwnerComp.GetAIOwner();
+	if (!IsValid(AIController))
+		return EBTNodeResult::Failed;
+
+	SelfPawn = AIController->GetPawn();
+	if (!IsValid(SelfPawn))
+		return EBTNodeResult::Failed;
+
+	Target = Cast<AActor>(BBComp->GetValueAsObject(TargetActor.SelectedKeyName));
+	if (!IsValid(Target))
+		return EBTNodeResult::Failed;
+
+	//Modify the Pawn speed (FloatingPawnMovement)
+	if (UFloatingPawnMovement* MovementComp = Cast<UFloatingPawnMovement>(SelfPawn->GetMovementComponent()))
+	{
+		MovementComp->MaxSpeed = Speed;
+	}
+	
 	bNotifyTick = true;
 	return EBTNodeResult::InProgress;
 }
@@ -21,55 +44,29 @@ void UBTTaskNode_FlyChasePlayer::TickTask(UBehaviorTreeComponent& OwnerComp, uin
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 	
-	UBlackboardComponent* BBComp = OwnerComp.GetBlackboardComponent();
-	if (!IsValid(BBComp))
+	if (!IsValid(AIController) && !IsValid(BBComp))
 	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
 		return;
 	}
 	
-	AAIController* AIController = OwnerComp.GetAIOwner();
-	if (!IsValid(AIController))
-	{
-		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
-		return;
-	}
+	//Save the target's position
+	BBComp->SetValueAsVector(LastTargetLocationKeyName.SelectedKeyName, Target->GetActorLocation());
 	
-	APawn* SelfPawn = AIController->GetPawn();
-	if (!IsValid(SelfPawn))
-	{
-		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
-		return;
-	}
-	
-	AActor* Player = Cast<AActor>(BBComp->GetValueAsObject(TargetActor.SelectedKeyName));
-	if (!IsValid(Player))
-	{
-		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
-		return;
-	}
-	
-	//Move the Ai to the Player
-	FVector PlayerLocation = Player->GetActorLocation();
-	FVector PawnLocation = SelfPawn->GetActorLocation();
-	
-	FVector TargetLocation = FVector(PlayerLocation.X, PlayerLocation.Y, PawnLocation.Z + ElevationHeight);
-	
-	FVector TargetDistance = TargetLocation - PawnLocation;
-	float Distance = FVector(TargetDistance.X, TargetDistance.Y, 0.f).Size();
+	//Move the AI to the Target
+	FVector NewTargetLocation = FVector(Target->GetActorLocation().X, Target->GetActorLocation().Y, SelfPawn.Get()->GetActorLocation().Z);
+	FVector ToTarget = NewTargetLocation - SelfPawn->GetActorLocation();
+	FVector Direction = ToTarget.GetSafeNormal2D();
+	SelfPawn->AddMovementInput(Direction, 1.f);
 
-	if (Distance < AcceptanceRadius)
+	//Make the AI look at the target
+	FRotator LookRotation = ToTarget.Rotation();
+	LookRotation.Pitch = 0.f;
+	SelfPawn->SetActorRotation(FMath::RInterpTo(SelfPawn->GetActorRotation(), LookRotation, DeltaSeconds, 5.f));
+
+	//Get the Distance between the pawn and the target
+	if (ToTarget.Size() < AcceptanceRadius)
 	{
-		bNotifyTick = false;
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-		return;
 	}
-
-	FVector PawnDirection = FVector(TargetDistance.X, TargetDistance.Y, 0.f).GetSafeNormal();
-	FVector Direction = PawnDirection * Speed * DeltaSeconds;
-	
-	SelfPawn->SetActorLocation(SelfPawn->GetActorLocation() + Direction, true);
-
-	//Rotate the AI for he is looking to the player
-	SelfPawn->SetActorRotation(Direction.Rotation());    
 }

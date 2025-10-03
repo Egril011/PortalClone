@@ -10,8 +10,6 @@
 // Sets default values
 ADroneAIPawn::ADroneAIPawn() : DroneAIMesh(nullptr)
 {
-	PrimaryActorTick.bCanEverTick = false;
-
 	DroneAIMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Drone_Mesh"));
 	RootComponent = DroneAIMesh;
 
@@ -25,7 +23,6 @@ ADroneAIPawn::ADroneAIPawn() : DroneAIMesh(nullptr)
 	//Use the Drone Controller for this class
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	AIControllerClass = ADroneAIController::StaticClass();
-	bUseControllerRotationPitch = true;
 }
 
 // Called to bind functionality to input

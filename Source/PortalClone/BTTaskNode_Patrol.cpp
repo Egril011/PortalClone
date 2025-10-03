@@ -5,7 +5,10 @@
 
 #include "AIController.h"
 #include "NavigationSystem.h"
-#include "Math/UnitConversion.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "Chaos/PBDSuspensionConstraintData.h"
+#include "GameFramework/FloatingPawnMovement.h"
+#include "Navigation/PathFollowingComponent.h"
 
 UBTTaskNode_Patrol::UBTTaskNode_Patrol()
 {
@@ -21,16 +24,11 @@ EBTNodeResult::Type UBTTaskNode_Patrol::ExecuteTask(UBehaviorTreeComponent& Owne
 	CurrentPawn = AIController->GetPawn();
 	if (!CurrentPawn)
 		return EBTNodeResult::Failed;
-
-	//Get the NavMesh
-	CurrentNav =  FNavigationSystem::GetCurrent<UNavigationSystemV1>(CurrentPawn->GetWorld());
-	if (!CurrentNav)
-		return EBTNodeResult::Failed;
-
+	
 	//Get the new reachable point
 	if (!ReturnReachablePoint(CurrentPawn->GetActorLocation(), TargetLocation))
 		return EBTNodeResult::Failed;
-
+	
 	bNotifyTick = true;
 	return EBTNodeResult::InProgress;
 }
@@ -38,34 +36,24 @@ EBTNodeResult::Type UBTTaskNode_Patrol::ExecuteTask(UBehaviorTreeComponent& Owne
 void UBTTaskNode_Patrol::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
-
+	
 	if (!CurrentPawn)
 	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
 		return;
 	}
-	
-	//Get the Pawn Location
+
+	//Move the AI to the Target
 	FVector PawnLocation = CurrentPawn->GetActorLocation();
-
-	//Get the Distance between the two points
-	FVector NewTargetLocation = FVector(TargetLocation.X,TargetLocation.Y, PawnLocation.Z);
-	FVector ToTarget = NewTargetLocation - PawnLocation;
-	float Distance = FVector(ToTarget.X, ToTarget.Y, 0.f).Size();
-
-	if (Distance < AcceptanceRadius)
-	{
-		UE_LOG(LogTemp,Warning,TEXT("Distance < AcceptanceRadius"));
-		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
-		return;
-	}
-
-	//Move the pawn toward the target
-	FVector MoveDirection = FVector(ToTarget.X, ToTarget.Y, 0).GetSafeNormal();
-	FVector Direction = MoveDirection * Speed * DeltaSeconds;
+	FVector ToTarget = TargetLocation - PawnLocation;
+	FVector Direction = ToTarget.GetSafeNormal2D();
+	CurrentPawn->AddMovementInput(Direction, 1.f);
 	
-	CurrentPawn->SetActorLocation(CurrentPawn->GetActorLocation() + Direction,true);
-	CurrentPawn->SetActorRotation(MoveDirection.Rotation());
+	//Get the Distance between the pawn and the target
+	if (ToTarget.Size2D() < AcceptanceRadius)
+	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+	}
 }
 
 bool UBTTaskNode_Patrol::ReturnReachablePoint(FVector PawnLocation, FVector& OutNewPawnLocation)
@@ -73,12 +61,13 @@ bool UBTTaskNode_Patrol::ReturnReachablePoint(FVector PawnLocation, FVector& Out
 	UNavigationSystemV1* NavigationSystem = UNavigationSystemV1::GetCurrent(CurrentPawn->GetWorld());
 	if (!NavigationSystem)
 		return false;
-
-	FNavLocation NavLocation;
-	if (NavigationSystem->GetRandomReachablePointInRadius(PawnLocation, Radius, NavLocation))
-	{
-		OutNewPawnLocation = NavLocation.Location;
-		return true;
-	}
-	 return false;
+	
+		FNavLocation NavLocation;
+		if (NavigationSystem->GetRandomReachablePointInRadius(PawnLocation, Radius, NavLocation))
+		{
+			OutNewPawnLocation = NavLocation.Location;
+			OutNewPawnLocation.Z = PawnLocation.Z;
+			return true;
+		}
+	return false;
 }

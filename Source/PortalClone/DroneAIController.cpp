@@ -60,7 +60,7 @@ void ADroneAIController::OnPossess(APawn* InPawn)
 void ADroneAIController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
 	/*Debug the Slight*/
 	if (DronePerceptionSight && GetPawn())
 	{
