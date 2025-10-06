@@ -11,44 +11,34 @@
 UInteractableTriggerComponent::UInteractableTriggerComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
- }
-
-void UInteractableTriggerComponent::OnRegister()
-{
-	Super::OnRegister();
-
-	AActor* OwnerActor = GetOwner();
-
-	if (!OwnerActor)
-		return;
 
 	//Sphere Collider
-	TriggerSphere = NewObject<USphereComponent>(OwnerActor, TEXT("SphereColliderTrigger"));
+	TriggerSphere = CreateDefaultSubobject<USphereComponent>(TEXT("TriggerSphere"));
 	TriggerSphere->InitSphereRadius(200.f);
-	TriggerSphere->SetupAttachment(OwnerActor->GetRootComponent());
-	TriggerSphere->RegisterComponent();
-
-	//Widgetcomponent
-	WidgetComponent = NewObject<UWidgetComponent>(OwnerActor, TEXT("WidgetColliderTrigger"));
-	WidgetComponent->SetupAttachment(GetOwner()->GetRootComponent());
-	WidgetComponent->SetRelativeTransform(FTransform(
-	FRotator(0, 90, 0),
-		FVector(0, 0, 250),
-		FVector(1.75f, 0.25f, 0.25f)
-	));
-
-	if (TriggerKeyWidgetClass)
-	{
-		WidgetComponent->SetWidgetClass(TriggerKeyWidgetClass);
-	}
+	TriggerSphere->SetupAttachment(this);
 	
+	//Widget component
+	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
+	WidgetComponent->SetupAttachment(this);
+	WidgetComponent->SetWidgetSpace(EWidgetSpace::World);
+	WidgetComponent->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
+	WidgetComponent->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
+	WidgetComponent->SetRelativeScale3D(FVector(1.f, 1.f, 1.f));
+	WidgetComponent->SetPivot(FVector2D(0.5f, 0.5f));       
+	WidgetComponent->SetTwoSided(true);                     
 	WidgetComponent->SetHiddenInGame(true);
-	WidgetComponent->RegisterComponent();
+ }
 
-	TriggerSphere->OnComponentBeginOverlap.AddDynamic(this,
-		&UInteractableTriggerComponent::OverlapBegin);
-	TriggerSphere->OnComponentEndOverlap.AddDynamic(this,
-		&UInteractableTriggerComponent::OverlapEnd);
+void UInteractableTriggerComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (TriggerSphere)
+	{
+		TriggerSphere->OnComponentBeginOverlap.AddDynamic(this, &UInteractableTriggerComponent::OverlapBegin);
+		
+		TriggerSphere->OnComponentEndOverlap.AddDynamic(this, &UInteractableTriggerComponent::OverlapEnd);
+	}
 }
 
 void UInteractableTriggerComponent::OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

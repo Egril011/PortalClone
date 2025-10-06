@@ -19,6 +19,7 @@ protected:
 	UBTTaskNode_FlyChasePlayer();
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+	
 
 private:
 	UPROPERTY(EditAnywhere, Category = "BB|Variable", meta=(AllowPrivateAccess))
@@ -29,6 +30,9 @@ private:
 	
 	UPROPERTY(EditAnywhere, Category = "Chasing", meta=(AllowPrivateAccess))
 	int Speed = 150.f;
+
+	UPROPERTY(EditAnywhere, Category = "Chasing", meta=(AllowPrivateAccess))
+	int HeightAI = 150.f;
 
 	UPROPERTY(EditAnywhere, Category = "Chasing", meta=(AllowPrivateAccess))
 	float AcceptanceRadius = 150.f;

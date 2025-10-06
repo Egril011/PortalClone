@@ -2,6 +2,8 @@
 
 
 #include "CubeKillZone.h"
+
+#include "GunGrabComponent.h"
 #include "PressableInterface.h"
 #include "PhysicsEngine/PhysicsHandleComponent.h"
 
@@ -19,28 +21,16 @@ void ACubeKillZone::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* 
 	bool bFromSweep, const FHitResult& SweepResult) {
 
 	if (OtherActor->GetClass()->ImplementsInterface(UPressableInterface::StaticClass())) {
-
-		//Search if the player grab an object 
-		for (TObjectIterator<UPhysicsHandleComponent> IT; IT; ++IT) {
-
-			UPhysicsHandleComponent* Handle = *IT;
-
-			if (Handle->GrabbedComponent == OtherComp) {
-				Handle->ReleaseComponent();
-
-				//Disable the velocity
-				if (OtherComp && OtherComp->IsSimulatingPhysics()) {
-					OtherComp->SetPhysicsLinearVelocity(FVector::ZeroVector);
-					OtherComp->SetPhysicsAngularVelocityInDegrees(FVector::ZeroVector);
-				}
-				break;
-			}
+		
+		//Check if the otherActor is currently grabbed
+		if (UGunGrabComponent::ActiveGrabber.IsValid()) {
+			UGunGrabComponent::ActiveGrabber->ForceStopGrabIfHoldingObject(OtherComp);
 		}
 
 		OtherActor->SetActorHiddenInGame(true);
 		OtherActor->SetActorEnableCollision(false);
-		OtherActor->SetActorTickEnabled(true);
-
+		OtherActor->SetActorTickEnabled(false);
+		
 		CubeRespawn->SpawnActor();
 	}
 }

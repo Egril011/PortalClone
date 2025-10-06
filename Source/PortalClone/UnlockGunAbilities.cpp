@@ -3,6 +3,7 @@
 
 #include "UnlockGunAbilities.h"
 
+#include "InteractableTriggerComponent.h"
 #include "NotificationSubsystem.h"
 #include "PortalCloneCharacter.h"
 #include "PortalCloneGun.h"
@@ -13,6 +14,8 @@
 // Sets default values
 AUnlockGunAbilities::AUnlockGunAbilities()
 {
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
+	RootComponent = MeshComponent;
 }
 
 void AUnlockGunAbilities::Interact_Implementation()

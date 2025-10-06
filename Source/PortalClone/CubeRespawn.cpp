@@ -18,7 +18,7 @@ void ACubeRespawn::BeginPlay() {
 	Location = SpawnCubeLocalisation->GetComponentLocation();
 	Rotator = SpawnCubeLocalisation->GetComponentRotation();
 
-	//Initalize the pool
+	//Initialize the pool
 	InitializePool();
 	SpawnActor();
 	
@@ -33,6 +33,12 @@ AActor* ACubeRespawn::SpawnActor() {
 			Actor->SetActorLocation(Location);
 			Actor->SetActorRotation(Rotator);
 
+			//Set the Velocity to 0
+			if (UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(Actor->GetRootComponent()))
+			{
+				PrimitiveComponent->SetPhysicsLinearVelocity(FVector::ZeroVector);
+			}
+			
 			Actor->SetActorHiddenInGame(false);
 			Actor->SetActorEnableCollision(true);
 			Actor->SetActorTickEnabled(true);

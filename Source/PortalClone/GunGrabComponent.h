@@ -30,6 +30,11 @@ public:
 	//method to handle the drop input
 	void InputDropObject();
 
+	//Use for the cubekill class
+	void ForceStopGrabIfHoldingObject(UPrimitiveComponent* TargetComponent);
+
+	static TWeakObjectPtr<UGunGrabComponent> ActiveGrabber;
+
 protected: 
 	virtual void BeginPlay() override;
 

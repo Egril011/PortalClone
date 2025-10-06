@@ -66,8 +66,12 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = EqippedGun)
 	APortalCloneGun* EquippedGun;
 
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLookAtInteraction, bool, bIsLooking);
+	FOnLookAtInteraction OnLookAtInteraction;
+
 protected:
-	virtual void BeginPlay() override; 
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
@@ -80,6 +84,9 @@ protected:
 	virtual void NotifyControllerChanged() override;
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 	// End of APawn interface
+
+	UPROPERTY(EditAnywhere, Category="Interaction", meta=(AllowPrivateAccess))
+	float InteractDistance = 500.f;
 	
 public:
 	/** Returns Mesh1P subobject **/
@@ -94,5 +101,12 @@ private:
 
 	//method to interact with objects
 	void CheckInteractable();
+
+	//Update the Widget between the crosshair and the interact UI
+	void UpdateInteractableWidget();
+
+	//Save the current look at
+	TObjectPtr<AActor> CurrentLookAtActor = nullptr;
+	float TimeSinceLastTrace = 0;
 };
 

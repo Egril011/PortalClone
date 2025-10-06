@@ -52,11 +52,13 @@ void UBTTaskNode_FlyChasePlayer::TickTask(UBehaviorTreeComponent& OwnerComp, uin
 	
 	//Save the target's position
 	BBComp->SetValueAsVector(LastTargetLocationKeyName.SelectedKeyName, Target->GetActorLocation());
+
+	//AI Height
+	FVector NewTargetLocation = Target->GetActorLocation() + FVector(0.f, 0.f,HeightAI);
 	
 	//Move the AI to the Target
-	FVector NewTargetLocation = FVector(Target->GetActorLocation().X, Target->GetActorLocation().Y, SelfPawn.Get()->GetActorLocation().Z);
 	FVector ToTarget = NewTargetLocation - SelfPawn->GetActorLocation();
-	FVector Direction = ToTarget.GetSafeNormal2D();
+	FVector Direction = ToTarget.GetSafeNormal();
 	SelfPawn->AddMovementInput(Direction, 1.f);
 
 	//Make the AI look at the target

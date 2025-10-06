@@ -17,7 +17,7 @@ ATeleportationCapsule::ATeleportationCapsule()
 
 	SkeletonMeshDoor->SetupAttachment(SkeletonMeshCapsule);
 
-	/*Attache the collider to the skeleton*/
+	/*Attach the collider to the skeleton*/
 	BoxCollisionPlayerDetection = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxColliderPlayerDetection"));
 	BoxCollisionPlayerDetection->SetupAttachment(SkeletonMeshCapsule);
 
@@ -36,7 +36,7 @@ ATeleportationCapsule::ATeleportationCapsule()
 	BoxCollisionPlayerDetection->OnComponentBeginOverlap.AddDynamic(this,
 		&ATeleportationCapsule::OnOverlapBegin);
 
-	//Attache the scene to the skeleton
+	//Attach the scene to the skeleton
 	SceneTeleportation = CreateDefaultSubobject<USceneComponent>(
 		TEXT("SceneTeleportation"));
 
@@ -52,7 +52,7 @@ void ATeleportationCapsule::Activate_Implementation() {
 void ATeleportationCapsule::OpenDoor() {
 
 	if (!SkeletonMeshDoor->IsPlaying() && AnimOpenDoor) {
-
+		
 		SkeletonMeshDoor->PlayAnimation(AnimOpenDoor, false);
 
 		SkeletonMeshDoor->SetCollisionEnabled(ECollisionEnabled::NoCollision);

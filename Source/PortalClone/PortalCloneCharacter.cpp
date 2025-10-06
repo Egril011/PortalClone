@@ -116,6 +116,19 @@ void APortalCloneCharacter::BeginPlay() {
 	NormalSpeed = GetCharacterMovement()->MaxWalkSpeed;
 }
 
+void APortalCloneCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	
+	TimeSinceLastTrace += DeltaSeconds;
+	
+	if (TimeSinceLastTrace > 0.05f)
+	{
+		UpdateInteractableWidget();
+		TimeSinceLastTrace = 0.f;
+	}
+}
+
 void APortalCloneCharacter::Sprint()
 {
 	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
@@ -155,5 +168,46 @@ void APortalCloneCharacter::CheckInteractable() {
 		if (HitActor->Implements<UInteractableInterface>()) {
 			IInteractableInterface::Execute_Interact(HitActor);
 		}	
+	}
+}
+
+void APortalCloneCharacter::UpdateInteractableWidget()
+{
+	// Start the LineTrace
+	FVector CameraLocation;
+	FRotator CameraRotation;
+
+	GetController()->GetPlayerViewPoint(CameraLocation, CameraRotation);
+	
+	FVector Start = CameraLocation;
+	FVector ForwardVector = CameraRotation.Vector();
+	FVector End = Start + (ForwardVector * 500.0f);
+	
+	FHitResult HitResult;
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		Start,
+		End,
+		ECC_Visibility
+	);
+
+	if (bHit) {
+
+		AActor* HitActor = HitResult.GetActor();
+
+		//See if the player hit an object that has the interface
+		if (HitActor->Implements<UInteractableInterface>()) {
+			if (HitActor != CurrentLookAtActor)
+			{
+				CurrentLookAtActor = HitActor;
+				OnLookAtInteraction.Broadcast(true);
+			}
+		}
+	}
+	else
+	{
+		CurrentLookAtActor = nullptr;
+		OnLookAtInteraction.Broadcast(false);
 	}
 }

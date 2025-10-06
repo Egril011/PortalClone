@@ -12,6 +12,8 @@ UGunGrabComponent::UGunGrabComponent()
 	PhysicsHandle = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("PhysicsHandle"));
 } 
 
+TWeakObjectPtr<UGunGrabComponent> UGunGrabComponent::ActiveGrabber = nullptr;
+
 void UGunGrabComponent::BeginPlay() {
 
 	Super::BeginPlay();
@@ -62,7 +64,8 @@ void UGunGrabComponent::GrabObject(const FHitResult& HitResult)
 		);
 
 		Primitive->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
-				
+
+		ActiveGrabber = this;
 		SetComponentTickEnabled(true);
 		Activate(true);
 	}
@@ -80,6 +83,7 @@ void UGunGrabComponent::DropObject() {
 		Deactivate();
 
 		GunRef->OnEndShootVFX.Broadcast();
+		ActiveGrabber = nullptr;
 
 		Primitive = nullptr;
 	}
@@ -106,6 +110,7 @@ void UGunGrabComponent::ThrowObject() {
 	Deactivate();
 
 	GunRef->OnEndShootVFX.Broadcast();
+	ActiveGrabber = nullptr;
 
 	Primitive = nullptr;
 }
@@ -119,3 +124,20 @@ bool UGunGrabComponent::IsHoldingObject() const
 	return false;
 }
 
+void UGunGrabComponent::ForceStopGrabIfHoldingObject(UPrimitiveComponent* TargetComponent)
+{
+	if (!PhysicsHandle || !PhysicsHandle->GrabbedComponent)
+		return;
+
+	if (PhysicsHandle->GrabbedComponent == TargetComponent)
+	{
+		PhysicsHandle->ReleaseComponent();
+		GunRef->OnEndShootVFX.Broadcast();
+
+		SetComponentTickEnabled(false);
+		Deactivate();
+
+		Primitive = nullptr;
+		ActiveGrabber = nullptr;
+	}
+}

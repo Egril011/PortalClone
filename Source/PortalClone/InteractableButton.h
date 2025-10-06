@@ -29,9 +29,6 @@ protected:
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "ActivatableTarget")
 	AActor* ActivatableTarget;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "InteractableWidget")
-	UInteractableTriggerComponent* InteractableTriggerComponent;
-
 private:
 	virtual void Interact_Implementation() override;
 

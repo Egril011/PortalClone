@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
+#include "Components/SceneComponent.h"
 #include "InteractableTriggerComponent.generated.h"
 
 class USphereComponent;
@@ -11,7 +11,7 @@ class UWidgetComponent;
 class UUserWidget;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class PORTALCLONE_API UInteractableTriggerComponent : public UActorComponent
+class PORTALCLONE_API UInteractableTriggerComponent : public USceneComponent
 {
 	GENERATED_BODY()
 
@@ -20,7 +20,7 @@ public:
 	UInteractableTriggerComponent();
 
 protected:
-	virtual void OnRegister() override;
+	virtual void BeginPlay() override;
 	
 	UFUNCTION()
 	void OverlapBegin(UPrimitiveComponent* OverlappedComponent,
@@ -32,12 +32,9 @@ protected:
 		AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trigger", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<UUserWidget> TriggerKeyWidgetClass;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Trigger", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Trigger", meta=(AllowPrivateAccess="true"))
 	TObjectPtr<USphereComponent> TriggerSphere;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Trigger", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Trigger", meta=(AllowPrivateAccess="true"))
 	TObjectPtr<UWidgetComponent> WidgetComponent;
 };

@@ -3,6 +3,7 @@
 
 #include "PressurePlate.h"
 #include "DoorPressedPlate.h"
+#include "PortalCloneCharacter.h"
 #include "PressableInterface.h"
 #include "RecallComponent.h"
 
@@ -17,17 +18,14 @@ APressurePlate::APressurePlate()
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollider"));
 	BoxCollision->SetupAttachment(StaticMesh);
 
-	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, 
-		&APressurePlate::OnOverlapBegin);
+	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &APressurePlate::OnOverlapBegin);
 
-	BoxCollision->OnComponentEndOverlap.AddDynamic(this, 
-		&APressurePlate::OnOverlapEnd);
+	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &APressurePlate::OnOverlapEnd);
 }
 
 void APressurePlate::BeginPlay() {
 
 	Super::BeginPlay();
-
 	TogglePlate(false);
 }
 
@@ -39,12 +37,13 @@ void APressurePlate::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor*
 		return;
 	}
 
-	/*Check if the overlapping object implements the interface then change its colour and 
-	then check if the door can open*/
-	if (StaticMesh && ActivateColour && OtherActor->Implements<UPressableInterface>())
-	{
+	//See if the OtherActor can Trigger the pressure plate
+	if (!CanTriggerBy(OtherActor))
+		return;
+
+	if (StaticMesh && DoorPressedPlate && ActivateColour && !IsActivate()) {
 		TogglePlate(true);
-	}
+	} 
 }
 
 void APressurePlate::OnOverlapEnd(UPrimitiveComponent* OverlappedComp,
@@ -53,26 +52,24 @@ void APressurePlate::OnOverlapEnd(UPrimitiveComponent* OverlappedComp,
 	if (!OtherActor || OtherActor == this) {
 		return;
 	}
+	
+	//See if the OtherActor can OverlapEnd the pressure plate
+	if (!CanTriggerBy(OtherActor))
+		return;
 
-	/*Check if the overlapping object implements the interface then change its colour and
-	then close the door and disable the plate*/
-	if (StaticMesh && NoActivateColour && OtherActor->Implements<UPressableInterface>())
+	if (!StaticMesh && !DoorPressedPlate && !ActivateColour && !bIsActivate)
+		return;
+
+	//Find the URecallComponent to handle if the object is recalling
+	RecallComponent = OtherActor->FindComponentByClass<URecallComponent>();
+	
+	if (IsValid(RecallComponent) && RecallComponent->IsRecalling())
 	{
-		if (auto* Recall = OtherActor->FindComponentByClass<URecallComponent>())
-		{
-			if (!IsValid(Recall))
-				return;
-				
-			RecallComponent = Recall;	
-
-			if (RecallComponent->IsRecalling())
-			{
-				RecallComponent->OnRecallFinished.AddUniqueDynamic(this, &APressurePlate::HandleRecallObject);
-				return;
-			}
-		}
-		TogglePlate(false);
+		RecallComponent->OnRecallFinished.AddUniqueDynamic(this, &APressurePlate::APressurePlate::HandleRecallObject);
+		return;
 	}
+	
+	TogglePlate(false);
 }
 
 void APressurePlate::TogglePlate(bool bActivate)
@@ -85,8 +82,32 @@ void APressurePlate::TogglePlate(bool bActivate)
 		DoorPressedPlate->ArePlateChanged();
 }
 
+bool APressurePlate::CanTriggerBy(AActor* Actor) const
+{
+	bool bIsPlayer = Actor->IsA<APortalCloneCharacter>();
+	bool bIsObject = Actor->Implements<UPressableInterface>();
+
+	switch (TriggerType)
+	{
+	case EPressurePlateTriggerType::PlayerOnly:
+		return bIsPlayer && !bIsObject;
+
+	case EPressurePlateTriggerType::ObjectOnly:
+		return bIsObject && !bIsPlayer;
+
+	case EPressurePlateTriggerType::Any:
+		return bIsPlayer || bIsObject;
+
+	default:
+		return false;
+	}
+}
+
 void APressurePlate::HandleRecallObject()
 {
 	RecallComponent->OnRecallFinished.RemoveDynamic(this, &APressurePlate::HandleRecallObject);
-	TogglePlate(false);
+	RecallComponent = nullptr;
+
+	if (StaticMesh && DoorPressedPlate && NoActivateColour && bIsActivate)
+		TogglePlate(false);
 }

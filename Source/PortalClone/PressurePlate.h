@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/BoxComponent.h"
+#include "EPressurePlateTriggerType.h"
 #include "PressurePlate.generated.h"
 
 class URecallComponent;
@@ -33,6 +34,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Material")
 	UMaterialInterface* NoActivateColour;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collider")
+	UBoxComponent* BoxCollision;
+
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
@@ -41,19 +45,22 @@ protected:
 	UFUNCTION()
 	void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, 
 		AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	
+	UPROPERTY(EditAnywhere, Category="PressurePlate")
+	TObjectPtr<ADoorPressedPlate> DoorPressedPlate = nullptr;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collider")
-	UBoxComponent* BoxCollision;
-
-	UPROPERTY(EditAnywhere)
-	ADoorPressedPlate* DoorPressedPlate;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PressurePlate")
+	EPressurePlateTriggerType TriggerType;
 
 private: 
 	bool bIsActivate;
-	URecallComponent* RecallComponent;
+	TObjectPtr<URecallComponent> RecallComponent = nullptr;
 
 	//Toggle the plate's colour and the door
 	void TogglePlate(bool bActivate);
+
+	//See which actor can trigger the pressure plate
+	bool CanTriggerBy(AActor* Actor) const;
 
 	UFUNCTION()
 	void HandleRecallObject();

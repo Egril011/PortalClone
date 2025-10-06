@@ -9,6 +9,8 @@
 #include "UnlockGunAbilities.generated.h"
 
 
+class UInteractableTriggerComponent;
+
 UCLASS()
 class PORTALCLONE_API AUnlockGunAbilities : public AActor, public IInteractableInterface
 {
@@ -23,6 +25,8 @@ protected:
 	UPROPERTY(EditAnywhere, Category= "Ability")
 	TArray<EGunStateHandler> GunStateHandlers;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Mesh")
+	TObjectPtr<UStaticMeshComponent> MeshComponent;
 private:
 	virtual void Interact_Implementation() override;
 };
