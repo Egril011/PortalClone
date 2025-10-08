@@ -35,7 +35,7 @@ void AUnlockGunAbilities::Interact_Implementation()
 			if (!PortalPlayer->EquippedGun->IsA<APortalCloneGun>())
 				return;	
 
-			UTrackGunStateComponent* TrackGunStateComponent = PortalPlayer->EquippedGun->TrackGunAbility;
+			UTrackGunStateComponent* TrackGunStateComponent = PortalPlayer->EquippedGun->GetTrackGunStateComponent();
 
 			if (!IsValid(TrackGunStateComponent))
 				return;

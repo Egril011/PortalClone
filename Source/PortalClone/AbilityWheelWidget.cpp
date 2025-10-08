@@ -39,7 +39,7 @@ void UAbilityWheelWidget::NativeConstruct()
 
 			if (Character->EquippedGun->IsA<APortalCloneGun>())
 			{
-				TrackGunAbility = Character->EquippedGun->TrackGunAbility;
+				TrackGunAbility = Character->EquippedGun->GetTrackGunStateComponent();
 			}
 		}
 

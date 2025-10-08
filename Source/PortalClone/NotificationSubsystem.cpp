@@ -43,6 +43,9 @@ void UNotificationSubsystem::ShowNotification(const FString& NotificationText)
 
 void UNotificationSubsystem::RemoveNotification()
 {
+	if (!IsValid(Notification))
+		return;
+	
 	Notification->OnRequestClose.RemoveAll(this);
 	Notification->RemoveFromParent();
 
@@ -51,6 +54,8 @@ void UNotificationSubsystem::RemoveNotification()
 		FInputModeGameOnly InputMode;
 		PlayerController->SetInputMode(InputMode);
 	}
+
+	Notification = nullptr;
 }
 
 UNotificationSubsystem* UNotificationSubsystem::NotificationSubsystemGetWord(const TObjectPtr<UObject> Object)

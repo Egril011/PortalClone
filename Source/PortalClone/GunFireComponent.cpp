@@ -11,37 +11,24 @@ UGunFireComponent::UGunFireComponent()
 
 }
 
-void UGunFireComponent::BeginPlay() {
-
-	Super::BeginPlay();
-
-	if (AActor* Owner = GetOwner())
-	{
-		if (Owner->IsA<APortalCloneGun>()) {
-
-			GunRef = Cast<APortalCloneGun>(Owner);
-
-			if (GunRef) {
-				
-				TrackGunAbilityRef = GunRef->TrackGunAbility;
-				GrabComponent = GunRef->GunGrabComponent;
-			}
-		}
-	}
-}
-
 void UGunFireComponent::Fire() {
 
-	if (!GunRef) {
+	APortalCloneGun* GunRef = Cast<APortalCloneGun>(GetOwner());
+	if (!IsValid(GunRef))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Null"))
 		return;
 	}
-
+	
 	/*If the player is firing again,
 	// and he has grabbed an object, it will throw it */
-	if (GrabComponent && GrabComponent->IsHoldingObject())
+	if (IsValid(GunRef->GetGrabComponent()))
 	{
-		GrabComponent->ThrowObject();
-		return;
+		if (GunRef->GetGrabComponent()->IsHoldingObject())
+		{
+			GunRef->GetGrabComponent()->ThrowObject();
+			return;
+		}
 	}
 	
 	//Start the LineTrace
@@ -76,7 +63,10 @@ void UGunFireComponent::Fire() {
 			DrawDebugLine(GetWorld(), Start, End, FColor::Cyan, false, 10.0f, 0, 1.0f);
 
 			//Call the method that will apply the state based on the gun's effect
-			TrackGunAbilityRef->UseCurrentAbility(HitResult);
+			if (IsValid(GunRef->GetTrackGunStateComponent()))
+			{
+				GunRef->GetTrackGunStateComponent()->UseCurrentAbility(HitResult);
+			}
 		}
 	}
 }

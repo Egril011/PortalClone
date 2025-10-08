@@ -70,7 +70,11 @@ void UGunRecallComponent::CleanUp()
 		RecallComponent = nullptr;
 	}
 
-	RecallVFXComponent->StopRecallVFX();
+	if (IsValid(RecallVFXComponent))
+	{
+		RecallVFXComponent->StopRecallVFX();
+	}
+	
 	ActorRef = nullptr;
 	bIsRecalling = false;
 }

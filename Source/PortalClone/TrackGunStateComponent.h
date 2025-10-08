@@ -23,16 +23,16 @@ public:
 	
 	/*Encapsulation and the methods to unlock or lock an ability*/
 	bool CanGrabObject() const { return bGrabObject; }
-	void UnlockGrabObject() { bGrabObject = true; }
-	void LockGrabObject() { bGrabObject = false; }
-	
+	void UnlockGrabObject();
+	void LockGrabObject();
+
 	bool CanFreezeObject() const { return bFreezeObject; }
-	void UnlockFreezeObject() { bFreezeObject = true; }
-	void LockFreezeObject() { bFreezeObject = false; }
+	void UnlockFreezeObject();
+	void LockFreezeObject();
 
 	bool CanRecallObject() const { return bRecallObject; }
-	void UnlockRecallObject() { bRecallObject = true; }
-	void LockRecallObject() { bRecallObject = false; }
+	void UnlockRecallObject();
+	void LockRecallObject();
 
 	//Apply the appropriate effect depending on the gun's state
 	void UseCurrentAbility(const FHitResult& HitResult) const;
@@ -54,7 +54,7 @@ private:
 	bool bGrabObject;
 	bool bFreezeObject;
 	bool bRecallObject;
-
+	
 	EGunStateHandler GunState;
 	TObjectPtr<UGunGrabComponent> GrabComponent;
 	TObjectPtr<UGunRecallComponent> RecallComponent;

@@ -21,18 +21,4 @@ public:
 
 	//method to shoot the effect
 	void Fire();
-
-protected: 
-
-	virtual void BeginPlay() override;
-
-private: 
-	UPROPERTY()
-	APortalCloneGun* GunRef;
-
-	UPROPERTY()
-	UTrackGunStateComponent* TrackGunAbilityRef;
-
-	UPROPERTY()
-	UGunGrabComponent* GrabComponent; 
 };

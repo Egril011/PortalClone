@@ -4,6 +4,7 @@
 #include "GunGrabComponent.h"
 #include "GunRecallComponent.h"
 #include "GunFreezeComponent.h"
+#include "MyGameInstance.h"
 
 // Sets default values for this component's properties
 UTrackGunStateComponent::UTrackGunStateComponent() : GrabComponent(nullptr), RecallComponent(nullptr)
@@ -32,6 +33,82 @@ void UTrackGunStateComponent::BeginPlay() {
 		if (UGunFreezeComponent* GunFreezeComponent = Owner->FindComponentByClass<UGunFreezeComponent>()){
 			FreezeComponent = GunFreezeComponent;
 		}
+	}
+
+	//Load abilities from GameInstance
+	if (UMyGameInstance* MyGameInstance = Cast<UMyGameInstance>(GetWorld()->GetGameInstance()))
+	{
+		bFreezeObject = MyGameInstance->bFreezeObject;
+		bGrabObject = MyGameInstance->bGrabObject;
+		bRecallObject = MyGameInstance->bRecallObject;
+	}
+}
+
+/*Grab*/
+void UTrackGunStateComponent::UnlockGrabObject()
+{
+	bGrabObject = true;
+
+	//Set also for the GameInstance
+	if (UMyGameInstance* MyGameInstance = Cast<UMyGameInstance>(GetWorld()->GetGameInstance()))
+	{
+		MyGameInstance->bGrabObject = true;
+	}
+}
+
+void UTrackGunStateComponent::LockGrabObject()
+{
+	bGrabObject = false;
+	
+	//Set also for the GameInstance
+	if (UMyGameInstance* MyGameInstance = Cast<UMyGameInstance>(GetWorld()->GetGameInstance()))
+	{
+		MyGameInstance->bGrabObject = false;
+	}
+}
+
+/*Freeze*/
+void UTrackGunStateComponent::UnlockFreezeObject()
+{
+	bFreezeObject = true;
+
+	//Set also for the GameInstance
+	if (UMyGameInstance* MyGameInstance = Cast<UMyGameInstance>(GetWorld()->GetGameInstance()))
+	{
+		MyGameInstance->bFreezeObject = true;
+	}
+}
+
+void UTrackGunStateComponent::LockFreezeObject()
+{
+	bFreezeObject = false;
+
+	//Set also for the GameInstance
+	if (UMyGameInstance* MyGameInstance = Cast<UMyGameInstance>(GetWorld()->GetGameInstance()))
+	{
+		MyGameInstance->bFreezeObject = false;
+	}
+}
+
+/*Recall*/
+void UTrackGunStateComponent::UnlockRecallObject()
+{
+	bRecallObject = true;
+
+	//Set also for the GameInstance
+	if (UMyGameInstance* MyGameInstance = Cast<UMyGameInstance>(GetWorld()->GetGameInstance()))
+	{
+		MyGameInstance->bRecallObject = true;
+	}
+}
+
+void UTrackGunStateComponent::LockRecallObject()
+{
+	bRecallObject = false;
+
+	if (UMyGameInstance* MyGameInstance = Cast<UMyGameInstance>(GetWorld()->GetGameInstance()))
+	{
+		MyGameInstance->bRecallObject = false;
 	}
 }
 
@@ -64,6 +141,8 @@ void UTrackGunStateComponent::UseCurrentAbility(const FHitResult& HitResult) con
 
 void UTrackGunStateComponent::ChangeGunState(const EGunStateHandler NewGunState) {
 	GunState = NewGunState;
+	UE_LOG(LogTemp, Warning, TEXT("GunState: %s"),
+	*UEnum::GetValueAsString(GunState));
 	OnGunStateChanged.Broadcast(NewGunState);
 }
 

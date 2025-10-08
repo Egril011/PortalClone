@@ -10,6 +10,7 @@
 #include "Delegates/Delegate.h"
 #include "PortalCloneGun.generated.h"
 
+class UGunWidgetComponent;
 class UGunFreezeComponent;
 class UGunRecallComponent;
 class UTrackGunStateComponent;
@@ -17,11 +18,10 @@ class UGunFireComponent;
 class UGunGrabComponent;
 class UGunVFXComponent;
 class UAbilityWheelComponent;
+class UAbilityWheelWidget;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnShootVFX, FName, VFXName, FVector, TargetLocation);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEndShootVFX);
-
-class UAbilityWheelWidget;
 
 UCLASS()
 class PORTALCLONE_API APortalCloneGun : public AActor
@@ -32,9 +32,23 @@ public:
 	// Sets default values for this actor's properties
 	APortalCloneGun();
 
-	//Skeleton
-	UPROPERTY(EditAnyWhere)
-	USkeletalMeshComponent* GunSkeletalMesh;
+	//Give a pointer to the character 
+	APortalCloneCharacter* GetCharacter() const {return Character.Get() ;};
+	FName MuzzleSocketName() const { return MuzzleSocketName_; }
+
+	//Getter
+	UGunGrabComponent* GetGrabComponent() const {return GunGrabComponent; }
+	UGunRecallComponent* GetRecallComponent() const {return GunRecallComponent; }
+	UGunFreezeComponent* GetFreezeComponent() const {return GunFreezeComponent; }
+	UTrackGunStateComponent* GetTrackGunStateComponent() const {return TrackGunAbility; }
+	USkeletalMeshComponent* GetMesh() const {return GunSkeletalMesh; }
+	
+	/** Attaches the actor to a FirstPersonCharacter */
+	void AttachWeapon(APortalCloneCharacter* TargetCharacter);
+
+	//The muzzle for the grab
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
+	USceneComponent* MuzzleSceneGrabbedObject;
 
 	/*BroadCast*/
 	UPROPERTY(BlueprintAssignable, Category = "Event")
@@ -42,6 +56,11 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Event")
 	FOnEndShootVFX OnEndShootVFX;
+
+protected:
+	//Skeleton
+	UPROPERTY(EditAnyWhere)
+	USkeletalMeshComponent* GunSkeletalMesh;
 
 	/** MappingContext and Inputs*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -55,13 +74,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* HandleMouseRightInput;
-	
-	//Give a pointer to the character 
-	APortalCloneCharacter* GetCharacter() const {return Character.Get() ;};
-
-	//The Widget for the Gun
-	UPROPERTY(EditAnywhere, Category="GunWidget")
-	TSubclassOf<UUserWidget> GunWidget;
 	
 	/*Gun Components*/
 	UPROPERTY(EditAnywhere, Category = "GunComponent")
@@ -85,12 +97,10 @@ public:
 	UPROPERTY(EditAnywhere, Category="GunComponent")
 	TObjectPtr<UGunFreezeComponent> GunFreezeComponent;
 
-	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
-	USceneComponent* MuzzleSceneGrabbedObject;
+	UPROPERTY(EditAnywhere, Category="GunComponent")
+	TObjectPtr<UGunWidgetComponent> GunWidgetComponent;
 
-	FName MuzzleSocketName() const { return MuzzleSocketName_; }
-
-protected:
+	//Collider
 	UPROPERTY()
 	USphereComponent* SphereCollider;
 
@@ -98,6 +108,9 @@ protected:
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 		bool bFromSweep, const FHitResult& SweepResult);
+
+	//method
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 private:
 	/** The Character holding this weapon*/
@@ -108,11 +121,8 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	FName MuzzleSocketName_ = TEXT("Muzzle");
 
-	/** Attaches the actor to a FirstPersonCharacter */
-	void AttachWeapon(APortalCloneCharacter* TargetCharacter);
- 
 	/* Unlock the Gun's input */
 	void UnlockGunInput();
-
+	
 	bool bGunInputUnlocked = false;
 };

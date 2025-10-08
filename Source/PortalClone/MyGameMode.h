@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "MyGameMode.generated.h"
 
+class APortalCloneGun;
 /**
  * 
  */
@@ -17,4 +18,7 @@ class PORTALCLONE_API AMyGameMode : public AGameModeBase
 public: 
 	UFUNCTION(BlueprintCallable)
 	void PlayerRespawn(AController* PlayerController);
+
+private:
+	TSubclassOf<APortalCloneGun> GunToRespawn;
 };

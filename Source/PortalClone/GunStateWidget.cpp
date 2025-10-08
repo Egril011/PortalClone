@@ -13,8 +13,20 @@ void UGunStateWidget::BindGunState(UTrackGunStateComponent* GunStateComponent)
 {
 	if (!IsValid(GunStateComponent))
 		return;
-	
-	GunStateComponent->OnGunStateChanged.AddUniqueDynamic(this,&UGunStateWidget::UpdateWidgetGunState);
+
+	GunStateComponentInstance = GunStateComponent;
+	GunStateComponentInstance->OnGunStateChanged.AddUniqueDynamic(this,&UGunStateWidget::UpdateWidgetGunState);
+}
+
+void UGunStateWidget::NativeDestruct()
+{
+	Super::NativeDestruct();
+
+	if (IsValid(GunStateComponentInstance))
+	{
+		GunStateComponentInstance->OnGunStateChanged.RemoveAll(this);
+		GunStateComponentInstance = nullptr;
+	}
 }
 
 void UGunStateWidget::UpdateWidgetGunState(const EGunStateHandler GunState)
@@ -38,7 +50,6 @@ void UGunStateWidget::UpdateWidgetGunState(const EGunStateHandler GunState)
 	case EGunStateHandler::Recall:
 		if (IsValid(WidgetSwitcher) && IsValid(GunRecallWidget))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Recalling WidgetSwitcher"));
 			WidgetSwitcher->SetActiveWidget(GunRecallWidget);
 		}
 		break;

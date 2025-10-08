@@ -11,10 +11,9 @@
 #include "GunFreezeComponent.h"
 #include "GunGrabComponent.h"
 #include "GunRecallComponent.h"
-#include "GunStateWidget.h"
 #include "TrackGunStateComponent.h"
 #include "GunVFXComponent.h"
-#include "Blueprint/UserWidget.h"
+#include "GunWidgetComponent.h"
 
 // Sets default values
 APortalCloneGun::APortalCloneGun()
@@ -39,6 +38,7 @@ APortalCloneGun::APortalCloneGun()
 	AbilityWheelComponent = CreateDefaultSubobject<UAbilityWheelComponent>(TEXT("AbilityWheelComponent"));
 	GunRecallComponent = CreateDefaultSubobject<UGunRecallComponent>(TEXT("RecallComponent"));
 	GunFreezeComponent = CreateDefaultSubobject<UGunFreezeComponent>(TEXT("GunFreezeComponent"));
+	GunWidgetComponent = CreateDefaultSubobject<UGunWidgetComponent>(TEXT("GunWidgetComponent"));
 	
 }
 
@@ -60,6 +60,18 @@ void APortalCloneGun::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor
 			}
 		}
 	}
+}
+
+void APortalCloneGun::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	if (!IsValid(GunWidgetComponent))
+		return;
+
+	GunWidgetComponent->DestroyComponent();
+	OnShootVFX.Clear();
+	OnEndShootVFX.Clear();
 }
 
 void APortalCloneGun::AttachWeapon(APortalCloneCharacter* TargetCharacter) {
@@ -84,21 +96,16 @@ void APortalCloneGun::AttachWeapon(APortalCloneCharacter* TargetCharacter) {
 				BoolProp->SetPropertyValue_InContainer(AnimInstance, true);
 			}
 		}
-
-		//Create the Widget for the gun (input)
-		if (!IsValid(GunWidget))
-			return;
-
-		auto* Widget = CreateWidget<UGunStateWidget>(GetWorld(), GunWidget);
-		if (!IsValid(Widget))
-			return;
 		
-		Widget->BindGunState(TrackGunAbility);
-		Widget->AddToViewport();
-
 		//Unlock the keys 
 		if(!bGunInputUnlocked)
 		UnlockGunInput();
+
+		//Widget for the input
+		if (IsValid(GunWidgetComponent) && IsValid(TrackGunAbility))
+		{
+			GunWidgetComponent->InitializeWidget(TrackGunAbility);
+		}
 	}
 }
 

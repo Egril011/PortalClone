@@ -3,16 +3,27 @@
 #include "MyGameMode.h"
 #include "MyGameInstance.h"
 #include "PortalCloneCharacter.h"
+#include "PortalCloneGun.h"
 
 void AMyGameMode::PlayerRespawn(AController* PlayerController) {
 
 	if (!PlayerController)
 		return;
-
+	
 	APawn* OldPlayer = PlayerController->GetPawn();
 
 	if (OldPlayer) {
 
+		//Save the gun to respawn
+		if (APortalCloneCharacter* OldPlayerCharacter = Cast<APortalCloneCharacter>(OldPlayer))
+		{
+			if (OldPlayerCharacter->EquippedGun)
+			{
+				GunToRespawn = OldPlayerCharacter->EquippedGun->GetClass();
+				OldPlayerCharacter->EquippedGun->Destroy();
+			}
+		}
+		
 		OldPlayer->Destroy();
 	}
 
@@ -26,7 +37,7 @@ void AMyGameMode::PlayerRespawn(AController* PlayerController) {
 		FActorSpawnParameters SpawnParam;
 		SpawnParam.Owner = PlayerController;
 
-		APawn* NewPlayer = GetWorld()->SpawnActor<APortalCloneCharacter>(
+		APortalCloneCharacter* NewPlayer = GetWorld()->SpawnActor<APortalCloneCharacter>(
 			DefaultPawnClass,
 			GI->SpawnLocation,
 			GI->SpawnRotation,
@@ -34,5 +45,26 @@ void AMyGameMode::PlayerRespawn(AController* PlayerController) {
 		);
 
 		PlayerController->Possess(NewPlayer);
+
+		//Respawn the Gun
+		FActorSpawnParameters SpawnParamGun;
+		SpawnParamGun.Owner = NewPlayer;
+	
+		
+		if (IsValid(GunToRespawn) && IsValid(NewPlayer))
+		{
+			APortalCloneGun* NewGun = NewPlayer->GetWorld()->SpawnActor<APortalCloneGun>(
+			GunToRespawn,
+			FVector::ZeroVector,
+			FRotator::ZeroRotator,
+			SpawnParamGun);
+
+			//Attach the gun to the player
+			if (!IsValid(NewGun))
+				return;
+
+			NewGun->AttachWeapon(NewPlayer);
+			NewPlayer->EquippedGun = NewGun;
+;		}
 	}
 }

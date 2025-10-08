@@ -89,8 +89,8 @@ void UNormalLaserComponent::LaserEffect()
 			return;
 
 		//Lock its abilities
-		EquippedGun->TrackGunAbility->LockFreezeObject();
-		EquippedGun->TrackGunAbility->LockGrabObject();
+		EquippedGun->GetTrackGunStateComponent()->LockFreezeObject();
+		EquippedGun->GetTrackGunStateComponent()->LockGrabObject();
 
 		UE_LOG(LogTemp,Warning,TEXT("LaserEffect Success"));
 	}

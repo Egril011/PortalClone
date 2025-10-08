@@ -11,7 +11,13 @@ class PORTALCLONE_API UMyGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
 
-	public:
+public:
+	/*Spawn's variable*/
 		FVector SpawnLocation;
 		FRotator SpawnRotation;
+
+	/*Gun Abilities variable*/
+	bool bGrabObject;
+	bool bFreezeObject;
+	bool bRecallObject;
 };

@@ -24,6 +24,9 @@ public:
 	//Get the TrackGunStateComponent in order to get its broadcast
 	void BindGunState(UTrackGunStateComponent* GunStateComponent);
 
+protected:
+	virtual void NativeDestruct() override;
+
 private:
 	UFUNCTION()
 	void UpdateWidgetGunState(EGunStateHandler GunState);
@@ -39,4 +42,6 @@ private:
 
 	UPROPERTY(meta=(BindWidget), meta=(AllowPrivateAccess))
 	TObjectPtr<UGunRecallWidget> GunRecallWidget;
+
+	TObjectPtr<UTrackGunStateComponent> GunStateComponentInstance;
 };
