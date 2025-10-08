@@ -10,6 +10,7 @@ UGunGrabComponent::UGunGrabComponent()
 	PrimaryComponentTick.bStartWithTickEnabled = false;
 
 	PhysicsHandle = CreateDefaultSubobject<UPhysicsHandleComponent>(TEXT("PhysicsHandle"));
+	MuzzleGrab = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MuzzleGrab"));
 } 
 
 TWeakObjectPtr<UGunGrabComponent> UGunGrabComponent::ActiveGrabber = nullptr;
@@ -23,6 +24,15 @@ void UGunGrabComponent::BeginPlay() {
 		if (Owner->IsA<APortalCloneGun>()) {
 
 			GunRef = Cast<APortalCloneGun>(Owner);
+
+			//Attach the Muzzle grab to the gun's mesh
+			if (IsValid(GunRef))
+			{
+				MuzzleGrab->AttachToComponent(
+					GunRef->GetMesh(),
+					FAttachmentTransformRules::SnapToTargetIncludingScale,
+					GunRef->GetMuzzleSocketName());
+			}
 		}
 	}
 }
@@ -34,9 +44,9 @@ void UGunGrabComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 	if (PhysicsHandle && PhysicsHandle->GrabbedComponent) {
 
-		//change the object's location so that the location is always the same even though the object is far aways 
-		FVector ObjectLocation = GunRef->MuzzleSceneGrabbedObject->GetComponentLocation() +
-			(GunRef->MuzzleSceneGrabbedObject->GetComponentRotation().Vector() * 250.0f);
+		//change the object's location so that the location is always the same even though the object is far always 
+		FVector ObjectLocation = MuzzleGrab->GetComponentLocation() +
+			(MuzzleGrab->GetComponentRotation().Vector() * 250.0f);
 
 		PhysicsHandle->SetTargetLocation(ObjectLocation);
 	}
@@ -51,14 +61,15 @@ void UGunGrabComponent::GrabObject(const FHitResult& HitResult)
 
 	if (Primitive && Primitive->IsSimulatingPhysics())
 	{
-		//Call the broadcast
+		//Call the broadcast to show the VFX
 		GunRef->OnShootVFX.Broadcast("Grab", HitResult.ImpactPoint);
 
+		//Start the grab and the tick 
 		Primitive->SetSimulatePhysics(true);
 
 		PhysicsHandle->GrabComponentAtLocationWithRotation(
 			Primitive,
-			GunRef->MuzzleSocketName(),
+			GunRef->GetMuzzleSocketName(),
 			Primitive->GetComponentLocation(),
 			Primitive->GetComponentRotation()
 		);
@@ -103,7 +114,7 @@ void UGunGrabComponent::ThrowObject() {
 
 	Primitive->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
 
-	Primitive->AddImpulse(GunRef->MuzzleSceneGrabbedObject->GetComponentRotation().Vector()
+	Primitive->AddImpulse(MuzzleGrab->GetComponentRotation().Vector()
 		* 1000.f * Primitive->GetMass(), NAME_None, false);
 
 	SetComponentTickEnabled(false);
@@ -131,13 +142,6 @@ void UGunGrabComponent::ForceStopGrabIfHoldingObject(UPrimitiveComponent* Target
 
 	if (PhysicsHandle->GrabbedComponent == TargetComponent)
 	{
-		PhysicsHandle->ReleaseComponent();
-		GunRef->OnEndShootVFX.Broadcast();
-
-		SetComponentTickEnabled(false);
-		Deactivate();
-
-		Primitive = nullptr;
-		ActiveGrabber = nullptr;
+		DropObject();
 	}
 }

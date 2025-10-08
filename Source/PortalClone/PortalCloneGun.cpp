@@ -21,10 +21,7 @@ APortalCloneGun::APortalCloneGun()
 	//Set the Muzzle scene to the original
 	GunSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("GunMesh"));
 	RootComponent = GunSkeletalMesh;
-
-	MuzzleSceneGrabbedObject = CreateDefaultSubobject<USceneComponent>(TEXT("SceneGrab"));
-	MuzzleSceneGrabbedObject->SetupAttachment(GunSkeletalMesh);
-
+	
 	SphereCollider = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollider"));
 	SphereCollider->SetupAttachment(GunSkeletalMesh);
 
@@ -66,10 +63,11 @@ void APortalCloneGun::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-	if (!IsValid(GunWidgetComponent))
-		return;
+	if (IsValid(GunWidgetComponent))
+	{
+		GunWidgetComponent->DestroyComponent();
+	}
 
-	GunWidgetComponent->DestroyComponent();
 	OnShootVFX.Clear();
 	OnEndShootVFX.Clear();
 }

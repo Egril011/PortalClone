@@ -20,9 +20,6 @@ class UGunVFXComponent;
 class UAbilityWheelComponent;
 class UAbilityWheelWidget;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnShootVFX, FName, VFXName, FVector, TargetLocation);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEndShootVFX);
-
 UCLASS()
 class PORTALCLONE_API APortalCloneGun : public AActor
 {
@@ -34,7 +31,9 @@ public:
 
 	//Give a pointer to the character 
 	APortalCloneCharacter* GetCharacter() const {return Character.Get() ;};
-	FName MuzzleSocketName() const { return MuzzleSocketName_; }
+
+	//Get the muzzleName
+	FName GetMuzzleSocketName() const { return MuzzleSocketName; }
 
 	//Getter
 	UGunGrabComponent* GetGrabComponent() const {return GunGrabComponent; }
@@ -45,15 +44,13 @@ public:
 	
 	/** Attaches the actor to a FirstPersonCharacter */
 	void AttachWeapon(APortalCloneCharacter* TargetCharacter);
-
-	//The muzzle for the grab
-	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
-	USceneComponent* MuzzleSceneGrabbedObject;
-
+	
 	/*BroadCast*/
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnShootVFX, FName, VFXName, FVector, TargetLocation);
 	UPROPERTY(BlueprintAssignable, Category = "Event")
 	FOnShootVFX OnShootVFX;
 
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEndShootVFX);
 	UPROPERTY(BlueprintAssignable, Category = "Event")
 	FOnEndShootVFX OnEndShootVFX;
 
@@ -119,7 +116,7 @@ private:
 
 	//To get the Muzzle's name from the gun's skeleton 
 	UPROPERTY(EditAnywhere, Category = "Weapon")
-	FName MuzzleSocketName_ = TEXT("Muzzle");
+	FName MuzzleSocketName = TEXT("Muzzle");
 
 	/* Unlock the Gun's input */
 	void UnlockGunInput();

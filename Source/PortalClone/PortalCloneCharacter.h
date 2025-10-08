@@ -22,6 +22,22 @@ class APortalCloneCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+public:
+	APortalCloneCharacter();
+
+	UPROPERTY(BlueprintReadOnly, Category = EqippedGun)
+	TObjectPtr<APortalCloneGun> EquippedGun;
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLookAtInteraction, bool, bIsLooking);
+	FOnLookAtInteraction OnLookAtInteraction;
+
+	/** Returns Mesh1P subobject **/
+	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
+	
+	/** Returns FirstPersonCameraComponent subobject **/
+	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
+	
+protected:
 	/** Pawn mesh: 1st person view (arms; seen only by self) */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Mesh, meta = (AllowPrivateAccess = "true"))
 	USkeletalMeshComponent* Mesh1P;
@@ -57,19 +73,9 @@ class APortalCloneCharacter : public ACharacter
 	UPROPERTY(EditDefaultsOnly, Category = Movement)
 	float NormalSpeed;
 
-	UPROPERTY(EditDefaultsOnly, Category = Movement)
+	UPROPERTY(EditDefaultsOnly, Category = Movement, meta=(AllowPrivateAccess))
 	float SprintSpeed = 1000.0f;
-
-public:
-	APortalCloneCharacter();
-
-	UPROPERTY(BlueprintReadOnly, Category = EqippedGun)
-	APortalCloneGun* EquippedGun;
-
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLookAtInteraction, bool, bIsLooking);
-	FOnLookAtInteraction OnLookAtInteraction;
-
-protected:
+	
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 
@@ -78,8 +84,7 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
-
-protected:
+	
 	// APawn interface
 	virtual void NotifyControllerChanged() override;
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
@@ -88,13 +93,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Interaction", meta=(AllowPrivateAccess))
 	float InteractDistance = 500.f;
 	
-public:
-	/** Returns Mesh1P subobject **/
-	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
-	
-	/** Returns FirstPersonCameraComponent subobject **/
-	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
-private:
 	//** Sprint function *//
 	void Sprint();
 	void StopSprinting();
@@ -104,7 +102,8 @@ private:
 
 	//Update the Widget between the crosshair and the interact UI
 	void UpdateInteractableWidget();
-
+	
+private:
 	//Save the current look at
 	TObjectPtr<AActor> CurrentLookAtActor = nullptr;
 	float TimeSinceLastTrace = 0;

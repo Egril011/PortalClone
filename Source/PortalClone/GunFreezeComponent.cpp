@@ -15,14 +15,14 @@ UGunFreezeComponent::UGunFreezeComponent()
 
 void UGunFreezeComponent::FreezeObject(FHitResult HitResult)
 {
-	AActor* HitActor = HitResult.GetActor();
-	if (!IsValid(HitActor))
-		return;
-	
-	if(!HitActor->Implements<UFreezableInterface>())
-		return;
-
-	IFreezableInterface::Execute_ApplyFreezeEffect(HitActor);
+ 	AActor* HitActor = HitResult.GetActor();
+ 	if (!IsValid(HitActor))
+ 		return;
+ 	
+ 	if(!HitActor->Implements<UFreezableInterface>())
+ 		return;
+ 
+ 	IFreezableInterface::Execute_ApplyFreezeEffect(HitActor);
 }
 
 

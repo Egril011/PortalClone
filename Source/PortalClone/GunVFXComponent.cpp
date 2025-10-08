@@ -38,7 +38,7 @@ void UGunVFXComponent::PlayVFX(FName VFXEffectName, FVector TargetLocation) {
 			ActiveVFX = UNiagaraFunctionLibrary::SpawnSystemAttached(
 				VFXMap[VFXEffectName],
 				GunRef->GetMesh(),
-				GunRef->MuzzleSocketName(),
+				GunRef->GetMuzzleSocketName(),
 				FVector(0.0f, 0.0f, 0.0f),
 				FRotator(0.0f, 0.0f, 0.0f),
 				EAttachLocation::SnapToTarget,

@@ -50,6 +50,10 @@ private :
 	UPROPERTY()
 	UPhysicsHandleComponent* PhysicsHandle;
 
+	//Where the object will be attached 
+	UPROPERTY(EditAnywhere, Category="Grab|MuzzleGrab", meta=(AllowPrivateAccess))
+	USceneComponent* MuzzleGrab;
+
 	UPrimitiveComponent* Primitive;
 
 	//method to drop the object

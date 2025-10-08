@@ -5,10 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "InteractableInterface.h"
-#include "ActivatableInterface.h"
 #include "InteractableButton.generated.h"
-
-class UInteractableTriggerComponent;
 
 UCLASS()
 class PORTALCLONE_API AInteractableButton : public AActor, public IInteractableInterface

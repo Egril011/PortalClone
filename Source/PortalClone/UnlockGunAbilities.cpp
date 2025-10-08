@@ -3,7 +3,6 @@
 
 #include "UnlockGunAbilities.h"
 
-#include "InteractableTriggerComponent.h"
 #include "NotificationSubsystem.h"
 #include "PortalCloneCharacter.h"
 #include "PortalCloneGun.h"
@@ -95,6 +94,8 @@ void AUnlockGunAbilities::Interact_Implementation()
 			}
 		}
 	}
+
+	Destroy();
 }
 
 

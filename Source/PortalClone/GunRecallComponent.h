@@ -20,6 +20,8 @@ public:
 	UGunRecallComponent();
 
 	void Recall(const FHitResult& HitResult);
+
+	/*If the player has the gun and the recall ability on and right click*/
 	void CancelRecall();
 
 protected:
@@ -35,6 +37,7 @@ private:
 	
 	bool bIsRecalling;
 
+	/*CleanUp everything*/
 	UFUNCTION()
 	void CleanUp();
 };

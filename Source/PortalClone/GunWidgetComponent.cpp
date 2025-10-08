@@ -21,6 +21,13 @@ void UGunWidgetComponent::InitializeWidget(UTrackGunStateComponent* TrackGunStat
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
 	if (!IsValid(PlayerController))
 		return;
+
+	//If the widget is still in live destroy it 
+	if (IsValid(UserWidgetInstance))
+	{
+		UserWidgetInstance->RemoveFromParent();
+		UserWidgetInstance = nullptr;
+	}
 	
 	UserWidgetInstance = CreateWidget<UGunStateWidget>(PlayerController, GunWidget);
 	if (!IsValid(UserWidgetInstance))

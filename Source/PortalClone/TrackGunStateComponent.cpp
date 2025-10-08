@@ -141,8 +141,6 @@ void UTrackGunStateComponent::UseCurrentAbility(const FHitResult& HitResult) con
 
 void UTrackGunStateComponent::ChangeGunState(const EGunStateHandler NewGunState) {
 	GunState = NewGunState;
-	UE_LOG(LogTemp, Warning, TEXT("GunState: %s"),
-	*UEnum::GetValueAsString(GunState));
 	OnGunStateChanged.Broadcast(NewGunState);
 }
 

@@ -45,11 +45,12 @@ void UGunRecallComponent::Recall(const FHitResult& HitResult)
 	TArray<FVector> Path;
 	RecallComponent->GetRecordedPath(Path);
 	RecallVFXComponent->PlayRecallVFX(Path, ActorRef);
-	
+
+	//Start the Recall
 	IRecallableInterface::Execute_Recallable(ActorRef);
 	bIsRecalling = true;
 }
-/**/
+
 void UGunRecallComponent::CancelRecall()
 {
 	if (!IsValid(ActorRef))

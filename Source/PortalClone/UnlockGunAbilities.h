@@ -8,9 +8,6 @@
 #include "GameFramework/Actor.h"
 #include "UnlockGunAbilities.generated.h"
 
-
-class UInteractableTriggerComponent;
-
 UCLASS()
 class PORTALCLONE_API AUnlockGunAbilities : public AActor, public IInteractableInterface
 {
