@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "GunRecallComponent.generated.h"
 
+class URecallVFXComponent;
+class APortalCloneGun;
 class URecallComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -20,6 +22,10 @@ public:
 	void Recall(const FHitResult& HitResult);
 	void CancelRecall();
 
+protected:
+	UPROPERTY(EditAnywhere, Category = "RecallVFX")
+	TObjectPtr<URecallVFXComponent> RecallVFXComponent;
+	
 private:
 	UPROPERTY()
 	TObjectPtr<AActor> ActorRef;

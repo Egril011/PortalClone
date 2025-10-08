@@ -181,3 +181,19 @@ void URecallComponent::StopRecall()
 	RecallCircularBuffer.Clear();
 }
 
+void URecallComponent::GetRecordedPath(TArray<FVector>& OutPath) const
+{
+	OutPath.Empty();
+	
+	for (int i = 0; i < RecallCircularBuffer.GetSize(); i++)
+	{
+		FVector Position;
+		FQuat Rotation;
+		float Time;
+
+		if (RecallCircularBuffer.GetNewest(i, Position, Rotation, Time))
+		{
+			OutPath.Add(Position);
+		}
+	}
+}

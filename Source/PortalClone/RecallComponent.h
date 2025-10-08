@@ -26,6 +26,9 @@ public:
 	//Stop the Recall
 	void StopRecall();
 
+	//Get all the saved paths
+	void GetRecordedPath(TArray<FVector>& OutPath) const;;
+
 	bool IsRecalling() const {return bRecalling;};
 
 	UPROPERTY(BlueprintAssignable, Category="Recall")

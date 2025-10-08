@@ -29,9 +29,7 @@ void UGunVFXComponent::PlayVFX(FName VFXEffectName, FVector TargetLocation) {
 
 	//looking if there is another effect activate
 	if (ActiveVFX) {
-		ActiveVFX->Deactivate();
-		ActiveVFX->DestroyComponent();
-		ActiveVFX = nullptr;
+		StopVFX();
 	}
 
 	if (GunRef && !VFXMap.IsEmpty()) { 

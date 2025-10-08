@@ -4,13 +4,14 @@
 #include "GunRecallComponent.h"
 #include "RecallableInterface.h"
 #include "RecallComponent.h"
+#include "RecallVFXComponent.h"
 
 // Sets default values for this component's properties
 UGunRecallComponent::UGunRecallComponent() : ActorRef(nullptr),
 												RecallComponent(nullptr),
 												bIsRecalling(false)
 {
-	PrimaryComponentTick.bCanEverTick = false;
+	RecallVFXComponent = CreateDefaultSubobject<URecallVFXComponent>(TEXT("RecallVFX"));
 }
 
 /*This method is used to execute the Recallable via the interface and to prevent the player
@@ -36,8 +37,16 @@ void UGunRecallComponent::Recall(const FHitResult& HitResult)
 	RecallComponent->OnRecallFinished.RemoveDynamic(this, &UGunRecallComponent::CleanUp);
 	RecallComponent->OnRecallFinished.AddDynamic(this, &UGunRecallComponent::CleanUp);
 
-	IRecallableInterface::Execute_Recallable(ActorRef);
+	//Start the VFX
+	if (!IsValid(RecallVFXComponent))
+		return;
+
+	//Get the saved path and play the VFX
+	TArray<FVector> Path;
+	RecallComponent->GetRecordedPath(Path);
+	RecallVFXComponent->PlayRecallVFX(Path, ActorRef);
 	
+	IRecallableInterface::Execute_Recallable(ActorRef);
 	bIsRecalling = true;
 }
 /**/
@@ -60,7 +69,8 @@ void UGunRecallComponent::CleanUp()
 		RecallComponent->OnRecallFinished.RemoveDynamic(this, &UGunRecallComponent::CleanUp);
 		RecallComponent = nullptr;
 	}
-	
+
+	RecallVFXComponent->StopRecallVFX();
 	ActorRef = nullptr;
 	bIsRecalling = false;
 }
