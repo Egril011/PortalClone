@@ -7,9 +7,6 @@
 // Sets default values for this component's properties
 UGunVFXComponent::UGunVFXComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = false;
 }
 
 void UGunVFXComponent::BeginPlay() {
@@ -27,11 +24,8 @@ void UGunVFXComponent::BeginPlay() {
 
 void UGunVFXComponent::PlayVFX(FName VFXEffectName, FVector TargetLocation) {
 
-	//looking if there is another effect activate
-	if (ActiveVFX) {
-		StopVFX();
-	}
-
+	Super::PlayVFX(VFXEffectName, TargetLocation);
+	
 	if (GunRef && !VFXMap.IsEmpty()) { 
 
 		if (VFXMap.Contains(VFXEffectName)) {
@@ -53,12 +47,8 @@ void UGunVFXComponent::PlayVFX(FName VFXEffectName, FVector TargetLocation) {
 	}
 }
 
-void UGunVFXComponent::StopVFX() {
-
-	if (ActiveVFX) {
-		ActiveVFX->Deactivate();
-		ActiveVFX->DestroyComponent();
-		ActiveVFX = nullptr;
-	}
+void UGunVFXComponent::StopVFX()
+{
+	Super::StopVFX();
 }
 

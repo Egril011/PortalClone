@@ -25,6 +25,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "BB|Variable", meta=(AllowPrivateAccess))
 	FBlackboardKeySelector TargetActor;
 
+	UPROPERTY(EditAnywhere, Category = "BB|Variable", meta = (AllowPrivateAccess))
+	FBlackboardKeySelector bIsTouchingTarget;
+
 	UPROPERTY(EditAnywhere, Category = "BB|Variable", meta=(AllowPrivateAccess))
 	FBlackboardKeySelector LastTargetLocationKeyName;
 	

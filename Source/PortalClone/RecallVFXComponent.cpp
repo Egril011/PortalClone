@@ -18,11 +18,11 @@ void URecallVFXComponent::PlayRecallVFX(const TArray<FVector>& RecallPath, AActo
 		return;
 	
 	if (ActiveVFX)
-		StopRecallVFX();
+		StopVFX();
 
 	//Create the VFX at the Object location
 	ActiveVFX = UNiagaraFunctionLibrary::SpawnSystemAttached(
-		RecallVFXSystem,
+		RecallVFX,
 		Actor->GetRootComponent(),
 		NAME_None,
 		FVector::ZeroVector,
@@ -44,12 +44,8 @@ void URecallVFXComponent::PlayRecallVFX(const TArray<FVector>& RecallPath, AActo
 	ActiveVFX->SetIntParameter(TEXT("PathCount"), RecallPath.Num());
 }
 
-void URecallVFXComponent::StopRecallVFX()
+void URecallVFXComponent::StopVFX()
 {
-	if (ActiveVFX) {
-		ActiveVFX->Deactivate();
-		ActiveVFX->DestroyComponent();
-		ActiveVFX = nullptr;
-	}
+	Super::StopVFX();
 }
 

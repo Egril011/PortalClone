@@ -4,6 +4,7 @@
 #include "DroneAIPawn.h"
 
 #include "DroneAIController.h"
+#include "SlowLaserComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
 
@@ -23,6 +24,8 @@ ADroneAIPawn::ADroneAIPawn() : DroneAIMesh(nullptr)
 	//Use the Drone Controller for this class
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	AIControllerClass = ADroneAIController::StaticClass();
+
+	SlowLaserComponent = CreateDefaultSubobject<USlowLaserComponent>(TEXT("SlowLaser"));
 }
 
 // Called to bind functionality to input

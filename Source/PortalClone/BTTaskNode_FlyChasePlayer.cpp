@@ -70,5 +70,8 @@ void UBTTaskNode_FlyChasePlayer::TickTask(UBehaviorTreeComponent& OwnerComp, uin
 	if (ToTarget.Size() < AcceptanceRadius)
 	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+
+		//tell the AI have touched the player
+		BBComp->SetValueAsBool(bIsTouchingTarget.SelectedKeyName, true);
 	}
 }

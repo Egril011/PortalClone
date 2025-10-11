@@ -6,11 +6,12 @@
 #include "Components/ActorComponent.h"
 #include "LaserComponent.generated.h"
 
+class UVFXLaser;
 class AAIController;
 class UBehaviorTree;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnFireFinished);
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(Abstract, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PORTALCLONE_API ULaserComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -33,6 +34,9 @@ protected:
 
 	//What effect the laser would do 
 	virtual void LaserEffect() PURE_VIRTUAL(ULaserComponent::LaserEffect);
+
+	UPROPERTY(EditAnywhere, Category="LaserComponent|VFX")
+	TObjectPtr<UVFXLaser> VFXLaser;
 
 private:
 	bool bLaserSuccess;

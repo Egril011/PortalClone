@@ -36,6 +36,9 @@ public:
 	
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
+
+	UPROPERTY(EditDefaultsOnly, Category = Movement, meta=(AllowPrivateAccess))
+	float SprintSpeed = 1000.0f;
 	
 protected:
 	/** Pawn mesh: 1st person view (arms; seen only by self) */
@@ -72,9 +75,6 @@ protected:
 	//** Sprint value *//
 	UPROPERTY(EditDefaultsOnly, Category = Movement)
 	float NormalSpeed;
-
-	UPROPERTY(EditDefaultsOnly, Category = Movement, meta=(AllowPrivateAccess))
-	float SprintSpeed = 1000.0f;
 	
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;

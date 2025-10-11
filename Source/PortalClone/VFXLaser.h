@@ -5,22 +5,18 @@
 #include "CoreMinimal.h"
 #include "VFXBaseComponent.h"
 #include "Components/ActorComponent.h"
-#include "RecallVFXComponent.generated.h"
+#include "VFXLaser.generated.h"
 
-class UNiagaraSystem;
-class UNiagaraComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class PORTALCLONE_API URecallVFXComponent : public UVFXBaseComponent
+class PORTALCLONE_API UVFXLaser : public UVFXBaseComponent
 {
 	GENERATED_BODY()
-	
-public: 	
-	// Sets default values for this component's properties
-	URecallVFXComponent();
-	void PlayRecallVFX(const TArray<FVector>& RecallPath, AActor* Actor);
-	virtual void StopVFX() override;
 
-private:
-	TObjectPtr<UNiagaraSystem> RecallVFX;
+public:	
+	// Sets default values for this component's properties
+	UVFXLaser();
+	virtual void PlayVFX(FName VFXEffect, FVector TargetLocation) override;
+	virtual void StopVFXDelay(float Delay) override;
+	virtual void StopVFX() override;
 };

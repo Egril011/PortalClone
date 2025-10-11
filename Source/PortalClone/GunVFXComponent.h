@@ -5,13 +5,14 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "VFXBaseComponent.h"
 #include "GunVFXComponent.generated.h"
 
 class APortalCloneGun;
 class UNiagaraComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class PORTALCLONE_API UGunVFXComponent : public UActorComponent
+class PORTALCLONE_API UGunVFXComponent : public UVFXBaseComponent
 {
 	GENERATED_BODY()
 
@@ -21,18 +22,9 @@ public:
 	
 	virtual void BeginPlay() override;
 
-	//method to play the VFX
-	UFUNCTION()
-	void PlayVFX(FName VFXEffect, FVector TargetLocation);
-
-	//method to stop the VFX
-	UFUNCTION()
-	void StopVFX();
-
-protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VFX")
-	TMap<FName, UNiagaraSystem*> VFXMap;
-
+	virtual void PlayVFX(FName VFXEffect, FVector TargetLocation) override;
+	virtual void StopVFX() override;
+	
 private:
 	APortalCloneGun* GunRef;
 	UNiagaraComponent* ActiveVFX;

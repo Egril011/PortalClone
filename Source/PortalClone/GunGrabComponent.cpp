@@ -61,14 +61,17 @@ void UGunGrabComponent::GrabObject(const FHitResult& HitResult)
 
 	if (Primitive && Primitive->IsSimulatingPhysics())
 	{
+		//Reset the Velocity for not the object is going crazy
+		Primitive->SetPhysicsLinearVelocity(FVector::ZeroVector);
+		Primitive->SetPhysicsAngularVelocityInRadians(FVector::ZeroVector);
+		
 		//Call the broadcast to show the VFX
 		GunRef->OnShootVFX.Broadcast("Grab", HitResult.ImpactPoint);
 
 		//Start the grab and the tick 
 		Primitive->SetSimulatePhysics(true);
-
 		PhysicsHandle->GrabComponentAtLocationWithRotation(
-			Primitive,
+			Primitive,   
 			GunRef->GetMuzzleSocketName(),
 			Primitive->GetComponentLocation(),
 			Primitive->GetComponentRotation()
@@ -86,16 +89,15 @@ void UGunGrabComponent::DropObject() {
 	
 	if (PhysicsHandle && PhysicsHandle->GrabbedComponent)
 	{
-		Primitive->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
-
 		PhysicsHandle->ReleaseComponent();
-
+		Primitive->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
+		Primitive->SetPhysicsLinearVelocity(FVector::ZeroVector);
+		Primitive->SetPhysicsAngularVelocityInRadians(FVector::ZeroVector);
 		SetComponentTickEnabled(false);
 		Deactivate();
 
 		GunRef->OnEndShootVFX.Broadcast();
 		ActiveGrabber = nullptr;
-
 		Primitive = nullptr;
 	}
 }
@@ -110,19 +112,17 @@ void UGunGrabComponent::InputDropObject()
 
 void UGunGrabComponent::ThrowObject() {
 
+	//Throw the object
+	FVector ThrowVelocity = MuzzleGrab->GetComponentRotation().Vector() * 800.0f;
 	PhysicsHandle->ReleaseComponent();
-
+	Primitive->SetPhysicsLinearVelocity(ThrowVelocity, false);
+	
 	Primitive->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
-
-	Primitive->AddImpulse(MuzzleGrab->GetComponentRotation().Vector()
-		* 1000.f * Primitive->GetMass(), NAME_None, false);
-
 	SetComponentTickEnabled(false);
 	Deactivate();
-
+	
 	GunRef->OnEndShootVFX.Broadcast();
 	ActiveGrabber = nullptr;
-
 	Primitive = nullptr;
 }
 

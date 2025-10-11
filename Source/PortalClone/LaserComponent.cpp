@@ -3,7 +3,10 @@
 
 #include "LaserComponent.h"
 
+#include "VFXLaser.h"
+
 // Sets default values for this component's properties
 ULaserComponent::ULaserComponent() : bLaserSuccess(false)
 {
+	VFXLaser = CreateDefaultSubobject<UVFXLaser>(FName("LaserVFX"));
 }

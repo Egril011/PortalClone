@@ -15,10 +15,7 @@ void UGunFireComponent::Fire() {
 
 	APortalCloneGun* GunRef = Cast<APortalCloneGun>(GetOwner());
 	if (!IsValid(GunRef))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Null"))
 		return;
-	}
 	
 	/*If the player is firing again,
 	// and he has grabbed an object, it will throw it */

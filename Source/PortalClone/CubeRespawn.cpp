@@ -57,9 +57,10 @@ void ACubeRespawn::InitializePool() {
 
 	for (int i = 0; i < ListSize; i++) {
 		
+		//Spawn the Actor 
 		AActor* Actor = GetWorld()->SpawnActor<AActor>(Target, FVector::ZeroVector, FRotator::ZeroRotator);
 		if (Actor) {
-
+			
 			Actor->SetActorHiddenInGame(true);
 			Actor->SetActorEnableCollision(false);
 			Actor->SetActorTickEnabled(false);

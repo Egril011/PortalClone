@@ -3,6 +3,7 @@
 
 #include "NormalCube.h"
 
+#include "CubeRespawn.h"
 #include "FreezeComponent.h"
 #include "RecallComponent.h"
 #include "RoundProgressBarWidget.h"
@@ -12,6 +13,7 @@
 ANormalCube::ANormalCube()
 {
 	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
+	StaticMesh->BodyInstance.bUseCCD = true;
 	RootComponent = StaticMesh;
 
 	//Create the component
@@ -23,8 +25,8 @@ ANormalCube::ANormalCube()
 	WidgetComponent->SetWidgetClass(URoundProgressBarWidget::StaticClass());
 }
 
-void ANormalCube::BeginPlay() {
-
+void ANormalCube::BeginPlay()
+{
 	Super::BeginPlay();
 	StaticMesh->SetSimulatePhysics(true);
 

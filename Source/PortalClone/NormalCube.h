@@ -23,10 +23,10 @@ public IFreezableInterface
 public:	
 	// Sets default values for this actor's properties
 	ANormalCube();
-	
-	void BeginPlay();
 
 protected:
+	virtual void BeginPlay() override;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StaticMesh")
 	UStaticMeshComponent* StaticMesh;
 
