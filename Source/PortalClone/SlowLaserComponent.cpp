@@ -75,7 +75,9 @@ void USlowLaserComponent::LaserEffect()
 			if (!IsValid(SlowEffectOnPlayer))
 				return;
 
-			SlowEffectOnPlayer->SlowThePlayer(PlayerRef, 30, 5.f);
+			if (!SlowEffectOnPlayer->GetIsSlowing())
+				SlowEffectOnPlayer->SlowThePlayer(PlayerRef, SlowEffectOnPlayer->GetPercentageOfSlow(),
+					SlowEffectOnPlayer->GetSlowEffectDuration());
 		}
 	}
 }

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Math/UnitConversion.h"
 #include "SlowEffectOnPlayer.generated.h"
 
 
@@ -21,11 +22,24 @@ public:
 	//Set the new player's speed based on the percentage 
 	void SlowThePlayer(APortalCloneCharacter* PlayerCharacter, float percentage, int howMuchTimeSlow);
 
+	//Check if the player has already been slowed
+	bool GetIsSlowing() const {return bisSlowing;};
+
+	float GetPercentageOfSlow() const {return PercentageOfSlow;};
+	float GetSlowEffectDuration() const {return SlowEffectDuration;};
+
 private:
 	float SavedRunningSpeed;
 	float SavedWalkSpeed;
+	bool bisSlowing;
 	FTimerHandle SlowTimer;
 	TObjectPtr<APortalCloneCharacter> PlayerRef;
+
+	UPROPERTY(EditAnywhere, Category="SlowEffectOnplayer|Variable", meta=(AllowPrivateAccess))
+	float PercentageOfSlow = 0.5f;
+
+	UPROPERTY(EditAnywhere, Category="SlowEffectOnplayer|Variable", meta=(AllowPrivateAccess))
+	float SlowEffectDuration = 5.f;
 	
 	//Restore the player's speed
 	void RestorePlayerSpeed();

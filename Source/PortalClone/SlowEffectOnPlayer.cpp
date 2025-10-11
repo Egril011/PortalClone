@@ -14,6 +14,8 @@ USlowEffectOnPlayer::USlowEffectOnPlayer()
 
 void USlowEffectOnPlayer::SlowThePlayer(APortalCloneCharacter* PlayerCharacterRef, float percentage, int howMuchTimeSlow)
 {
+	bisSlowing = true;
+	
 	if (!IsValid(PlayerCharacterRef))
 		return;
 
@@ -56,4 +58,5 @@ void USlowEffectOnPlayer::RestorePlayerSpeed()
 	PlayerRef->GetCharacterMovement()->MaxWalkSpeed = SavedWalkSpeed;
 	GetWorld()->GetTimerManager().ClearTimer(SlowTimer);
 	PlayerRef = nullptr;
+	bisSlowing = false;
 }
