@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Math/UnitConversion.h"
 #include "SlowEffectOnPlayer.generated.h"
 
 
@@ -31,9 +30,12 @@ public:
 private:
 	float SavedRunningSpeed;
 	float SavedWalkSpeed;
+	float VignetteIntensity;
 	bool bisSlowing;
 	FTimerHandle SlowTimer;
+	FTimerHandle VignetteTimer;
 	TObjectPtr<APortalCloneCharacter> PlayerRef;
+	TObjectPtr<APostProcessVolume> PostProcessVolume;
 
 	UPROPERTY(EditAnywhere, Category="SlowEffectOnplayer|Variable", meta=(AllowPrivateAccess))
 	float PercentageOfSlow = 0.5f;
@@ -43,4 +45,13 @@ private:
 	
 	//Restore the player's speed
 	void RestorePlayerSpeed();
+
+	//Apply the Vignette effect
+	void ApplyVignette();
+
+	//Decrease the Vignette intensity
+	void DecreaseVignette();
+
+	//Remove the vignette effect
+	void RemoveVignette();
 };
