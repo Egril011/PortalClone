@@ -1,14 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MovingPlatform.h"
+#include "MovingPlatformBase.h"
 
 #include "FreezeComponent.h"
 #include "RoundProgressBarWidget.h"
 #include "Components/WidgetComponent.h"
 
 // Sets default values
-AMovingPlatform::AMovingPlatform()
+AMovingPlatformBase::AMovingPlatformBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -27,12 +27,9 @@ AMovingPlatform::AMovingPlatform()
 	FreezeComponent = CreateDefaultSubobject<UFreezeComponent>(TEXT("FreezeComponent"));
 }
 
-void AMovingPlatform::BeginPlay() {
+void AMovingPlatformBase::BeginPlay() {
 
 	Super::BeginPlay();
-
-	StartLocation = StartPoint->GetComponentLocation();
-	EndLocation = EndPoint->GetComponentLocation();
 
 	if (WidgetComponent)
 	{
@@ -43,43 +40,19 @@ void AMovingPlatform::BeginPlay() {
 	}
 }
 
-void AMovingPlatform::Tick(float DeltaTime) {
+void AMovingPlatformBase::Tick(float DeltaTime) {
 
 	Super::Tick(DeltaTime);
 
-	if (IsValid(FreezeComponent) && FreezeComponent->IsFrozen())
-	{
+	if (FreezeComponent->IsFrozen())
 		return;
-	}
 	
-	if (bIsWaiting)
-	{
-		CurrentWaitTime -= DeltaTime;
-		if (CurrentWaitTime <= 0.0f)
-		{
-			bIsWaiting = false;
-		}
-		return;
-	}
-	
-	FVector CurrentLocation = GetActorLocation();
-	FVector Destination = bMovingToTarget ? StartLocation : EndLocation;
-
-	FVector Direction = (Destination - CurrentLocation).GetSafeNormal();
-	FVector NewLocation = CurrentLocation + Direction * MoveSpeed * DeltaTime;
-
-	SetActorLocation(NewLocation);
-
-	if (FVector::Dist(NewLocation, Destination) < 1.0f) {
-
-		bMovingToTarget = !bMovingToTarget;
-		bIsWaiting = true;
-		CurrentWaitTime = WaitTime;
-	}
+	UpdateMovingPlatform(DeltaTime);
 }
 
-void AMovingPlatform::ApplyFreezeEffect_Implementation()
+void AMovingPlatformBase::ApplyFreezeEffect_Implementation()
 {
+	UE_LOG(LogTemp, Log, TEXT("ApplyFreezeEffect_Implementation"));
 	if (!FreezeComponent)
 		return;
 

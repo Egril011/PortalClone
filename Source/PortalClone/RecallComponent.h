@@ -62,6 +62,9 @@ private:
 	
 	FRecallCircularBuffer RecallCircularBuffer;
 
+	bool SavedGravity = false;
+	bool SavedPhysics = false;
+
 	void RecordObject();
 	void Recalling(float DeltaTime);
 };

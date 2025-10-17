@@ -22,7 +22,7 @@ void URecallVFXComponent::PlayRecallVFX(const TArray<FVector>& RecallPath, AActo
 
 	//Create the VFX at the Object location
 	ActiveVFX = UNiagaraFunctionLibrary::SpawnSystemAttached(
-		RecallVFX,
+		VFXMap[RecallVFXName],
 		Actor->GetRootComponent(),
 		NAME_None,
 		FVector::ZeroVector,

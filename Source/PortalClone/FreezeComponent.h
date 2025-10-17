@@ -35,7 +35,7 @@ private:
 	float StartTime;
 
 	UPROPERTY(EditAnywhere, Category = "FreezeComponent|Variable", meta = (AllowPrivateAccess = "true"))
-	float Duration;
+	float Duration = 5.0f;
 	
 	/*Method*/
 	void FreezeTimer();

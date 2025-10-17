@@ -21,6 +21,7 @@ public:
 	void PlayRecallVFX(const TArray<FVector>& RecallPath, AActor* Actor);
 	virtual void StopVFX() override;
 
-private:
-	TObjectPtr<UNiagaraSystem> RecallVFX;
+protected:
+	UPROPERTY(EditAnywhere, Category = "VFX")
+	FName RecallVFXName;
 };

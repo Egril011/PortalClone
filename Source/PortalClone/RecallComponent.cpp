@@ -68,7 +68,7 @@ void URecallComponent::StartRecall()
 		StopRecall();
 		return;
 	}
-
+	
 	if (bRecalling)
 		return;
 	
@@ -83,8 +83,12 @@ void URecallComponent::StartRecall()
 	if (UPrimitiveComponent* Root = Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent()))
 	{
 		if (Root->IsAnySimulatingPhysics())
+		{
+			SavedPhysics = Root->IsSimulatingPhysics();
 			Root->SetSimulatePhysics(false);
+		}
 
+		SavedGravity = Root->IsGravityEnabled();
 		Root->SetEnableGravity(false);
 		Root->SetPhysicsLinearVelocity(FVector::ZeroVector);
 		Root->SetPhysicsAngularVelocityInDegrees(FVector::ZeroVector);
@@ -172,8 +176,8 @@ void URecallComponent::StopRecall()
 
 	if (UPrimitiveComponent* Root = Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent()))
 	{
-		Root->SetEnableGravity(true);
-		Root->SetSimulatePhysics(true);
+		Root->SetEnableGravity(SavedGravity);
+		Root->SetSimulatePhysics(SavedPhysics);
 	}
 
 	GetWorld()->GetTimerManager().UnPauseTimer(TimerHandle);

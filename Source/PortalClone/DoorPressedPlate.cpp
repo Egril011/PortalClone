@@ -42,11 +42,10 @@ bool ADoorPressedPlate::AreAllPlatesActivated() const {
 
 void ADoorPressedPlate::PlayOpenDoor() {
 
-	if (SkeletalMesh && DoorState == EDoorAnimation::Close &&
-		!SkeletalMesh->IsPlaying()) {
+	if (SkeletalMesh && DoorState == EDoorAnimation::Close) {
 		
 		SkeletalMesh->PlayAnimation(OpenDoorAnimation, false);
-		BoxComponentFront->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		BoxComponentFront->SetCollisionEnabled(ECollisionEnabled::NoCollision);       
 		
 		DoorState = EDoorAnimation::Open;
 	}
@@ -54,8 +53,7 @@ void ADoorPressedPlate::PlayOpenDoor() {
 
 void ADoorPressedPlate::PlayCloseDoor() {
 
-	if(SkeletalMesh && DoorState == EDoorAnimation::Open &&
-		!SkeletalMesh->IsPlaying()){
+	if(SkeletalMesh && DoorState == EDoorAnimation::Open){
 	
 		SkeletalMesh->PlayAnimation(CloseDoorAnimation, false);
 		BoxComponentFront->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
