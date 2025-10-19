@@ -65,6 +65,6 @@ void AMyGameMode::PlayerRespawn(AController* PlayerController) {
 
 			NewGun->AttachWeapon(NewPlayer);
 			NewPlayer->EquippedGun = NewGun;
-;		}
+		}
 	}
 }

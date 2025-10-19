@@ -71,7 +71,7 @@ void UBTTaskNode_FlyChasePlayer::TickTask(UBehaviorTreeComponent& OwnerComp, uin
 	{
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 
-		//tell the AI have touched the player
+		//tell the AI have touched the target
 		BBComp->SetValueAsBool(bIsTouchingTarget.SelectedKeyName, true);
 	}
 }
