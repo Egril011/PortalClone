@@ -4,30 +4,40 @@
 #include "BTTaskNode_Patrol.h"
 
 #include "AIController.h"
-#include "NavigationSystem.h"
+#include "DroneAIPawn.h"
+#include "PatrolPoints.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Chaos/PBDSuspensionConstraintData.h"
-#include "GameFramework/FloatingPawnMovement.h"
-#include "Navigation/PathFollowingComponent.h"
 
 UBTTaskNode_Patrol::UBTTaskNode_Patrol()
 {
-	NodeName = TEXT("Patrol");
+	NodeName = TEXT("PatrolAIFly");
 }
 
 EBTNodeResult::Type UBTTaskNode_Patrol::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	AAIController* AIController = OwnerComp.GetAIOwner();
-	if (!AIController)
+	if (!IsValid(AIController)) 
 		return EBTNodeResult::Failed;
 
-	CurrentPawn = AIController->GetPawn();
-	if (!CurrentPawn)
+	if (!AIController->GetPawn()->IsA<ADroneAIPawn>())
 		return EBTNodeResult::Failed;
+
+	DroneAI = Cast<ADroneAIPawn>(AIController->GetPawn());
+	if (!IsValid(DroneAI))
+		return EBTNodeResult::Failed;
+
+	//Get which floor the AI is
+	IndexPatrolPoint = 0;
+	int Floor = AIController->GetBlackboardComponent()->GetValueAsInt(CurrentFloor.SelectedKeyName);
 	
-	//Get the new reachable point
-	if (!ReturnReachablePoint(CurrentPawn->GetActorLocation(), TargetLocation))
-		return EBTNodeResult::Failed;
+	//Get the PatrolPoints that match with the floor
+	if (DroneAI->GetPatrolPoints().Contains(Floor))
+	{
+		PatrolPointFloor = DroneAI->GetPatrolPoints()[Floor];
+	}
+	
+	GetNearestPatrolPoint(PatrolPointFloor);
+	StartingPoint = IndexPatrolPoint;
 	
 	bNotifyTick = true;
 	return EBTNodeResult::InProgress;
@@ -35,39 +45,58 @@ EBTNodeResult::Type UBTTaskNode_Patrol::ExecuteTask(UBehaviorTreeComponent& Owne
 
 void UBTTaskNode_Patrol::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
-	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
-	
-	if (!CurrentPawn)
-	{
-		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
-		return;
-	}
+	MoveToNextPatrolPoint(PatrolPointFloor, DeltaSeconds, OwnerComp);
+}
 
-	//Move the AI to the Target
-	FVector PawnLocation = CurrentPawn->GetActorLocation();
-	FVector ToTarget = TargetLocation - PawnLocation;
-	FVector Direction = ToTarget.GetSafeNormal2D();
-	CurrentPawn->AddMovementInput(Direction, 1.f);
+void UBTTaskNode_Patrol::GetNearestPatrolPoint(const TArray<APatrolPoints*>& PatrolPoints)
+{
+	if (!IsValid(DroneAI))
+		return;
+
+	if (PatrolPoints.Num() == 0)
+		return;
 	
-	//Get the Distance between the pawn and the target
-	if (ToTarget.Size2D() < AcceptanceRadius)
+	//Get the first point location  
+	NearestPoint = FVector::DistSquared(PatrolPoints[0]->GetActorLocation(), DroneAI->GetActorLocation());
+
+	//Search the nearest point from the AI
+	for (int i = 0; i < PatrolPoints.Num(); i++)
 	{
-		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+		APatrolPoints* p = PatrolPoints[i];
+		float Distance = FVector::DistSquared(p->GetActorLocation(), DroneAI->GetActorLocation());
+		if (Distance < NearestPoint)
+		{
+			NearestPoint = Distance;
+			IndexPatrolPoint = i; 
+		}
 	}
 }
 
-bool UBTTaskNode_Patrol::ReturnReachablePoint(FVector PawnLocation, FVector& OutNewPawnLocation)
+void UBTTaskNode_Patrol::MoveToNextPatrolPoint(const TArray<APatrolPoints*>& PatrolPoints, float DeltaTime, UBehaviorTreeComponent& OwnerComp)
 {
-	UNavigationSystemV1* NavigationSystem = UNavigationSystemV1::GetCurrent(CurrentPawn->GetWorld());
-	if (!NavigationSystem)
-		return false;
+	if (IndexPatrolPoint < 0 || IndexPatrolPoint >= PatrolPoints.Num())
+		return FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
 	
-		FNavLocation NavLocation;
-		if (NavigationSystem->GetRandomReachablePointInRadius(PawnLocation, Radius, NavLocation))
+	//Move the AI to the next patrol point from the Array
+	FVector ToPoint = PatrolPoints[IndexPatrolPoint]->GetActorLocation() - DroneAI->GetActorLocation();
+	FVector Direction = ToPoint.GetSafeNormal();
+	DroneAI->AddMovementInput(Direction, 1.f);
+
+	//Make the AI rotate
+	FRotator Rotation = ToPoint.Rotation();
+	Rotation.Pitch = 0.f;
+	DroneAI->SetActorRotation(FMath::RInterpTo(DroneAI->GetActorRotation(), Rotation, DeltaTime, 5.f));
+
+	if (ToPoint.Size() < AcceptanceRadius)
+	{
+		//make the AI goes to each point (circular buffer)
+		IndexPatrolPoint = (IndexPatrolPoint + 1) % PatrolPoints.Num(); 
+		
+		if (IndexPatrolPoint == StartingPoint)
 		{
-			OutNewPawnLocation = NavLocation.Location;
-			OutNewPawnLocation.Z = PawnLocation.Z;
-			return true;
+			//Change the fl oor when the AI have gone to each points
+			OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool(bChangeFloor.SelectedKeyName, true);
+			return FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		}
-	return false;
+	}
 }

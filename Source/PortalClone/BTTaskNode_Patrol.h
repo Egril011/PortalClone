@@ -6,6 +6,8 @@
 #include "BehaviorTree/BTTaskNode.h"
 #include "BTTaskNode_Patrol.generated.h"
 
+class APatrolPoints;
+class ADroneAIPawn;
 class UNavigationSystemV1;
 /**
  * 
@@ -22,20 +24,23 @@ protected:
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
 private:
-	TObjectPtr<APawn> CurrentPawn = nullptr;
-	TObjectPtr<UBlackboardComponent> BBComp = nullptr;
+	TObjectPtr<ADroneAIPawn> DroneAI = nullptr;
+	TObjectPtr<AActor> OwnerActor = nullptr;
+	TArray<APatrolPoints*> PatrolPointFloor;
+	
+	float NearestPoint = 0.f;
+	int IndexPatrolPoint = 0;
+	int StartingPoint = 0;
 
-	UPROPERTY(EditAnywhere, Category="Patrol", meta=(AllowPrivateAccess))
-	float Speed = 5.f;
-
-	UPROPERTY(EditAnywhere, Category="Patrol", meta=(AllowPrivateAccess))
+	UPROPERTY(EditAnywhere, Category = "Patrol|Variable", meta = (AllowPrivateAccess = "true"))
 	float AcceptanceRadius = 150.f;
 
-	UPROPERTY(EditAnywhere, Category = "Patrol", meta=(AllowPrivateAccess))
-	float Radius = 500.f;
+	UPROPERTY(EditAnywhere, Category = "BB|Variable")
+	FBlackboardKeySelector CurrentFloor;
 
-	FVector TargetLocation = FVector(0.f, 0.f,0.f);
-	
-	//Get a reachable point thanks to the NavMesh
-	bool ReturnReachablePoint(FVector PawnLocation, FVector& OutNewPawnLocation);
+	UPROPERTY(EditAnywhere, Category = "BB|Variable")
+	FBlackboardKeySelector bChangeFloor;
+
+	void GetNearestPatrolPoint(const TArray<APatrolPoints*>& PatrolPoints);
+	void MoveToNextPatrolPoint(const TArray<APatrolPoints*>& PatrolPoints, float DeltaTime, UBehaviorTreeComponent& OwnerComp);
 };

@@ -4,6 +4,7 @@
 #include "DroneAIPawn.h"
 
 #include "DroneAIController.h"
+#include "PatrolPoints.h"
 #include "SlowLaserComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/FloatingPawnMovement.h"
@@ -26,6 +27,24 @@ ADroneAIPawn::ADroneAIPawn() : DroneAIMesh(nullptr)
 	AIControllerClass = ADroneAIController::StaticClass();
 
 	SlowLaserComponent = CreateDefaultSubobject<USlowLaserComponent>(TEXT("SlowLaser"));
+}
+
+void ADroneAIPawn::BeginPlay()
+{
+	Super::BeginPlay();
+	PatrolPointMap.Empty();
+
+	//Put the saved PatrolPoints into a HashTable to get it into BTTaskNode_Patrol
+	for (APatrolPoints* PatrolPoint : PatrolPoints)
+	{
+		int FloorNumber = PatrolPoint->GetFloorNumber();
+		if (!PatrolPointMap.Contains(FloorNumber))
+		{
+			PatrolPointMap.Add(FloorNumber, TArray<APatrolPoints*>());
+		}
+
+		PatrolPointMap[FloorNumber].Add(PatrolPoint);
+	}
 }
 
 // Called to bind functionality to input

@@ -6,6 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "DroneAIPawn.generated.h"
 
+class APatrolPoints;
 class USlowLaserComponent;
 class UBehaviorTree;
 class UBoxComponent;
@@ -24,7 +25,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Drone AI")
 	UBehaviorTree* DefaultBehaviorTree;
 
+	//return the Patrol Points' map
+	TMap<int, TArray<APatrolPoints*>> GetPatrolPoints(){return PatrolPointMap; }
+	
 protected:
+	virtual void BeginPlay() override;
+	
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* BoxComponent;
 	
@@ -33,6 +39,12 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Drone AI|Movement")
 	UFloatingPawnMovement* DroneMovement;
+	
+	UPROPERTY(EditAnywhere, Category="Drone AI|Patrol Points")
+	TArray<APatrolPoints*> PatrolPoints;
+
+	//Save the patrol point from the PatrolPoint with their floor that belongs to them
+	TMap<int, TArray<APatrolPoints*>> PatrolPointMap;
 	
 public:	
 	// Called to bind functionality to input
