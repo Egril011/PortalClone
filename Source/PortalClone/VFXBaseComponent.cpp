@@ -21,7 +21,7 @@ void UVFXBaseComponent::StopVFX()
 	if (ActiveVFX) {
 		ActiveVFX->Deactivate();
 		ActiveVFX->DestroyComponent();
-		ActiveVFX = nullptr; 
+		ActiveVFX = nullptr;
 	}
 }
 

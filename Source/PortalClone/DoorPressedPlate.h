@@ -21,7 +21,6 @@ public:
 
 	//Check if the plates states changed
 	void ArePlateChanged();
-	
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SkeletalMesh")
@@ -44,18 +43,17 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	UAnimSequence* CloseDoorAnimation;
+	
+	//Play its animation (close the door)
+	virtual void PlayCloseDoor();
 
 private:
-	
 	//get the door state
 	EDoorAnimation DoorState;
 
 	//Check if all the plate are pressed
 	bool AreAllPlatesActivated() const;
 
-	//Play its animation (close the door)
-	void PlayCloseDoor();
-
 	//Play its animation (open the door)
-	void PlayOpenDoor();
+	virtual void PlayOpenDoor();
 };

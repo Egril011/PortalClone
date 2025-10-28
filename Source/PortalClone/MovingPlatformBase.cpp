@@ -52,7 +52,6 @@ void AMovingPlatformBase::Tick(float DeltaTime) {
 
 void AMovingPlatformBase::ApplyFreezeEffect_Implementation()
 {
-	UE_LOG(LogTemp, Log, TEXT("ApplyFreezeEffect_Implementation"));
 	if (!FreezeComponent)
 		return;
 

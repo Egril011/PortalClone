@@ -3,6 +3,9 @@
 
 #include "FreezeComponent.h"
 
+#include "InterchangeResult.h"
+#include "ToolWidgetsSlateTypes.h"
+
 // Sets default values for this component's properties
 UFreezeComponent::UFreezeComponent()
 {
@@ -59,21 +62,26 @@ void UFreezeComponent::SetFreezeState(bool State)
 {
 	if (!IsValid(Owner))
 		return;
-
-	if (!IsValid(SM))
-		return;
 	
 	bFrozen = State;
 	
 	if (State)
 	{
-		SM->SetMobility(EComponentMobility::Static);
-		SM->SetSimulatePhysics(false);
+		if (IsValid(SM))
+		{
+			SM->SetMobility(EComponentMobility::Static);
+			SM->SetSimulatePhysics(false);
+		}
 	}
 	else
 	{
-		SM->SetMobility(EComponentMobility::Movable);
-		SM->SetSimulatePhysics(bIsActorSimulatePhysics);
+		if (IsValid(SM))
+		{
+			SM->SetMobility(EComponentMobility::Movable);
+			SM->SetSimulatePhysics(bIsActorSimulatePhysics);
+		}
+
+		OnEndFreeze.Broadcast();
 	}
 }
 

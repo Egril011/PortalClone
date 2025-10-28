@@ -27,8 +27,7 @@ void UGunVFXComponent::PlayVFX(FName VFXEffectName, FVector TargetLocation) {
 	Super::PlayVFX(VFXEffectName, TargetLocation);
 	
 	if (GunRef && !VFXMap.IsEmpty()) { 
-
-		if (VFXMap.Contains(VFXEffectName)) {
+		if (VFXMap.Contains(VFXEffectName)) {		
 			ActiveVFX = UNiagaraFunctionLibrary::SpawnSystemAttached(
 				VFXMap[VFXEffectName],
 				GunRef->GetMesh(),

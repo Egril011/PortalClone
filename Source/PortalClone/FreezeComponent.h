@@ -6,7 +6,7 @@
 #include "ProgressBarInterface.h"
 #include "Components/ActorComponent.h"
 #include "FreezeComponent.generated.h"
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEndFreeze);
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PORTALCLONE_API UFreezeComponent : public UActorComponent, public IProgressBarInterface
 {
@@ -20,6 +20,10 @@ public:
 
 	//Cancels the freeze effect if the player reuse the freeze ability on already frozen object
 	void CancelFreezeEffect();
+
+	//To know when the freeze is done
+	UPROPERTY()
+	FOnEndFreeze OnEndFreeze;
 	
 private:
 	TObjectPtr<AActor> Owner = nullptr;

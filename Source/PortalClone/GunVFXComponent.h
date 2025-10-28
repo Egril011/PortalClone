@@ -27,5 +27,4 @@ public:
 	
 private:
 	APortalCloneGun* GunRef;
-	UNiagaraComponent* ActiveVFX;
 };
