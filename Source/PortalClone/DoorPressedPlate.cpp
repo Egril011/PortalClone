@@ -2,7 +2,7 @@
 #include "DoorPressedPlate.h"
 #include "PressurePlate.h"
 
-// Sets default values
+// Sets default values  
 ADoorPressedPlate::ADoorPressedPlate()
 {
 	SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
@@ -32,12 +32,28 @@ void ADoorPressedPlate::ArePlateChanged() {
 
 bool ADoorPressedPlate::AreAllPlatesActivated() const {
 
-	for (APressurePlate* Plate : RequiredPressurePlate) {
-		
-		if (!Plate->IsActivate())
-			return false;
+	if (DoorActivationMode == EDoorActivationMode::AllPressurePlates )
+	{
+		for (APressurePlate* Plate : RequiredPressurePlate) {
+			
+			if (!Plate->IsActivate())
+				return false;
+		}
+		return true;
 	}
-	return true;
+	
+	else if (DoorActivationMode == EDoorActivationMode::AnyPressurePlates)
+	{
+		for (APressurePlate* Plate : RequiredPressurePlate)
+		{
+			if (Plate->IsActivate())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	return false;
 }
 
 void ADoorPressedPlate::PlayOpenDoor() {

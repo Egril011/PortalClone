@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "EDoorActivationMode.h"
 #include "GameFramework/Actor.h"
 #include "EDoorAnimation.h"
 #include "DoorPressedPlate.generated.h"
@@ -43,6 +44,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	UAnimSequence* CloseDoorAnimation;
+
+	UPROPERTY(EditAnywhere)
+	EDoorActivationMode DoorActivationMode;
 	
 	//Play its animation (close the door)
 	virtual void PlayCloseDoor();
