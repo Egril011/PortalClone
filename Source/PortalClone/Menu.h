@@ -26,6 +26,7 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* ButtonExit;
 
+	//Quit the Game
 	UFUNCTION()
 	void OnClickExit();
 };

@@ -12,12 +12,11 @@ AInteractableButton::AInteractableButton()
 }
 
 void AInteractableButton::Interact_Implementation() {
-
+	UE_LOG(LogTemp, Warning, TEXT("test1"));
 	PlayAnimation();
 }
 
 void AInteractableButton::PlayAnimation() {
-
 	if (!SkeletalMesh->IsPlaying()) {
 
 		if (!IsValid(PressAnimation))
@@ -26,7 +25,6 @@ void AInteractableButton::PlayAnimation() {
 		SkeletalMesh->PlayAnimation(PressAnimation, false);
 
 		if (ActivatableTarget && ActivatableTarget->Implements<UActivatableInterface>()) {
-
 			IActivatableInterface::Execute_Activate(ActivatableTarget);
 		}
 	}

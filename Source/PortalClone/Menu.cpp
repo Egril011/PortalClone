@@ -33,6 +33,6 @@ FReply UMenu::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKe
 }
 
 void UMenu::OnClickExit()
-{
-	
+{  
+	UKismetSystemLibrary::QuitGame(GetWorld(), nullptr, EQuitPreference::Quit, false);
 }
