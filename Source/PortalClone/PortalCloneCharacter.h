@@ -7,6 +7,8 @@
 #include "Logging/LogMacros.h"
 #include "PortalCloneCharacter.generated.h"
 
+class UMenu;
+class UWidgetComponent;
 class UInputComponent;
 class APortalCloneGun;
 class USkeletalMeshComponent;
@@ -72,6 +74,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* InteractAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* ShowMenuAction;
+
 	//** Sprint value *//
 	UPROPERTY(EditDefaultsOnly, Category = Movement)
 	float NormalSpeed;
@@ -100,8 +105,18 @@ protected:
 	//method to interact with objects
 	void CheckInteractable();
 
+	//method to create the menu widget
+	UFUNCTION()
+	void CreateMenu();
+	
+	UPROPERTY(EditAnywhere, Category="Widget", meta=(AllowPrivateAccess="true"))
+	TSubclassOf<UMenu> MenuWidget;
+	TObjectPtr<UMenu> MenuInstance;
+	
 	//Update the Widget between the crosshair and the interact UI
 	void UpdateInteractableWidget();
+
+	
 	
 private:
 	//Save the current look at

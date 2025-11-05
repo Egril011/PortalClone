@@ -10,7 +10,10 @@
 #include "InputActionValue.h"
 #include "Engine/LocalPlayer.h"
 #include "InteractableInterface.h"
+#include "Menu.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -74,6 +77,9 @@ void APortalCloneCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
 		//Interact
 		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &APortalCloneCharacter::CheckInteractable);
+
+		//Menu
+		EnhancedInputComponent->BindAction(ShowMenuAction, ETriggerEvent::Started, this, &APortalCloneCharacter::CreateMenu);
 	}
 	else
 	{
@@ -167,6 +173,45 @@ void APortalCloneCharacter::CheckInteractable() {
 		if (HitActor->Implements<UInteractableInterface>()) {
 			IInteractableInterface::Execute_Interact(HitActor);
 		}	
+	}
+}
+
+void APortalCloneCharacter::CreateMenu()
+{
+	if (!MenuWidget)
+		return;
+
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	if (!IsValid(PlayerController))
+		return;
+	
+	if (IsValid(MenuInstance) &&  MenuInstance->IsInViewport())
+	{
+		//Close the menu
+		MenuInstance->OnRequestClose.RemoveAll(this);
+		MenuInstance->RemoveFromParent();
+		MenuInstance = nullptr;
+
+		PlayerController->bShowMouseCursor = false;
+		PlayerController->SetInputMode(FInputModeGameOnly());
+	}
+	else
+	{
+		//Open the menu
+		MenuInstance = CreateWidget<UMenu>(PlayerController, MenuWidget);
+		if (IsValid(MenuInstance))
+		{
+			MenuInstance->OnRequestClose.AddUniqueDynamic(this, &APortalCloneCharacter::CreateMenu);
+			MenuInstance->AddToViewport();
+
+			//UI interaction
+			PlayerController->bShowMouseCursor = true;
+			FInputModeUIOnly InputModeUIOnly;
+			PlayerController->SetInputMode(InputModeUIOnly);
+			InputModeUIOnly.SetWidgetToFocus(MenuInstance->TakeWidget());
+			InputModeUIOnly.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+			PlayerController->SetInputMode(InputModeUIOnly);
+		}
 	}
 }
 
