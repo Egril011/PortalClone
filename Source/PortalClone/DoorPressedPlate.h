@@ -39,6 +39,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collider")
 	UBoxComponent* BoxComponentFront;
 
+	//if the player stays stuck under the door
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Collider")
+	UBoxComponent* BoxComponentKillZone;
+
 	UPROPERTY(EditAnywhere, Category = "Animation")
 	UAnimSequence* OpenDoorAnimation;
 
@@ -60,4 +64,9 @@ private:
 
 	//Play its animation (open the door)
 	virtual void PlayOpenDoor();
+
+	//method to kill the player if he stays suck under the door
+	UFUNCTION()
+	void KillPlayer(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 };

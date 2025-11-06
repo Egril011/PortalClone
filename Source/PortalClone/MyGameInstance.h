@@ -13,8 +13,8 @@ class PORTALCLONE_API UMyGameInstance : public UGameInstance
 
 public:
 	/*Spawn's variable*/
-		FVector SpawnLocation;
-		FRotator SpawnRotation;
+	FVector SpawnLocation;
+	FRotator SpawnRotation;
 
 	/*Gun Abilities variable*/
 	bool bGrabObject;

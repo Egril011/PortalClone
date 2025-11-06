@@ -4,6 +4,7 @@
 #include "MyGameInstance.h"
 #include "PortalCloneCharacter.h"
 #include "PortalCloneGun.h"
+#include "Engine/GameViewportClient.h"
 
 void AMyGameMode::PlayerRespawn(AController* PlayerController) {
 
@@ -13,7 +14,6 @@ void AMyGameMode::PlayerRespawn(AController* PlayerController) {
 	APawn* OldPlayer = PlayerController->GetPawn();
 
 	if (OldPlayer) {
-
 		//Save the gun to respawn
 		if (APortalCloneCharacter* OldPlayerCharacter = Cast<APortalCloneCharacter>(OldPlayer))
 		{
@@ -49,7 +49,6 @@ void AMyGameMode::PlayerRespawn(AController* PlayerController) {
 		//Respawn the Gun
 		FActorSpawnParameters SpawnParamGun;
 		SpawnParamGun.Owner = NewPlayer;
-	
 		
 		if (IsValid(GunToRespawn) && IsValid(NewPlayer))
 		{

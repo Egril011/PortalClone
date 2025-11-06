@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "AbilityWheelWidget.generated.h"
 
+enum class EGunStateHandler : uint8;
 class UTrackGunStateComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnRequestClose);
@@ -49,4 +50,5 @@ private:
 	void SetupAbility(UButton* Button, bool bIsUnlocked, FName HandlerName);
 
 	UTrackGunStateComponent*  TrackGunAbility;
+	void HandleAbilityClick(EGunStateHandler NewState);
 };

@@ -14,6 +14,7 @@ void UAbilityWheelWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	SetIsFocusable(true);
+	UGameplayStatics::SetGamePaused(GetWorld(), true);
 	
 	if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
 	{
@@ -62,6 +63,7 @@ FReply UAbilityWheelWidget::NativeOnKeyDown(const FGeometry& InGeometry, const F
 {
 	if (InKeyEvent.GetKey() == EKeys::Q)
 	{
+		UGameplayStatics::SetGamePaused(GetWorld(), false);
 		OnRequestClose.Broadcast();
 		return FReply::Handled();
 	}
@@ -70,17 +72,28 @@ FReply UAbilityWheelWidget::NativeOnKeyDown(const FGeometry& InGeometry, const F
 
 void UAbilityWheelWidget::OnFreezeClicked()
 {
-	TrackGunAbility->ChangeGunState(EGunStateHandler::Freeze);
+	HandleAbilityClick(EGunStateHandler::Freeze);
 }
 
 void UAbilityWheelWidget::OnGrabClicked()
 {
-	TrackGunAbility->ChangeGunState(EGunStateHandler::Grab);
+	HandleAbilityClick(EGunStateHandler::Grab);
 }
 
 void UAbilityWheelWidget::OnRecallClicked()
 {
-	TrackGunAbility->ChangeGunState(EGunStateHandler::Recall);
+	HandleAbilityClick(EGunStateHandler::Recall);
+}
+
+void UAbilityWheelWidget::HandleAbilityClick(EGunStateHandler NewState)
+{
+	UGameplayStatics::SetGamePaused(GetWorld(), false);
+	OnRequestClose.Broadcast();
+
+	if (!IsValid(TrackGunAbility))
+		return;
+
+	TrackGunAbility->ChangeGunState(NewState);
 }
 
 void UAbilityWheelWidget::SetupAbility(UButton* Button, const bool bIsUnlocked, const FName HandlerName)
