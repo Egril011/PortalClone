@@ -12,7 +12,6 @@ AInteractableButton::AInteractableButton()
 }
 
 void AInteractableButton::Interact_Implementation() {
-	UE_LOG(LogTemp, Warning, TEXT("test1"));
 	PlayAnimation();
 }
 

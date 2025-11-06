@@ -73,3 +73,19 @@ void ANormalCube::ApplyFreezeEffect_Implementation()
 	WidgetComponent->SetVisibility(true);
 	FreezeComponent->StartFreezeEffect();
 }
+
+void ANormalCube::FellOutOfWorld(const class UDamageType& dmgType)
+{
+	if (!IsValid(Respawn))
+		return;
+
+	//Set the velocity to zero
+	if (UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(GetRootComponent()))
+	{
+		PrimitiveComponent->SetPhysicsLinearVelocity(FVector::ZeroVector);
+		PrimitiveComponent->SetPhysicsAngularVelocityInDegrees(FVector::ZeroVector);
+	}
+	
+	//Respawn the cube
+	Respawn->SpawnActor();
+}

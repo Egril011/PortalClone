@@ -9,6 +9,7 @@
 #include "RecallableInterface.h"
 #include "NormalCube.generated.h"
 
+class ACubeRespawn;
 class UWidgetComponent;
 class UFreezeComponent;
 class UGunFreezeComponent;
@@ -23,6 +24,9 @@ public IFreezableInterface
 public:	
 	// Sets default values for this actor's properties
 	ANormalCube();
+
+	//safe the cube respawn to respawn it if need it
+	TObjectPtr<ACubeRespawn> Respawn;
 
 protected:
 	virtual void BeginPlay() override;
@@ -44,4 +48,7 @@ protected:
 	virtual void Recallable_Implementation() override;
 	virtual void CancelRecall_Implementation() override;
 	virtual void ApplyFreezeEffect_Implementation() override;
+
+	//if the object goes out off bound because of the grab and throw
+	virtual void FellOutOfWorld(const class UDamageType& dmgType) override;
 };

@@ -3,6 +3,8 @@
 
 #include "CubeRespawn.h"
 
+#include "NormalCube.h"
+
 // Sets default values
 ACubeRespawn::ACubeRespawn()
 {
@@ -64,6 +66,10 @@ void ACubeRespawn::InitializePool() {
 			Actor->SetActorHiddenInGame(true);
 			Actor->SetActorEnableCollision(false);
 			Actor->SetActorTickEnabled(false);
+
+			//if the Actor is a normalcube, save the reference to the respawn
+			if (ANormalCube* Cube = Cast<ANormalCube>(Actor))
+				Cube->Respawn = this;
 
 			ActorList.Add(Actor);
 		}
