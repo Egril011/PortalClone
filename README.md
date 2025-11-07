@@ -1,4 +1,4 @@
-# \#Ability Demo
+# \# Ability Demo
 
 
 
@@ -8,7 +8,7 @@ This short demo introduces the player to 4 different rooms, each focused on a un
 
 
 
-\##Room:
+\## Room:
 
 * \*\*Room 1\*\*: Grab
 * \*\*Room 2\*\*: Recall
@@ -17,7 +17,7 @@ This short demo introduces the player to 4 different rooms, each focused on a un
 
 
 
-\##Overview of the Mechanics:
+\## Overview of the Mechanics:
 
 
 
@@ -43,7 +43,7 @@ This short demo introduces the player to 4 different rooms, each focused on a un
 
 
 
-\##Link
+\## Link
 
 Play the Demo: https://egril011.itch.io/ability-demo
 
@@ -53,7 +53,7 @@ Play the Demo: https://egril011.itch.io/ability-demo
 
 
 
-\##Note
+\## Note
 
 This project was created as a personal portfolio demo to showcase my programming skill.
 
