@@ -3,9 +3,6 @@
 
 #include "FreezeComponent.h"
 
-#include "InterchangeResult.h"
-#include "ToolWidgetsSlateTypes.h"
-
 // Sets default values for this component's properties
 UFreezeComponent::UFreezeComponent()
 {

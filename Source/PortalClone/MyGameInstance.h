@@ -20,4 +20,6 @@ public:
 	bool bGrabObject;
 	bool bFreezeObject;
 	bool bRecallObject;
+
+	void ResetAbilities();
 };

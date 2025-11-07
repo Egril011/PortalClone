@@ -3,6 +3,7 @@
 
 #include "VictoryWidget.h"
 
+#include "MyGameInstance.h"
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -37,6 +38,12 @@ void UVictoryWidget::RestartGame()
 		PlayerController->bShowMouseCursor = false;
 		FInputModeGameOnly InputModeGameOnly;
 		PlayerController->SetInputMode(InputModeGameOnly);
+	}
+
+	//Reset the abilities
+	if (UMyGameInstance* MyGI = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(this)))
+	{
+		MyGI->ResetAbilities();
 	}
 	
 	UGameplayStatics::OpenLevel(this, TEXT("AbilityLevel"));
