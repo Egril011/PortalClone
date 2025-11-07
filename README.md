@@ -1,8 +1,6 @@
 # Ability Demo
 
-
-
-Ability demo is a first-person prototype developed in Unreal Engine 5, using **C++** with **Blueprint integration**. This short demo introduces the player to 4 different rooms, each focused on a unique ability.
+Ability demo is a first-person prototype developed in Unreal Engine 5, using **C++** with **Blueprint integration**. This short demo introduces the player to 4 different rooms, each focused on a unique gameplay ability.
 
 ## Room:
 
@@ -37,6 +35,7 @@ Play the Demo: https://egril011.itch.io/ability-demo
 
 ## Note
 
-This project was created as a personal portfolio demo to showcase my programming skill.
-All the assets were from **sketchfab.com**, and all the images were generated using **AI tools**.  
+This project was developed as part of my personal portfolio, focusing on gameplay, and programming skill.
+All the assets were sourced from **sketchfab.com**, and images were generated using **AI tools**. 
+All **code**, **gameplay logic** were created by me.  
 
