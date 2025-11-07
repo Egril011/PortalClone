@@ -16,12 +16,15 @@ Ability demo is a first-person prototype developed in Unreal Engine 5, using **C
 ## Overview of the Mechanics:
 
 **Grab**
+
 <img src="GIF/Grab.gif" width="320" alt="Grab-demo">
 
 **Recall**
+
 <img src="GIF/Recall.gif" width="320" alt="Recall-demo">
 
 **Freeze**
+
 <img src="GIF/Freeze.gif" width="320" alt="Freeze-demo">
 
 ---
